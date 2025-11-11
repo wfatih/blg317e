@@ -1,12 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
   <head>
-    <meta charset="utf-8"/>
-    <title>My movies - Home</title>
-    <link rel="stylesheet" href="/static/home.css"/>
+    <meta charset="utf-8" />
+    <title>BLG317 - NBA Maç Veritabanı</title>
+    <link rel="stylesheet" href="/static/home.css" />
   </head>
+
   <body>
-    <h1>My movie collection</h1>
-    <p>Have a nice {{ day }}!</p>
+    <header>
+      <h1>BLG317 - Veritabanı Sistemleri</h1>
+      <p class="date">📅 {{ date }}</p>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h2>NBA Maç Veritabanı Projesi</h2>
+        <p>
+          Bu dönem projemizde, NBA maçlarının istatistiksel verilerini içeren
+          bir veri seti kullanarak ilişkisel veritabanı modellemesi, SQL
+          sorgulamaları ve veri analizi yapacağız.
+        </p>
+        <a href="#" class="button">Veri Setini İncele</a>
+      </section>
+
+      <section class="dataset">
+        <h3>Veri Seti Hakkında</h3>
+        <ul>
+          <li><strong>Toplam maç sayısı:</strong> 25,000+</li>
+          <li><strong>Alanlar:</strong> Takım, oyuncu, tarih, skor, asist, rebound</li>
+          <li><strong>Kaynak:</strong> Kaggle NBA Match Data / Stats API</li>
+        </ul>
+      </section>
+
+      <section class="objectives">
+        <h3>Ders Uygulamaları</h3>
+        <p>
+          Öğrencilerden beklenen, veri setini analiz ederek ilişkisel tablo
+          yapıları oluşturmak ve sorgular yazmaktır. Örneğin:
+        </p>
+        <ul>
+          <li>En yüksek skorlu 10 maç</li>
+          <li>Takım bazlı ortalama skor karşılaştırmaları</li>
+          <li>Oyuncu performans trendleri</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 BLG317 - NBA Match Dataset Project</p>
+    </footer>
   </body>
 </html>

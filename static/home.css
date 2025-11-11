@@ -1,3 +1,107 @@
-h1 {
-    color: #e9601a;
+/* Genel sayfa düzeni */
+body {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(180deg, #f5f6fa 0%, #e9ecf3 100%);
+  margin: 0;
+  padding: 0;
+  color: #222;
+}
+
+/* Üst kısım (header) */
+header {
+  background-color: #162447;
+  color: #fff;
+  text-align: center;
+  padding: 2rem 0 1.2rem 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: 1px;
+}
+
+header .date {
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+/* Ana içerik */
+main {
+  max-width: 850px;
+  margin: 2rem auto;
+  padding: 0 1.2rem;
+}
+
+/* Hero (giriş bölümü) */
+.hero {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+.hero h2 {
+  color: #162447;
+  margin-bottom: 0.8rem;
+}
+
+.hero p {
+  color: #555;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.hero .button {
+  display: inline-block;
+  background-color: #1f4068;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.hero .button:hover {
+  background-color: #0f3057;
+}
+
+/* Bölüm başlıkları */
+section h3 {
+  color: #162447;
+  margin-bottom: 0.5rem;
+}
+
+/* Dataset ve Objectives bölümleri */
+section {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+section ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  color: #333;
+}
+
+section li {
+  margin-bottom: 0.4rem;
+  line-height: 1.4;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  background-color: #162447;
+  color: #fff;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+  margin-top: 2rem;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
