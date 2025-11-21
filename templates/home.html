@@ -1,53 +1,47 @@
-<!DOCTYPE html>
-<html lang="tr">
-  <head>
-    <meta charset="utf-8" />
-    <title>BLG317 - NBA Maç Veritabanı</title>
-    <link rel="stylesheet" href="/static/home.css" />
-  </head>
+{% extends "base.html" %}
 
-  <body>
-    <header>
-      <h1>BLG317 - Veritabanı Sistemleri</h1>
-      <p class="date">📅 {{ date }}</p>
-    </header>
+{% block content %}
 
-    <main>
-      <section class="hero">
-        <h2>NBA Maç Veritabanı Projesi</h2>
-        <p>
-          Bu dönem projemizde, NBA maçlarının istatistiksel verilerini içeren
-          bir veri seti kullanarak ilişkisel veritabanı modellemesi, SQL
-          sorgulamaları ve veri analizi yapacağız.
-        </p>
-        <a href="#" class="button">Veri Setini İncele</a>
-      </section>
+<header class="hero">
+  <h1>BLG317 - Database Systems</h1>
+  <p class="date">📅 {{ date }}</p>
+</header>
 
-      <section class="dataset">
-        <h3>Veri Seti Hakkında</h3>
-        <ul>
-          <li><strong>Toplam maç sayısı:</strong> 25,000+</li>
-          <li><strong>Alanlar:</strong> Takım, oyuncu, tarih, skor, asist, rebound</li>
-          <li><strong>Kaynak:</strong> Kaggle NBA Match Data / Stats API</li>
-        </ul>
-      </section>
+<main>
+  <section class="hero">
+    <h2>NBA Game Database Project</h2>
+    <p>
+      In this semester project, we will work on a dataset containing
+      statistical information of NBA games. Students are expected to perform
+      relational database modeling, SQL querying, and basic data analysis.
+    </p>
+    <a href="#" class="button">Explore the Dataset</a>
+  </section>
 
-      <section class="objectives">
-        <h3>Ders Uygulamaları</h3>
-        <p>
-          Öğrencilerden beklenen, veri setini analiz ederek ilişkisel tablo
-          yapıları oluşturmak ve sorgular yazmaktır. Örneğin:
-        </p>
-        <ul>
-          <li>En yüksek skorlu 10 maç</li>
-          <li>Takım bazlı ortalama skor karşılaştırmaları</li>
-          <li>Oyuncu performans trendleri</li>
-        </ul>
-      </section>
-    </main>
+  <section class="dataset">
+    <h3>About the Dataset</h3>
+    <ul>
+      <li><strong>Total number of games:</strong> 25,000+</li>
+      <li>
+        <strong>Main fields:</strong> Team, player, date, score, assists,
+        rebounds
+      </li>
+      <li><strong>Source:</strong> Kaggle NBA Games Dataset / Stats API</li>
+    </ul>
+  </section>
 
-    <footer>
-      <p>&copy; 2025 BLG317 - NBA Match Dataset Project</p>
-    </footer>
-  </body>
-</html>
+  <section class="objectives">
+    <h3>Course Objectives</h3>
+    <p>
+      Students will analyze the dataset and design properly structured relational
+      tables. Example tasks include:
+    </p>
+    <ul>
+      <li>Top 10 highest-scoring games</li>
+      <li>Average score comparison between teams</li>
+      <li>Player performance trends across seasons</li>
+    </ul>
+  </section>
+</main>
+
+{% endblock %}
