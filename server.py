@@ -13,15 +13,6 @@ def home_page():
     day_name = today.strftime("%A")
     return render_template("home.html", date=day_name)
 
-
-
-
-# -------- STATISTICS PAGE --------
-@app.route("/statistics")
-def statistics_page():
-    return render_template("statistics.html")
-
-
 # -------- ARENAS PAGE --------
 @app.route("/arenas", methods=["GET", "POST"])
 def arenas_page():
@@ -504,6 +495,144 @@ def delete_team(tid):
         print("Delete error:", e)
 
     return redirect("/teams")
+
+
+# -------- STATISTICS LIST --------
+@app.route("/statistics")
+def statistics_page():
+    con = sqlite3.connect("nba.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    # Get page number from query string, default to 1
+    page = request.args.get('page', 1, type=int)
+    per_page = 5000  # Show 5000 records per page
+    offset = (page - 1) * per_page
+
+    # Get total count
+    total = cur.execute("SELECT COUNT(*) FROM player_game_stats").fetchone()[0]
+    total_pages = (total + per_page - 1) // per_page
+
+    # Get paginated results
+    statistics = cur.execute("""
+        SELECT * FROM player_game_stats
+        ORDER BY stat_id
+        LIMIT ? OFFSET ?
+    """, (per_page, offset)).fetchall()
+
+    return render_template(
+        "statistics_list.html", 
+        statistics=statistics,
+        page=page,
+        total_pages=total_pages
+    )
+
+# -------- ADD STATISTIC --------
+@app.route("/statistics/add", methods=["GET", "POST"])
+def add_statistic():
+    con = sqlite3.connect("nba.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    players = cur.execute("SELECT * FROM players ORDER BY full_name").fetchall()
+    games = cur.execute("SELECT * FROM games ORDER BY game_id").fetchall()
+
+    if request.method == "POST":
+        cur.execute("""
+            INSERT INTO player_game_stats (
+                stat_id, player_id, game_id, points, assists, rebounds, minutes_played
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (
+            request.form["stat_id"],
+            request.form["player_id"],
+            request.form["game_id"],
+            request.form["points"],
+            request.form["assists"],
+            request.form["rebounds"],
+            request.form["minutes_played"]
+        ))
+
+        con.commit()
+        return redirect("/statistics")
+
+    empty_statistic = {
+        "stat_id": "",
+        "player_id": "",
+        "game_id": "",
+        "points": "",
+        "assists": "",
+        "rebounds": "",
+        "minutes_played": "",
+    }
+
+    return render_template(
+        "statistics_form.html", 
+        title="Add Statistic",
+        statistic=empty_statistic, 
+        players=players, 
+        games=games
+    )
+
+# -------- EDIT STATISTIC --------
+@app.route("/statistics/edit/<int:sid>", methods=["GET", "POST"])
+def edit_statistic(sid):
+    con = sqlite3.connect("nba.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    players = cur.execute("SELECT * FROM players ORDER BY full_name").fetchall()
+    games = cur.execute("SELECT * FROM games ORDER BY game_id").fetchall()
+
+    statistic = cur.execute(
+        "SELECT * FROM player_game_stats WHERE stat_id=?", (sid,)
+    ).fetchone()
+
+    if request.method == "POST":
+        cur.execute("""
+            UPDATE player_game_stats
+            SET player_id = ?,
+                game_id = ?,
+                points = ?,
+                assists = ?,
+                rebounds = ?,
+                minutes_played = ?
+            WHERE stat_id = ?
+        """, (
+            request.form["player_id"],
+            request.form["game_id"],
+            request.form["points"],
+            request.form["assists"],
+            request.form["rebounds"],
+            request.form["minutes_played"],
+            sid
+        ))
+
+        con.commit()
+        return redirect("/statistics")
+
+    return render_template(
+        "statistics_form.html", 
+        title="Edit Statistic", 
+        statistic=statistic,         
+        players=players, 
+        games=games
+    )
+
+# -------- DELETE STATISTIC --------
+@app.route("/statistics/delete/<int:sid>")
+def delete_statistic(sid):
+    con = sqlite3.connect("nba.db")
+    con.execute("PRAGMA foreign_keys = ON;")
+    cur = con.cursor()
+
+    try:
+        cur.execute("DELETE FROM player_game_stats WHERE stat_id=?", (sid,))
+        con.commit()
+    except Exception as e:
+        print("Delete error:", e)
+
+    return redirect("/statistics")
 
 # -------- RUN APP --------
 if __name__ == "__main__":
