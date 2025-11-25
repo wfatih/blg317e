@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/home.css">
+</head>
+
+<body>
+
+<h1>{{ title }}</h1>
+
+<form method="POST">
+
+    <!-- GAME ID (sadece Add sayfasında editable) -->
+    <label>Game ID:</label>
+    <input type="number" name="game_id" value="{{ game.game_id }}" 
+           {% if title != 'Add Game' %}readonly{% endif %}>
+    <br>
+
+    <!-- HOME TEAM -->
+    <label>Home Team:</label>
+    <select name="home_team_id" required>
+        {% for t in teams %}
+            <option value="{{ t.team_id }}"
+                {% if game.home_team_id == t.team_id %}selected{% endif %}>
+                {{ t.team_name }}
+            </option>
+        {% endfor %}
+    </select>
+    <br>
+
+    <!-- AWAY TEAM -->
+    <label>Away Team:</label>
+    <select name="away_team_id" required>
+        {% for t in teams %}
+            <option value="{{ t.team_id }}"
+                {% if game.away_team_id == t.team_id %}selected{% endif %}>
+                {{ t.team_name }}
+            </option>
+        {% endfor %}
+    </select>
+    <br>
+
+    <!-- STADIUM -->
+    <label>Stadium:</label>
+    <select name="stadium_id">
+        <option value="">-- None --</option>
+        {% for s in stadiums %}
+            <option value="{{ s.stadium_id }}"
+                {% if game.stadium_id == s.stadium_id %}selected{% endif %}>
+                {{ s.stadium_name }}
+            </option>
+        {% endfor %}
+    </select>
+    <br>
+
+    <!-- DATE -->
+    <label>Game Date:</label>
+    <input type="date" name="game_date" value="{{ game.game_date }}">
+    <br>
+
+    <!-- SEASON -->
+    <label>Season:</label>
+    <input type="text" name="season" placeholder="2022-2023" value="{{ game.season }}">
+    <br>
+
+    <!-- ARENA NAME -->
+    <label>Arena Name:</label>
+    <input type="text" name="arena_name" value="{{ game.arena_name }}">
+    <br>
+
+    <!-- SUBMIT -->
+    <button type="submit">Save</button>
+
+</form>
+
+<br>
+<a href="/games">← Back to Games List</a>
+
+</body>
+</html>
