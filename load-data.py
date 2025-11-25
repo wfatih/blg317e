@@ -63,16 +63,47 @@ with open("data/games.csv", "r", encoding="utf-8") as f:
     for row in reader:
         cur.execute("""
             INSERT OR IGNORE INTO games (
-                game_id, home_team_id, away_team_id, game_date, season, arena_name
-            ) VALUES (?, ?, ?, ?, ?, ?)
+                game_id, home_team_id, away_team_id, game_date, season, arena_name,
+                home_team_score, away_team_score,
+                fg_pct_home, fg_pct_away,
+                ft_pct_home, ft_pct_away,
+                fg3_pct_home, fg3_pct_away,
+                ast_home, ast_away,
+                reb_home, reb_away,
+                home_team_wins,
+                stadium_id
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             row["GAME_ID"],
             row["HOME_TEAM_ID"],
             row["VISITOR_TEAM_ID"],
             row["GAME_DATE_EST"],
             row["SEASON"],
-            None
+            None,  # arena name is missing in CSV
+
+            row["PTS_home"],
+            row["PTS_away"],
+
+            row["FG_PCT_home"],
+            row["FG_PCT_away"],
+
+            row["FT_PCT_home"],
+            row["FT_PCT_away"],
+
+            row["FG3_PCT_home"],
+            row["FG3_PCT_away"],
+
+            row["AST_home"],
+            row["AST_away"],
+
+            row["REB_home"],
+            row["REB_away"],
+
+            row["HOME_TEAM_WINS"],
+            None     # stadium_id later filled from stadiums table
         ))
+
 
 
 # -----------------------------

@@ -1,55 +1,78 @@
 {% extends "base.html" %}
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Games List</title>
-    <link rel="stylesheet" href="/static/home.css">
-</head>
 
-<body>
+<h2 class="mb-3">Games</h2>
 
-<h1>Games</h1>
+<a href="/games/add" class="btn btn-primary mb-3">➕ Add Game</a>
 
-<a href="/games/add">➕ Add New Game</a>
-<br><br>
+<!-- FILTER FORM -->
+<form method="GET" class="row g-2 mb-4">
+    <div class="col-md-3">
+        <input class="form-control" name="season" placeholder="Season (2022)" value="{{ request.args.get('season','') }}">
+    </div>
+    <div class="col-md-3">
+        <input class="form-control" name="team" placeholder="Team name" value="{{ request.args.get('team','') }}">
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="date" name="date_from" value="{{ request.args.get('date_from','') }}">
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="date" name="date_to" value="{{ request.args.get('date_to','') }}">
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-dark w-100">Filter</button>
+    </div>
+</form>
 
-<table border="1" cellpadding="6">
-    <thead>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
         <tr>
             <th>ID</th>
-            <th>Home Team</th>
-            <th>Away Team</th>
-            <th>Stadium</th>
-            <th>Game Date</th>
+            <th>Home</th>
+            <th>Away</th>
+            <th>Score</th>
+            <th>Winner</th>
+            <th>Date</th>
             <th>Season</th>
-            <th>Arena Name</th>
+            <th>Stadium</th>
             <th>Actions</th>
         </tr>
     </thead>
 
     <tbody>
-    {% for g in games %}
+        {% for g in games %}
         <tr>
             <td>{{ g.game_id }}</td>
+
             <td>{{ g.home_team }}</td>
             <td>{{ g.away_team }}</td>
-            <td>{{ g.stadium_name if g.stadium_name else "-" }}</td>
-            <td>{{ g.game_date }}</td>
-            <td>{{ g.season }}</td>
-            <td>{{ g.arena_name if g.arena_name else "-" }}</td>
 
             <td>
-                <a href="/games/edit/{{ g.game_id }}">Edit</a> |
-                <a href="/games/delete/{{ g.game_id }}" onclick="return confirm('Delete this game?')">Delete</a>
+                {{ g.home_team_score }} - {{ g.away_team_score }}
+            </td>
+
+            <td>
+                {% if g.home_team_wins == 1 %}
+                    <span class="badge bg-success">{{ g.home_team }} Won</span>
+                {% else %}
+                    <span class="badge bg-danger">{{ g.away_team }} Won</span>
+                {% endif %}
+            </td>
+
+            <td>{{ g.game_date }}</td>
+            <td>{{ g.season }}</td>
+
+            <td>{{ g.stadium_name if g.stadium_name else "-" }}</td>
+
+            <td>
+                <a href="/games/edit/{{ g.game_id }}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="/games/delete/{{ g.game_id }}" class="btn btn-sm btn-danger"
+                   onclick="return confirm('Delete this game?')">Delete</a>
             </td>
         </tr>
-    {% endfor %}
+        {% endfor %}
     </tbody>
 </table>
-
-</body>
-</html>
 
 {% endblock %}
