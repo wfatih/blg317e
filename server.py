@@ -14,10 +14,6 @@ def home_page():
     return render_template("home.html", date=day_name)
 
 
-# -------- TEAMS PAGE --------
-@app.route("/teams")
-def teams_page():
-    return render_template("teams.html")
 
 
 # -------- STATISTICS PAGE --------
@@ -280,6 +276,100 @@ def delete_player(pid):
 
     return redirect("/players")
 
+# -------- TEAMS LIST --------
+@app.route("/teams")
+def teams_page():
+    con = sqlite3.connect("nba.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    teams = cur.execute("""
+        SELECT * FROM teams
+        ORDER BY team_id
+    """).fetchall()
+
+    return render_template("teams_list.html", teams=teams)
+
+# -------- ADD TEAM --------
+@app.route("/teams/add", methods=["GET", "POST"])
+def add_team():
+    con = sqlite3.connect("nba.db")
+    cur = con.cursor()
+
+    if request.method == "POST":
+        cur.execute("""
+            INSERT INTO teams (
+                team_id, team_name, conference, city, founded_year
+            )
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            request.form["team_id"],
+            request.form["team_name"],
+            request.form["conference"],
+            request.form["city"],
+            request.form["founded_year"]
+        ))
+
+        con.commit()
+        return redirect("/teams")
+
+    empty_team = {
+        "team_id": "",
+        "team_name": "",
+        "conference": "",
+        "city": "",
+        "founded_year": "",
+    }
+
+    return render_template("teams_form.html", title="Add Team", team=empty_team)
+
+# -------- EDIT TEAM --------
+@app.route("/teams/edit/<int:tid>", methods=["GET", "POST"])
+def edit_team(tid):
+    con = sqlite3.connect("nba.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    team = cur.execute(
+        "SELECT * FROM teams WHERE team_id=?", (tid,)
+    ).fetchone()
+
+    if request.method == "POST":
+        cur.execute("""
+            UPDATE teams
+            SET team_name = ?,
+                conference = ?,
+                city = ?,
+                founded_year = ?
+            WHERE team_id = ?
+        """, (
+            request.form["team_name"],
+            request.form["conference"],
+            request.form["city"],
+            request.form["founded_year"],
+            tid
+        ))
+
+        con.commit()
+        return redirect("/teams")
+
+    return render_template("teams_form.html", title="Edit Team", team=team)
+
+
+# -------- DELETE TEAM --------
+@app.route("/teams/delete/<int:tid>")
+def delete_team(tid):
+    con = sqlite3.connect("nba.db")
+    con.execute("PRAGMA foreign_keys = ON;")
+    cur = con.cursor()
+
+    try:
+        cur.execute("DELETE FROM teams WHERE team_id=?", (tid,))
+        con.commit()
+    except Exception as e:
+        print("Delete error:", e)
+
+    return redirect("/teams")
 
 # -------- RUN APP --------
 if __name__ == "__main__":

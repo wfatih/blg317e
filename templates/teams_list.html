@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-4">Teams</h1>
+
+<a class="btn btn-primary mb-3" href="/teams/add">Add New Team</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Team Name</th>
+            <th>Conference</th>
+            <th>City</th>
+            <th>Founded</th>
+            <th style="width: 150px;">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for t in teams %}
+        <tr>
+            <td>{{ t.team_id }}</td>
+            <td>{{ t.team_name }}</td>
+            <td>{{ t.conference }}</td>
+            <td>{{ t.city }}</td>
+            <td>{{ t.founded_year }}</td>
+
+            <td>
+                <a class="btn btn-sm btn-warning" href="/teams/edit/{{ t.team_id }}">Edit</a>
+                <a class="btn btn-sm btn-danger"
+                   href="/teams/delete/{{ t.team_id }}"
+                   onclick="return confirm('Are you sure you want to delete this team?');">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

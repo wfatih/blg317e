@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="mb-4">{{ title }}</h1>
+
+<form method="POST" class="card p-4">
+
+    <!-- TEAM ID (sadece Add sırasında gösterilir) -->
+    {% if title == "Add Team" %}
+    <div class="mb-3">
+        <label class="form-label">Team ID</label>
+        <input type="number" name="team_id" class="form-control" value="{{ team.team_id }}" required>
+    </div>
+    {% endif %}
+
+    <div class="mb-3">
+        <label class="form-label">Team Name</label>
+        <input type="text" name="team_name" class="form-control" value="{{ team.team_name }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Conference</label>
+        <input type="text" name="conference" class="form-control" value="{{ team.conference }}">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">City</label>
+        <input type="text" name="city" class="form-control" value="{{ team.city }}">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Founded Year</label>
+        <input type="number" name="founded_year" class="form-control" value="{{ team.founded_year }}">
+    </div>
+
+    <button class="btn btn-success" type="submit">Save</button>
+    <a class="btn btn-secondary ms-2" href="/teams">Cancel</a>
+
+</form>
+
+{% endblock %}
