@@ -20,12 +20,6 @@ def teams_page():
     return render_template("teams.html")
 
 
-# -------- PLAYERS PAGE --------
-@app.route("/players")
-def players_page():
-    return render_template("players.html")
-
-
 # -------- STATISTICS PAGE --------
 @app.route("/statistics")
 def statistics_page():
@@ -156,6 +150,136 @@ def delete_game(gid):
         print("Error deleting:", e)
 
     return redirect("/games")
+
+# -------- PLAYERS LIST --------
+@app.route("/players")
+def players_page():
+    con = sqlite3.connect("nba.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    players = cur.execute("""
+        SELECT 
+            p.*,
+            t.team_name
+        FROM players p
+        LEFT JOIN teams t ON p.team_id = t.team_id
+        ORDER BY p.player_id
+    """).fetchall()
+
+    return render_template("players_list.html", players=players)
+
+
+# -------- ADD PLAYER --------
+@app.route("/players/add", methods=["GET", "POST"])
+def add_player():
+    con = sqlite3.connect("nba.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    teams = cur.execute("SELECT * FROM teams ORDER BY team_name").fetchall()
+
+    if request.method == "POST":
+        cur.execute("""
+            INSERT INTO players (
+                player_id, team_id, full_name, position,
+                height_cm, weight_kg, birthdate, country
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            request.form["player_id"],
+            request.form["team_id"] or None,
+            request.form["full_name"],
+            request.form["position"],
+            request.form["height_cm"],
+            request.form["weight_kg"],
+            request.form["birthdate"],
+            request.form["country"],
+        ))
+
+        con.commit()
+        return redirect("/players")
+
+    empty_player = {
+        "player_id": "",
+        "team_id": "",
+        "full_name": "",
+        "position": "",
+        "height_cm": "",
+        "weight_kg": "",
+        "birthdate": "",
+        "country": ""
+    }
+
+    return render_template(
+        "players_form.html",
+        title="Add Player",
+        player=empty_player,
+        teams=teams
+    )
+
+
+# -------- EDIT PLAYER --------
+@app.route("/players/edit/<int:pid>", methods=["GET", "POST"])
+def edit_player(pid):
+    con = sqlite3.connect("nba.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    player = cur.execute(
+        "SELECT * FROM players WHERE player_id=?", (pid,)
+    ).fetchone()
+
+    teams = cur.execute("SELECT * FROM teams ORDER BY team_name").fetchall()
+
+    if request.method == "POST":
+        cur.execute("""
+            UPDATE players
+            SET team_id = ?,
+                full_name = ?,
+                position = ?,
+                height_cm = ?,
+                weight_kg = ?,
+                birthdate = ?,
+                country = ?
+            WHERE player_id = ?
+        """, (
+            request.form["team_id"] or None,
+            request.form["full_name"],
+            request.form["position"],
+            request.form["height_cm"],
+            request.form["weight_kg"],
+            request.form["birthdate"],
+            request.form["country"],
+            pid
+        ))
+
+        con.commit()
+        return redirect("/players")
+
+    return render_template(
+        "players_form.html",
+        title="Edit Player",
+        player=player,
+        teams=teams
+    )
+
+
+# -------- DELETE PLAYER --------
+@app.route("/players/delete/<int:pid>")
+def delete_player(pid):
+    con = sqlite3.connect("nba.db")
+    con.execute("PRAGMA foreign_keys = ON;")
+    cur = con.cursor()
+
+    try:
+        cur.execute("DELETE FROM players WHERE player_id=?", (pid,))
+        con.commit()
+    except Exception as e:
+        print("Delete error:", e)
+
+    return redirect("/players")
+
 
 # -------- RUN APP --------
 if __name__ == "__main__":
