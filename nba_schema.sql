@@ -39,25 +39,36 @@ CREATE TABLE players (
 ------------------------------------------------------------
 -- 3) GAMES TABLE
 ------------------------------------------------------------
+DROP TABLE IF EXISTS games;
+
 CREATE TABLE games (
-    game_id             INTEGER PRIMARY KEY,
-    home_team_id        INTEGER NOT NULL,
-    away_team_id        INTEGER NOT NULL,
-    game_date           TEXT NOT NULL,
-    season              TEXT NOT NULL,
-    arena_name          TEXT,
+    game_id INTEGER PRIMARY KEY,
+    home_team_id INTEGER NOT NULL,
+    away_team_id INTEGER NOT NULL,
+    game_date TEXT NOT NULL,
+    season TEXT NOT NULL,
+    arena_name TEXT,
+    
+    -- NEW: game stats from games.csv
+    home_team_score INTEGER,
+    away_team_score INTEGER,
+    fg_pct_home REAL,
+    fg_pct_away REAL,
+    ft_pct_home REAL,
+    ft_pct_away REAL,
+    fg3_pct_home REAL,
+    fg3_pct_away REAL,
+    ast_home INTEGER,
+    ast_away INTEGER,
+    reb_home INTEGER,
+    reb_away INTEGER,
+    home_team_wins INTEGER,
 
-    FOREIGN KEY (home_team_id)
-        REFERENCES teams(team_id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
+    stadium_id INTEGER,
 
-    FOREIGN KEY (away_team_id)
-        REFERENCES teams(team_id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CHECK (home_team_id <> away_team_id)
+    FOREIGN KEY(home_team_id) REFERENCES teams(team_id),
+    FOREIGN KEY(away_team_id) REFERENCES teams(team_id),
+    FOREIGN KEY(stadium_id) REFERENCES stadiums(stadium_id)
 );
 
 ------------------------------------------------------------

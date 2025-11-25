@@ -1,7 +1,7 @@
 from datetime import datetime
 import sqlite3
 
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 
 
 app = Flask(__name__)
@@ -14,9 +14,88 @@ def home_page():
     return render_template("home.html", date=day_name)
 
 # -------- ARENAS PAGE --------
-@app.route("/arenas")
+@app.route("/arenas", methods=["GET", "POST"])
 def arenas_page():
-    return render_template("arenas.html")
+    con = sqlite3.connect("nba.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    # Handle Search
+    search_query = request.args.get("search", "")
+    if search_query:
+        query = """
+            SELECT s.*, t.team_name 
+            FROM stadiums s 
+            LEFT JOIN teams t ON s.team_id = t.team_id
+            WHERE s.stadium_name LIKE ? OR s.city LIKE ? OR t.team_name LIKE ?
+        """
+        like_val = f"%{search_query}%"
+        cur.execute(query, (like_val, like_val, like_val))
+    else:
+        query = """
+            SELECT s.*, t.team_name 
+            FROM stadiums s 
+            LEFT JOIN teams t ON s.team_id = t.team_id
+        """
+        cur.execute(query)
+    
+    arenas = cur.fetchall()
+
+    # Get Teams for Dropdown
+    cur.execute("SELECT * FROM teams")
+    teams = cur.fetchall()
+
+    con.close()
+    return render_template("arenas.html", arenas=arenas, teams=teams)
+
+@app.route("/arenas/add", methods=["POST"])
+def add_arena():
+    stadium_name = request.form.get("stadium_name")
+    city = request.form.get("city")
+    capacity = request.form.get("capacity")
+    team_id = request.form.get("team_id")
+
+    if not team_id:
+        team_id = None
+
+    con = sqlite3.connect("nba.db")
+    cur = con.cursor()
+    query = "INSERT INTO stadiums (stadium_name, city, capacity, team_id) VALUES (?, ?, ?, ?)"
+    cur.execute(query, (stadium_name, city, capacity, team_id))
+    con.commit()
+    con.close()
+    return redirect(url_for("arenas_page"))
+
+@app.route("/arenas/delete/<int:id>", methods=["POST"])
+def delete_arena(id):
+    con = sqlite3.connect("nba.db")
+    cur = con.cursor()
+    cur.execute("DELETE FROM stadiums WHERE stadium_id = ?", (id,))
+    con.commit()
+    con.close()
+    return redirect(url_for("arenas_page"))
+
+@app.route("/arenas/update/<int:id>", methods=["POST"])
+def update_arena(id):
+    stadium_name = request.form.get("stadium_name")
+    city = request.form.get("city")
+    capacity = request.form.get("capacity")
+    team_id = request.form.get("team_id")
+
+    if not team_id:
+        team_id = None
+
+    con = sqlite3.connect("nba.db")
+    cur = con.cursor()
+    query = """
+        UPDATE stadiums 
+        SET stadium_name=?, city=?, capacity=?, team_id=? 
+        WHERE stadium_id=?
+    """
+    cur.execute(query, (stadium_name, city, capacity, team_id, id))
+    con.commit()
+    con.close()
+    return redirect(url_for("arenas_page"))
 
 
 # -------- ABOUT PROJECT PAGE --------
