@@ -1,107 +1,205 @@
-/* Genel sayfa düzeni */
+/* ============================================
+   GENERAL PAGE STYLE
+============================================ */
 body {
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  background: linear-gradient(180deg, #f5f6fa 0%, #e9ecf3 100%);
   margin: 0;
   padding: 0;
+  font-family: "Arial", sans-serif;
+  background-color: #f2f2f2;
+  color: #333;
+  overflow-x: hidden; /* No horizontal scrolling */
+}
+
+h1, h2, h3 {
+  margin: 0;
   color: #222;
 }
 
-/* Üst kısım (header) */
-header {
-  background-color: #162447;
+.main-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+
+/* ============================================
+   NAVBAR (Modern koyu lacivert-gri)
+============================================ */
+.navbar {
+  width: 100%;
+  background-color: #1f2a38; /* modern dark tone */
+  color: white;
+  padding: 14px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.navbar .logo {
+  font-size: 20px;
+  font-weight: bold;
   color: #fff;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: #dfe6ee;
+  font-size: 15px;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: all 0.25s ease;
+}
+
+/* Hover — modern soft blue */
+.nav-links li a:hover {
+  background-color: #3a4a61;
+  color: #fff;
+}
+
+
+/* ============================================
+   HEADER (Home Page Header - Bozulmadı)
+============================================ */
+header {
   text-align: center;
-  padding: 2rem 0 1.2rem 0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 25px 10px;
+  background: #ffffff;
+  border-bottom: 1px solid #dcdcdc;
+  margin-bottom: 30px;
 }
 
 header h1 {
-  margin: 0;
-  font-size: 2rem;
-  letter-spacing: 1px;
+  font-size: 26px;
 }
 
 header .date {
-  font-size: 0.95rem;
-  opacity: 0.85;
+  color: #777;
+  font-size: 14px;
+  margin-top: 4px;
 }
 
-/* Ana içerik */
-main {
-  max-width: 850px;
-  margin: 2rem auto;
-  padding: 0 1.2rem;
-}
 
-/* Hero (giriş bölümü) */
+/* ============================================
+   HERO (Bozulmadı)
+============================================ */
 .hero {
-  background-color: #fff;
+  background: white;
+  max-width: 900px;
+  margin: 0 auto 30px auto;
+  padding: 30px;
   border-radius: 10px;
-  padding: 2rem;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 2rem;
+  box-shadow: 0px 3px 10px rgba(0,0,0,0.1);
 }
 
 .hero h2 {
-  color: #162447;
-  margin-bottom: 0.8rem;
+  font-size: 24px;
+  margin-bottom: 12px;
 }
 
 .hero p {
+  font-size: 15px;
   color: #555;
-  margin-bottom: 1.5rem;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
-.hero .button {
+.button {
   display: inline-block;
-  background-color: #1f4068;
-  color: #fff;
+  margin-top: 18px;
+  padding: 12px 20px;
+  background-color: #4a90e2;
+  color: white;
   text-decoration: none;
-  padding: 0.7rem 1.4rem;
   border-radius: 6px;
-  transition: background-color 0.3s ease;
+  transition: 0.2s ease;
 }
 
-.hero .button:hover {
-  background-color: #0f3057;
+.button:hover {
+  background-color: #376fb7;
 }
 
-/* Bölüm başlıkları */
-section h3 {
-  color: #162447;
-  margin-bottom: 0.5rem;
-}
 
-/* Dataset ve Objectives bölümleri */
-section {
-  background-color: #fff;
+/* ============================================
+   DATASET + OBJECTIVES (Bozulmadı)
+============================================ */
+.dataset,
+.objectives {
+  max-width: 900px;
+  background: white;
+  margin: 35px auto;
+  padding: 25px;
   border-radius: 10px;
-  padding: 1.5rem 2rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0px 3px 10px rgba(0,0,0,0.08);
 }
 
-section ul {
-  list-style-type: disc;
-  padding-left: 1.5rem;
-  color: #333;
+.dataset ul, .objectives ul {
+  padding-left: 20px;
 }
 
-section li {
-  margin-bottom: 0.4rem;
-  line-height: 1.4;
+.dataset li, .objectives li {
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: #444;
 }
 
-/* Footer */
+
+/* ============================================
+   FOOTER (Navbar ile aynı modern renk)
+============================================ */
 footer {
+  width: 100%;
+  background-color: #1f2a38; /* Same as navbar */
+  color: white;
   text-align: center;
-  background-color: #162447;
-  color: #fff;
-  padding: 1rem 0;
-  font-size: 0.9rem;
-  margin-top: 2rem;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  padding: 18px 0;
+  margin-top: 40px;
+  font-size: 14px;
+  box-shadow: 0px -2px 6px rgba(0,0,0,0.2);
+}
+
+
+/* ============================================
+   RESPONSIVE (Mobile Friendly)
+============================================ */
+@media (max-width: 750px) {
+
+  .navbar {
+    flex-direction: column;
+    padding: 16px 10px;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .nav-links li a {
+    font-size: 14px;
+    padding: 7px 10px;
+  }
+
+  header h1 {
+    font-size: 22px;
+  }
+
+  .hero,
+  .dataset,
+  .objectives {
+    margin-left: 15px;
+    margin-right: 15px;
+  }
 }
