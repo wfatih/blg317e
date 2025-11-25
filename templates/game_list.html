@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Games List</title>
+    <link rel="stylesheet" href="/static/home.css">
+</head>
+
+<body>
+    <h1>Game List</h1>
+
+    <a href="/games/add" class="btn">Add New Game</a>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Home Team</th>
+            <th>Away Team</th>
+            <th>Stadium</th>
+            <th>Date</th>
+            <th>Season</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for game in games %}
+        <tr>
+            <td>{{ game.game_id }}</td>
+            <td>{{ game.home_team_name }}</td>
+            <td>{{ game.away_team_name }}</td>
+            <td>{{ game.stadium_name }}</td>
+            <td>{{ game.game_date }}</td>
+            <td>{{ game.season }}</td>
+
+            <td>
+                <a href="/games/edit/{{ game.game_id }}">Edit</a> |
+                <a href="/games/delete/{{ game.game_id }}" onclick="return confirm('Delete this game?');">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
