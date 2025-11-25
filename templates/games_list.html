@@ -1,78 +1,455 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+    :root {
+        --primary-color: #4f46e5;
+        --secondary-color: #818cf8;
+        --success-color: #10b981;
+        --danger-color: #ef4444;
+        --warning-color: #f59e0b;
+        --dark-color: #1f2937;
+        --light-bg: #f9fafb;
+    }
 
-<h2 class="mb-3">Games</h2>
+    .games-container {
+        padding: 2rem 1rem;
+    }
 
-<a href="/games/add" class="btn btn-primary mb-3">➕ Add Game</a>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
 
-<!-- FILTER FORM -->
-<form method="GET" class="row g-2 mb-4">
-    <div class="col-md-3">
-        <input class="form-control" name="season" placeholder="Season (2022)" value="{{ request.args.get('season','') }}">
+    .page-header h2 {
+        font-size: 2rem;
+        color: var(--dark-color);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .stats-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6b7280;
+        font-weight: 500;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        color: white;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(79, 70, 229, 0.3);
+        color: white;
+    }
+
+    .filter-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-section h5 {
+        margin-bottom: 1rem;
+        color: var(--dark-color);
+        font-weight: 600;
+    }
+
+    .filter-section .form-label {
+        font-weight: 500;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .filter-section .form-control {
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+        padding: 0.6rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .filter-section .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.15);
+        outline: none;
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .table {
+        margin: 0;
+        width: 100%;
+    }
+
+    .table thead th {
+        background: var(--dark-color);
+        color: white;
+        font-weight: 600;
+        border: none;
+        padding: 1rem;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f9fafb;
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .badge.bg-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+
+    .badge.bg-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+    }
+
+    .badge.bg-secondary {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        color: white;
+    }
+
+    .btn-sm {
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        border: none;
+    }
+
+    .btn-warning {
+        background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+        color: white;
+    }
+
+    .btn-warning:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        color: white;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        color: white;
+    }
+
+    .btn-dark {
+        background: linear-gradient(135deg, var(--dark-color) 0%, #111827 100%);
+        color: white;
+    }
+
+    .btn-dark:hover {
+        opacity: 0.9;
+    }
+
+    .btn-outline-secondary {
+        border: 2px solid #e5e7eb;
+        background: white;
+        color: #6b7280;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-outline-secondary:hover {
+        background: #f3f4f6;
+        border-color: #d1d5db;
+        color: #374151;
+    }
+
+    .score-display {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--dark-color);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #6b7280;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
+
+    /* Pagination */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 2rem;
+        gap: 0.5rem;
+    }
+
+    .pagination-btn {
+        padding: 0.5rem 1rem;
+        border: 2px solid #e5e7eb;
+        background: white;
+        color: var(--primary-color);
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .pagination-btn:hover:not(.disabled) {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+
+    .pagination-btn.active {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .pagination-btn.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .pagination-info {
+        color: #6b7280;
+        font-weight: 500;
+        padding: 0 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .table {
+            font-size: 0.85rem;
+        }
+        
+        .btn-sm {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.75rem;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="games-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h2>
+            <i class="fas fa-basketball-ball"></i> Games Management
+        </h2>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <div class="stats-info">
+                <i class="fas fa-database"></i> Total: <strong>{{ total_games }}</strong>
+            </div>
+            <a href="/games/add" class="btn-primary">
+                <i class="fas fa-plus-circle"></i> Add New Game
+            </a>
+        </div>
     </div>
-    <div class="col-md-3">
-        <input class="form-control" name="team" placeholder="Team name" value="{{ request.args.get('team','') }}">
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <h5><i class="fas fa-filter"></i> Filter Games</h5>
+        <form method="GET">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Season</label>
+                    <input type="text" class="form-control" name="season" 
+                           placeholder="e.g., 2023" value="{{ request.args.get('season', '') }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Team</label>
+                    <input type="text" class="form-control" name="team" 
+                           placeholder="Team name" value="{{ request.args.get('team', '') }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">From Date</label>
+                    <input type="date" class="form-control" name="date_from" 
+                           value="{{ request.args.get('date_from', '') }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">To Date</label>
+                    <input type="date" class="form-control" name="date_to" 
+                           value="{{ request.args.get('date_to', '') }}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn-dark" style="flex: 1; height: 42px;">
+                        <i class="fas fa-search"></i> Filter
+                    </button>
+                    <a href="/games" class="btn-outline-secondary" style="height: 42px; width: 42px;">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
     </div>
-    <div class="col-md-2">
-        <input class="form-control" type="date" name="date_from" value="{{ request.args.get('date_from','') }}">
-    </div>
-    <div class="col-md-2">
-        <input class="form-control" type="date" name="date_to" value="{{ request.args.get('date_to','') }}">
-    </div>
-    <div class="col-md-2">
-        <button class="btn btn-dark w-100">Filter</button>
-    </div>
-</form>
 
-
-<table class="table table-bordered table-striped">
-    <thead class="table-dark">
-        <tr>
-            <th>ID</th>
-            <th>Home</th>
-            <th>Away</th>
-            <th>Score</th>
-            <th>Winner</th>
-            <th>Date</th>
-            <th>Season</th>
-            <th>Stadium</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for g in games %}
-        <tr>
-            <td>{{ g.game_id }}</td>
-
-            <td>{{ g.home_team }}</td>
-            <td>{{ g.away_team }}</td>
-
-            <td>
-                {{ g.home_team_score }} - {{ g.away_team_score }}
-            </td>
-
-            <td>
-                {% if g.home_team_wins == 1 %}
-                    <span class="badge bg-success">{{ g.home_team }} Won</span>
+    <!-- Table -->
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Home Team</th>
+                    <th>Away Team</th>
+                    <th>Score</th>
+                    <th>Winner</th>
+                    <th>Date</th>
+                    <th>Season</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if games %}
+                    {% for g in games %}
+                    <tr>
+                        <td><strong>{{ g.game_id }}</strong></td>
+                        <td><i class="fas fa-home text-primary"></i> {{ g.home_team }}</td>
+                        <td><i class="fas fa-plane" style="color: #6b7280;"></i> {{ g.away_team }}</td>
+                        <td class="score-display">
+                            {% if g.home_team_score and g.away_team_score %}
+                                {{ g.home_team_score }} - {{ g.away_team_score }}
+                            {% else %}
+                                <span style="color: #9ca3af;">TBD</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if g.home_team_wins == 1 %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-trophy"></i> {{ g.home_team }} Won
+                                </span>
+                            {% elif g.home_team_wins == 0 %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-trophy"></i> {{ g.away_team }} Won
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-clock"></i> Pending
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td><i class="far fa-calendar"></i> {{ g.game_date }}</td>
+                        <td><span class="badge bg-secondary">{{ g.season }}</span></td>
+                        <td>
+                            <a href="/games/edit/{{ g.game_id }}" class="btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="/games/delete/{{ g.game_id }}" class="btn-sm btn-danger"
+                               onclick="return confirm('Are you sure you want to delete this game?')">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
                 {% else %}
-                    <span class="badge bg-danger">{{ g.away_team }} Won</span>
+                    <tr>
+                        <td colspan="9" class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No games found</p>
+                            <a href="/games/add" class="btn-primary" style="margin-top: 1rem;">
+                                <i class="fas fa-plus-circle"></i> Add Your First Game
+                            </a>
+                        </td>
+                    </tr>
                 {% endif %}
-            </td>
+            </tbody>
+        </table>
+    </div>
 
-            <td>{{ g.game_date }}</td>
-            <td>{{ g.season }}</td>
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div class="pagination-container">
+        <!-- Previous Button -->
+        <a href="?page={{ page - 1 }}{% if request.args.get('season') %}&season={{ request.args.get('season') }}{% endif %}{% if request.args.get('team') %}&team={{ request.args.get('team') }}{% endif %}{% if request.args.get('date_from') %}&date_from={{ request.args.get('date_from') }}{% endif %}{% if request.args.get('date_to') %}&date_to={{ request.args.get('date_to') }}{% endif %}" 
+           class="pagination-btn {% if page <= 1 %}disabled{% endif %}">
+            <i class="fas fa-chevron-left"></i> Previous
+        </a>
 
-            <td>{{ g.stadium_name if g.stadium_name else "-" }}</td>
+        <!-- Page Info -->
+        <span class="pagination-info">
+            Page {{ page }} of {{ total_pages }}
+        </span>
 
-            <td>
-                <a href="/games/edit/{{ g.game_id }}" class="btn btn-sm btn-warning">Edit</a>
-                <a href="/games/delete/{{ g.game_id }}" class="btn btn-sm btn-danger"
-                   onclick="return confirm('Delete this game?')">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        <!-- Next Button -->
+        <a href="?page={{ page + 1 }}{% if request.args.get('season') %}&season={{ request.args.get('season') }}{% endif %}{% if request.args.get('team') %}&team={{ request.args.get('team') }}{% endif %}{% if request.args.get('date_from') %}&date_from={{ request.args.get('date_from') }}{% endif %}{% if request.args.get('date_to') %}&date_to={{ request.args.get('date_to') }}{% endif %}" 
+           class="pagination-btn {% if page >= total_pages %}disabled{% endif %}">
+            Next <i class="fas fa-chevron-right"></i>
+        </a>
+    </div>
+    {% endif %}
+</div>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 {% endblock %}

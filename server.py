@@ -114,6 +114,7 @@ def about_page():
 
 
 
+
 @app.route("/games")
 def games_list():
     con = sqlite3.connect("nba.db")
@@ -121,7 +122,18 @@ def games_list():
     cur = con.cursor()
     con.execute("PRAGMA foreign_keys = ON;")
 
-    games = cur.execute("""
+    # Get filter parameters
+    season = request.args.get('season', '').strip()
+    team = request.args.get('team', '').strip()
+    date_from = request.args.get('date_from', '').strip()
+    date_to = request.args.get('date_to', '').strip()
+    
+    # Pagination parameters
+    page = request.args.get('page', 1, type=int)
+    per_page = 10  # Games per page
+
+    # Base query
+    query = """
         SELECT 
             g.*,
             t1.team_name AS home_team,
@@ -131,10 +143,50 @@ def games_list():
         JOIN teams t1 ON g.home_team_id = t1.team_id
         JOIN teams t2 ON g.away_team_id = t2.team_id
         LEFT JOIN stadiums s ON g.stadium_id = s.stadium_id
-        ORDER BY g.game_id
-    """).fetchall()
+        WHERE 1=1
+    """
+    
+    params = []
 
-    return render_template("games_list.html", games=games)
+    # Add filters
+    if season:
+        query += " AND g.season LIKE ?"
+        params.append(f"%{season}%")
+    
+    if team:
+        query += " AND (t1.team_name LIKE ? OR t2.team_name LIKE ?)"
+        params.append(f"%{team}%")
+        params.append(f"%{team}%")
+    
+    if date_from:
+        query += " AND g.game_date >= ?"
+        params.append(date_from)
+    
+    if date_to:
+        query += " AND g.game_date <= ?"
+        params.append(date_to)
+
+    query += " ORDER BY g.game_date DESC, g.game_id DESC"
+
+    # Get total count for pagination
+    count_query = f"SELECT COUNT(*) as total FROM ({query})"
+    total_games = cur.execute(count_query, params).fetchone()['total']
+    total_pages = (total_games + per_page - 1) // per_page  # Ceiling division
+
+    # Add pagination
+    offset = (page - 1) * per_page
+    query += f" LIMIT {per_page} OFFSET {offset}"
+
+    games = cur.execute(query, params).fetchall()
+    con.close()
+
+    return render_template(
+        "games_list.html", 
+        games=games,
+        page=page,
+        total_pages=total_pages,
+        total_games=total_games
+    )
 
 
 @app.route("/games/add", methods=["GET", "POST"])
@@ -177,6 +229,8 @@ def add_game():
     }
 
     return render_template("games_form.html", title="Add Game", game=empty_game, teams=teams, stadiums=stadiums)
+
+
 @app.route("/games/edit/<int:gid>", methods=["GET", "POST"])
 def edit_game(gid):
     con = sqlite3.connect("nba.db")
@@ -211,6 +265,7 @@ def edit_game(gid):
         return redirect("/games")
 
     return render_template("games_form.html", title="Edit Game", game=game, teams=teams, stadiums=stadiums)
+
 
 @app.route("/games/delete/<int:gid>")
 def delete_game(gid):
