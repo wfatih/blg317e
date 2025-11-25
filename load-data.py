@@ -27,6 +27,18 @@ with open("data/teams.csv", "r", encoding="utf-8") as f:
             row["YEARFOUNDED"]
         ))
 
+        # Also insert Stadium data if available
+        if row["ARENA"]:
+            cur.execute("""
+                INSERT OR IGNORE INTO stadiums (team_id, stadium_name, city, capacity)
+                VALUES (?, ?, ?, ?)
+            """, (
+                row["TEAM_ID"],
+                row["ARENA"],
+                row["CITY"],
+                row["ARENACAPACITY"]
+            ))
+
 
 # -----------------------------
 # 2) PLAYERS
