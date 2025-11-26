@@ -279,16 +279,41 @@ def players_page():
     con.row_factory = sqlite3.Row
     cur = con.cursor()
 
-    players = cur.execute("""
-        SELECT 
-            p.*,
-            t.team_name
+    # GET parameters
+    team = request.args.get("team", "").strip()
+    name = request.args.get("name", "").strip()
+
+    # Base query
+    query = """
+        SELECT p.*, t.team_name
         FROM players p
         LEFT JOIN teams t ON p.team_id = t.team_id
-        ORDER BY p.player_id
-    """).fetchall()
+        WHERE 1 = 1
+    """
+    params = []
 
-    return render_template("players_list.html", players=players)
+    # Name filter
+    if name:
+        query += " AND p.full_name LIKE ?"
+        params.append("%" + name + "%")
+
+    # Team filter
+    if team:
+        query += " AND t.team_name = ?"
+        params.append(team)
+
+    query += " ORDER BY p.player_id"
+
+    players = cur.execute(query, params).fetchall()
+
+    # For dropdown list
+    all_teams = cur.execute("SELECT team_name FROM teams ORDER BY team_name").fetchall()
+
+    return render_template("players_list.html",
+                           players=players,
+                           teams=all_teams)
+
+
 
 
 # -------- ADD PLAYER --------

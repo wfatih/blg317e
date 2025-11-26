@@ -6,83 +6,255 @@
         --secondary-color: #818cf8;
         --danger-color: #ef4444;
         --dark-color: #1f2937;
+        --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
 
     .form-container {
-        max-width: 800px;
+        max-width: 1100px;
         margin: 2rem auto;
         padding: 1rem;
     }
 
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
     .page-header h2 {
         font-size: 2rem;
-        color: var(--dark-color);
+        color: #0f172a;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        letter-spacing: -0.025em;
+    }
+
+    .page-header h2 i {
+        color: #667eea;
+        font-size: 1.8rem;
     }
 
     .form-card {
-        background: white;
-        padding: 2rem;
-        border-radius: 16px;
-        box-shadow: 0px 2px 8px rgba(0,0,0,.1);
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fc 100%);
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     }
 
     .section-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--dark-color);
-        border-bottom: 2px solid #e5e7eb;
-        padding-bottom: .5rem;
-        margin-bottom: 1rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #0f172a;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: .75rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        letter-spacing: -0.025em;
+    }
+
+    .section-title i {
+        color: #667eea;
+        font-size: 1.3rem;
     }
 
     .form-label {
-        font-weight: 500;
-        margin-bottom: .3rem;
-        color: var(--dark-color);
+        font-weight: 600;
+        margin-bottom: .6rem;
+        color: #334155;
+        font-size: 0.9rem;
+        letter-spacing: 0.01em;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .form-label i {
+        color: #94a3b8;
+        font-size: 0.85rem;
     }
 
     .form-control, .form-select {
-        border-radius: 8px;
-        border: 2px solid #e5e7eb;
-        padding: .65rem 1rem;
-        transition: .3s;
+        width: 100%;
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        padding: 0.85rem 1.2rem;
+        transition: all .3s ease;
+        font-size: 0.95rem;
+        background: white;
+        color: #1e293b;
+        font-weight: 500;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        box-sizing: border-box;
     }
+
     .form-control:focus, .form-select:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 .2rem rgba(79,70,229,.15);
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1), 0 1px 3px rgba(0,0,0,0.08);
+        outline: none;
+        background: white;
+    }
+
+    .form-control::placeholder {
+        color: #94a3b8;
+        font-weight: 400;
+    }
+
+    .form-control[readonly] {
+        background: #f1f5f9;
+        color: #64748b;
+        cursor: not-allowed;
     }
 
     .form-actions {
         display: flex;
         gap: 1rem;
         margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 2px solid #e5e7eb;
+        padding-top: 2rem;
+        border-top: 2px solid #e2e8f0;
     }
 
     .btn-primary-gradient {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: .75rem 2rem;
-        border-radius: 8px;
-        font-weight: 500;
+        padding: 0.85rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 600;
         border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        transition: all .3s ease;
+        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.3);
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+
+    .btn-primary-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+    }
+
+    .btn-primary-gradient:active {
+        transform: translateY(0);
     }
 
     .btn-secondary {
-        border: 2px solid #e5e7eb;
+        border: 2px solid #e2e8f0;
         background: white;
-        padding: .75rem 2rem;
-        border-radius: 8px;
-        font-weight: 500;
-        color: #374151;
+        padding: 0.85rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        color: #64748b;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        transition: all .3s ease;
+        font-size: 0.95rem;
+    }
+
+    .btn-secondary:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #475569;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .btn-secondary:active {
+        transform: translateY(0);
+    }
+
+    /* TWO COLUMN GRID LAYOUT */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -0.75rem;
+    }
+
+    .row.g-3 > * {
+        padding: 0 0.75rem;
+        margin-bottom: 1.2rem;
+        box-sizing: border-box;
+    }
+
+    .col-md-6 {
+        width: 50%;
+        flex: 0 0 50%;
+        max-width: 50%;
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+        .col-md-6 {
+            width: 100%;
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        .form-card {
+            padding: 1.8rem 1.5rem;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-primary-gradient,
+        .btn-secondary {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* Input Icons Styling */
+    .input-icon-wrapper {
+        position: relative;
+    }
+
+    .input-icon-wrapper i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        pointer-events: none;
+    }
+
+    .input-icon-wrapper .form-control {
+        padding-left: 2.75rem;
     }
 
 </style>
 
 <div class="form-container">
 
-    <div class="page-header mb-3">
+    <div class="page-header">
         <h2>
             {% if title == 'Add Player' %}
                 <i class="fas fa-user-plus"></i>
@@ -97,25 +269,40 @@
         <form method="POST">
 
             <!-- Player Info -->
-            <div class="section-title"><i class="fas fa-id-card"></i> Player Information</div>
+            <div class="section-title">
+                <i class="fas fa-id-card"></i> 
+                Player Information
+            </div>
 
             <div class="row g-3">
 
                 <div class="col-md-6">
-                    <label class="form-label">Player ID</label>
+                    <label class="form-label">
+                        <i class="fas fa-hashtag"></i>
+                        Player ID
+                    </label>
                     <input type="number" class="form-control" name="player_id"
                            value="{{ player.player_id }}"
+                           placeholder="Enter player ID"
                            {% if title != 'Add Player' %} readonly {% endif %}>
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Full Name</label>
+                    <label class="form-label">
+                        <i class="fas fa-user"></i>
+                        Full Name
+                    </label>
                     <input type="text" class="form-control" name="full_name"
-                           value="{{ player.full_name }}" required>
+                           value="{{ player.full_name }}" 
+                           placeholder="Enter full name"
+                           required>
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Team</label>
+                    <label class="form-label">
+                        <i class="fas fa-shield-alt"></i>
+                        Team
+                    </label>
                     <select name="team_id" class="form-select">
                         <option value="">-- None --</option>
                         {% for t in teams %}
@@ -128,42 +315,65 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Position</label>
+                    <label class="form-label">
+                        <i class="fas fa-running"></i>
+                        Position
+                    </label>
                     <input type="text" class="form-control" name="position"
-                           value="{{ player.position }}">
+                           value="{{ player.position }}"
+                           placeholder="e.g., Forward, Midfielder">
                 </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">Height (cm)</label>
+                <div class="col-md-6">
+                    <label class="form-label">
+                        <i class="fas fa-ruler-vertical"></i>
+                        Height (cm)
+                    </label>
                     <input type="number" class="form-control" step="0.1" name="height_cm"
-                           value="{{ player.height_cm }}">
+                           value="{{ player.height_cm }}"
+                           placeholder="e.g., 180">
                 </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">Weight (kg)</label>
+                <div class="col-md-6">
+                    <label class="form-label">
+                        <i class="fas fa-weight"></i>
+                        Weight (kg)
+                    </label>
                     <input type="number" class="form-control" step="0.1" name="weight_kg"
-                           value="{{ player.weight_kg }}">
+                           value="{{ player.weight_kg }}"
+                           placeholder="e.g., 75">
                 </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">Birthdate</label>
+                <div class="col-md-6">
+                    <label class="form-label">
+                        <i class="fas fa-calendar-alt"></i>
+                        Birthdate
+                    </label>
                     <input type="text" class="form-control" name="birthdate"
-                           value="{{ player.birthdate }}">
+                           value="{{ player.birthdate }}"
+                           placeholder="YYYY-MM-DD">
                 </div>
 
-                <div class="col-md-12">
-                    <label class="form-label">Country</label>
+                <div class="col-md-6">
+                    <label class="form-label">
+                        <i class="fas fa-globe"></i>
+                        Country
+                    </label>
                     <input type="text" class="form-control" name="country"
-                           value="{{ player.country }}">
+                           value="{{ player.country }}"
+                           placeholder="Enter country">
                 </div>
+
             </div>
 
             <!-- Actions -->
             <div class="form-actions">
                 <button class="btn-primary-gradient" type="submit">
-                    <i class="fas fa-save"></i> Save
+                    <i class="fas fa-save"></i> Save Player
                 </button>
-                <a href="/players" class="btn-secondary">Cancel</a>
+                <a href="/players" class="btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
             </div>
 
         </form>
