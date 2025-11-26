@@ -190,36 +190,79 @@ def add_game():
     stadiums = cur.execute("SELECT * FROM stadiums ORDER BY stadium_name").fetchall()
 
     if request.method == "POST":
+        # Winner detection
+        home_score = int(request.form["home_team_score"] or 0)
+        away_score = int(request.form["away_team_score"] or 0)
+
+        if home_score == 0 and away_score == 0:
+            winner = None
+        else:
+            winner = 1 if home_score > away_score else 0
+
         cur.execute("""
             INSERT INTO games (
-                game_id, home_team_id, away_team_id, stadium_id,
-                game_date, season, arena_name
+                home_team_id, away_team_id, stadium_id,
+                game_date, season, arena_name,
+                home_team_score, away_team_score,
+                fg_pct_home, fg_pct_away,
+                ft_pct_home, ft_pct_away,
+                fg3_pct_home, fg3_pct_away,
+                ast_home, ast_away,
+                reb_home, reb_away,
+                home_team_wins
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
-            request.form["game_id"],
             request.form["home_team_id"],
             request.form["away_team_id"],
             request.form["stadium_id"] or None,
             request.form["game_date"],
             request.form["season"],
-            request.form["arena_name"]
+            request.form["arena_name"],
+
+            request.form["home_team_score"] or None,
+            request.form["away_team_score"] or None,
+
+            request.form["fg_pct_home"] or None,
+            request.form["fg_pct_away"] or None,
+            request.form["ft_pct_home"] or None,
+            request.form["ft_pct_away"] or None,
+            request.form["fg3_pct_home"] or None,
+            request.form["fg3_pct_away"] or None,
+            request.form["ast_home"] or None,
+            request.form["ast_away"] or None,
+            request.form["reb_home"] or None,
+            request.form["reb_away"] or None,
+
+            winner
         ))
 
         con.commit()
         return redirect("/games")
 
     empty_game = {
-        "game_id": "",
         "home_team_id": "",
         "away_team_id": "",
         "stadium_id": "",
         "game_date": "",
         "season": "",
-        "arena_name": ""
+        "arena_name": "",
+        "home_team_score": "",
+        "away_team_score": "",
+        "fg_pct_home": "",
+        "fg_pct_away": "",
+        "ft_pct_home": "",
+        "ft_pct_away": "",
+        "fg3_pct_home": "",
+        "fg3_pct_away": "",
+        "ast_home": "",
+        "ast_away": "",
+        "reb_home": "",
+        "reb_away": "",
     }
 
     return render_template("games_form.html", title="Add Game", game=empty_game, teams=teams, stadiums=stadiums)
+
 
 
 @app.route("/games/edit/<int:gid>", methods=["GET", "POST"])

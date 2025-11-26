@@ -337,6 +337,89 @@
                     </div>
                 </div>
             </div>
+            <!-- SCORE SECTION -->
+            <div class="form-section">
+                <div class="section-title"><i class="fas fa-basketball-ball"></i> Game Score</div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Home Team Score</label>
+                        <input class="form-control" type="number" name="home_team_score"
+                            value="{{ game.home_team_score }}">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Away Team Score</label>
+                        <input class="form-control" type="number" name="away_team_score"
+                            value="{{ game.away_team_score }}">
+                    </div>
+                </div>
+            </div>
+            <div class="form-section">
+            <div class="section-title"><i class="fas fa-chart-line"></i> Game Statistics</div>
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Home FG%</label>
+                    <input class="form-control" type="number" step="0.001" name="fg_pct_home"
+                        value="{{ game.fg_pct_home }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Away FG%</label>
+                    <input class="form-control" type="number" step="0.001" name="fg_pct_away"
+                        value="{{ game.fg_pct_away }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Home FT%</label>
+                    <input class="form-control" type="number" step="0.001" name="ft_pct_home"
+                        value="{{ game.ft_pct_home }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Away FT%</label>
+                    <input class="form-control" type="number" step="0.001" name="ft_pct_away"
+                        value="{{ game.ft_pct_away }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Home 3PT%</label>
+                    <input class="form-control" type="number" step="0.001" name="fg3_pct_home"
+                        value="{{ game.fg3_pct_home }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Away 3PT%</label>
+                    <input class="form-control" type="number" step="0.001" name="fg3_pct_away"
+                        value="{{ game.fg3_pct_away }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Home AST</label>
+                    <input class="form-control" type="number" name="ast_home"
+                        value="{{ game.ast_home }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Away AST</label>
+                    <input class="form-control" type="number" name="ast_away"
+                        value="{{ game.ast_away }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Home REB</label>
+                    <input class="form-control" type="number" name="reb_home"
+                        value="{{ game.reb_home }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Away REB</label>
+                    <input class="form-control" type="number" name="reb_away"
+                        value="{{ game.reb_away }}">
+                </div>
+            </div>
+        </div>
 
             <!-- Form Actions -->
             <div class="form-actions">
