@@ -15,6 +15,53 @@
         padding: 1rem;
     }
 
+    /* BREADCRUMB */
+    .breadcrumb-wrapper {
+        margin-bottom: 1.5rem;
+    }
+
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9rem;
+        flex-wrap: wrap;
+    }
+
+    .breadcrumb-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .breadcrumb-item a {
+        color: #667eea;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .breadcrumb-item a:hover {
+        color: #5568d3;
+        text-decoration: underline;
+    }
+
+    .breadcrumb-separator {
+        color: #cbd5e1;
+        font-size: 0.85rem;
+        margin: 0 0.25rem;
+    }
+
+    .breadcrumb-item.active {
+        color: #0f172a;
+        font-weight: 600;
+    }
+
     .page-header {
         display: flex;
         justify-content: space-between;
@@ -23,7 +70,7 @@
     }
 
     .page-header h2 {
-        font-size: 2rem;
+        font-size: 2.5rem;
         color: #0f172a;
         font-weight: 700;
         display: flex;
@@ -230,6 +277,11 @@
             width: 100%;
             justify-content: center;
         }
+
+        .breadcrumb {
+            font-size: 0.85rem;
+            padding: 0.6rem 1rem;
+        }
     }
 
     /* Input Icons Styling */
@@ -254,6 +306,40 @@
 
 <div class="form-container">
 
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-wrapper">
+        <nav class="breadcrumb">
+            <div class="breadcrumb-item">
+                <a href="/">
+                    <i class="fas fa-home"></i>
+                    Home
+                </a>
+            </div>
+            <span class="breadcrumb-separator">
+                <i class="fas fa-chevron-right"></i>
+            </span>
+            <div class="breadcrumb-item">
+                <a href="/players">
+                    <i class="fas fa-users"></i>
+                    Players
+                </a>
+            </div>
+            <span class="breadcrumb-separator">
+                <i class="fas fa-chevron-right"></i>
+            </span>
+            <div class="breadcrumb-item active">
+                {% if title == 'Add Player' %}
+                    <i class="fas fa-user-plus"></i>
+                    Add Player
+                {% else %}
+                    <i class="fas fa-user-edit"></i>
+                    Edit Player
+                {% endif %}
+            </div>
+        </nav>
+    </div>
+
+    <!-- Page Header -->
     <div class="page-header">
         <h2>
             {% if title == 'Add Player' %}
