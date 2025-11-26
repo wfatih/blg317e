@@ -131,13 +131,11 @@ with open("data/games_details.csv", "r", encoding="utf-8") as f:
         game_id = row["GAME_ID"]
         full_name = row["PLAYER_NAME"]
 
-        # 1) Eğer player yoksa → otomatik oluştur
+        # Eğer player players tablosunda yoksa → bu satırı SKIP et
         cur.execute("SELECT 1 FROM players WHERE player_id = ?", (player_id,))
         if cur.fetchone() is None:
-            cur.execute("""
-                INSERT INTO players (player_id, full_name)
-                VALUES (?, ?)
-            """, (player_id, full_name))
+            continue
+
 
         # 2) Eğer game yoksa → o satırı atla (bu çok nadir olur)
         cur.execute("SELECT 1 FROM games WHERE game_id = ?", (game_id,))

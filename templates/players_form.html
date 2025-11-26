@@ -1,68 +1,176 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+    :root {
+        --primary-color: #4f46e5;
+        --secondary-color: #818cf8;
+        --danger-color: #ef4444;
+        --dark-color: #1f2937;
+    }
 
-<h1>{{ title }}</h1>
+    .form-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
 
-<form method="POST">
+    .page-header h2 {
+        font-size: 2rem;
+        color: var(--dark-color);
+    }
 
-    <div class="mb-3">
-        <label class="form-label">Player ID</label>
-        <input 
-            type="number" 
-            name="player_id" 
-            class="form-control"
-            value="{{ player.player_id }}"
-            {% if title != 'Add Player' %} readonly {% endif %}
-        >
+    .form-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0px 2px 8px rgba(0,0,0,.1);
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--dark-color);
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: .5rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-label {
+        font-weight: 500;
+        margin-bottom: .3rem;
+        color: var(--dark-color);
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+        padding: .65rem 1rem;
+        transition: .3s;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 .2rem rgba(79,70,229,.15);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid #e5e7eb;
+    }
+
+    .btn-primary-gradient {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: .75rem 2rem;
+        border-radius: 8px;
+        font-weight: 500;
+        border: none;
+    }
+
+    .btn-secondary {
+        border: 2px solid #e5e7eb;
+        background: white;
+        padding: .75rem 2rem;
+        border-radius: 8px;
+        font-weight: 500;
+        color: #374151;
+    }
+
+</style>
+
+<div class="form-container">
+
+    <div class="page-header mb-3">
+        <h2>
+            {% if title == 'Add Player' %}
+                <i class="fas fa-user-plus"></i>
+            {% else %}
+                <i class="fas fa-user-edit"></i>
+            {% endif %}
+            {{ title }}
+        </h2>
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Full Name</label>
-        <input type="text" name="full_name" class="form-control" value="{{ player.full_name }}" required>
+    <div class="form-card">
+        <form method="POST">
+
+            <!-- Player Info -->
+            <div class="section-title"><i class="fas fa-id-card"></i> Player Information</div>
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="form-label">Player ID</label>
+                    <input type="number" class="form-control" name="player_id"
+                           value="{{ player.player_id }}"
+                           {% if title != 'Add Player' %} readonly {% endif %}>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-control" name="full_name"
+                           value="{{ player.full_name }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Team</label>
+                    <select name="team_id" class="form-select">
+                        <option value="">-- None --</option>
+                        {% for t in teams %}
+                        <option value="{{ t.team_id }}" 
+                                {% if player.team_id == t.team_id %} selected {% endif %}>
+                            {{ t.team_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Position</label>
+                    <input type="text" class="form-control" name="position"
+                           value="{{ player.position }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Height (cm)</label>
+                    <input type="number" class="form-control" step="0.1" name="height_cm"
+                           value="{{ player.height_cm }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Weight (kg)</label>
+                    <input type="number" class="form-control" step="0.1" name="weight_kg"
+                           value="{{ player.weight_kg }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Birthdate</label>
+                    <input type="text" class="form-control" name="birthdate"
+                           value="{{ player.birthdate }}">
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label">Country</label>
+                    <input type="text" class="form-control" name="country"
+                           value="{{ player.country }}">
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="form-actions">
+                <button class="btn-primary-gradient" type="submit">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <a href="/players" class="btn-secondary">Cancel</a>
+            </div>
+
+        </form>
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Team</label>
-        <select name="team_id" class="form-select">
-            <option value="">-- No Team --</option>
+</div>
 
-            {% for t in teams %}
-                <option value="{{ t.team_id }}"
-                    {% if player.team_id == t.team_id %} selected {% endif %}
-                >
-                    {{ t.team_name }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Position</label>
-        <input type="text" name="position" class="form-control" value="{{ player.position }}">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Height (cm)</label>
-        <input type="number" step="0.1" name="height_cm" class="form-control" value="{{ player.height_cm }}">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Weight (kg)</label>
-        <input type="number" step="0.1" name="weight_kg" class="form-control" value="{{ player.weight_kg }}">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Birthdate</label>
-        <input type="text" name="birthdate" class="form-control" value="{{ player.birthdate }}">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Country</label>
-        <input type="text" name="country" class="form-control" value="{{ player.country }}">
-    </div>
-
-    <button type="submit" class="btn btn-success">Save</button>
-    <a href="/players" class="btn btn-secondary">Cancel</a>
-</form>
-
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
