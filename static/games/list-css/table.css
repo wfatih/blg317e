@@ -1,0 +1,17 @@
+.table-container {
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.table thead th {
+    background: #1f2937;
+    color: white;
+    border: none;
+    padding: 0.9rem;
+}
+
+.table tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}

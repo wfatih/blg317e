@@ -1,0 +1,42 @@
+.form-label {
+    font-weight: 500;
+    color: var(--dark-color);
+    margin-bottom: 0.4rem;
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+}
+
+.form-control,
+.form-select {
+    border-radius: 10px;
+    border: 2px solid var(--light-border);
+    padding: 0.7rem 1rem;
+    background: white;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(79,70,229,0.15);
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+    background: #f3f4f6;
+    cursor: not-allowed;
+}
+
+.input-group-text {
+    background: #f3f4f6;
+    border: 2px solid var(--light-border);
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+}
+
+.input-group .form-control {
+    border-radius: 0 10px 10px 0;
+    border-left: none;
+}

@@ -1,0 +1,88 @@
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Home</th>
+                <th>Away</th>
+                <th>Score</th>
+                <th>Winner</th>
+                <th>Date</th>
+                <th>Season</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% if games %}
+            {% for g in games %}
+            <tr>
+                <td><strong>{{ g.game_id }}</strong></td>
+
+                <td>
+                    <i class="fas fa-home text-primary"></i>
+                    {{ g.home_team }}
+                </td>
+
+                <td>
+                    <i class="fas fa-plane text-secondary"></i>
+                    {{ g.away_team }}
+                </td>
+
+                <!-- SCORE -->
+                <td class="score-display">
+                    {% if g.home_team_score != None and g.away_team_score != None %}
+                        {{ g.home_team_score }} - {{ g.away_team_score }}
+                    {% else %}
+                        <span class="text-muted">TBD</span>
+                    {% endif %}
+                </td>
+
+                <!-- WINNER BADGE -->
+                <td>
+                    {% if g.home_team_wins == 1 %}
+                        <span class="badge bg-success">
+                            <i class="fas fa-trophy"></i> {{ g.home_team }}
+                        </span>
+                    {% elif g.home_team_wins == 0 %}
+                        <span class="badge bg-danger">
+                            <i class="fas fa-trophy"></i> {{ g.away_team }}
+                        </span>
+                    {% else %}
+                        <span class="badge bg-secondary">
+                            <i class="fas fa-clock"></i> Pending
+                        </span>
+                    {% endif %}
+                </td>
+
+                <td><i class="far fa-calendar"></i> {{ g.game_date }}</td>
+                <td><span class="badge bg-secondary">{{ g.season }}</span></td>
+
+                <!-- ACTION BUTTONS -->
+                <td>
+                    <a href="/games/edit/{{ g.game_id }}" class="btn-sm btn-warning">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+
+                    <a href="/games/delete/{{ g.game_id }}"
+                       onclick="return confirm('Delete game?')"
+                       class="btn-sm btn-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="8" class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p class="mt-2">No games found</p>
+                    <a href="/games/add" class="btn-primary mt-3">
+                        <i class="fas fa-plus-circle"></i> Add First Game
+                    </a>
+                </td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>

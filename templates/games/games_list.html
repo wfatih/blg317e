@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- LIST CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='games/list-css/header.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='games/list-css/filters.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='games/list-css/table.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='games/list-css/pagination.css') }}">
+
+<div class="games-container">
+
+    {% include "games/list-components/header.html" %}
+    {% include "games/list-components/filters.html" %}
+    {% include "games/list-components/table.html" %}
+    {% include "games/list-components/pagination.html" %}
+
+</div>
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+{% endblock %}

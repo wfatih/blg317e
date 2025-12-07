@@ -1,0 +1,24 @@
+.help-text {
+    color: #6b7280;
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+}
+
+.info-badge {
+    background: #eef2ff;
+    color: #4338ca;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    display: inline-flex;
+    font-size: 0.8rem;
+    font-weight: 600;
+    gap: 0.3rem;
+    align-items: center;
+}
+
+.required {
+    color: var(--danger-color);
+}
