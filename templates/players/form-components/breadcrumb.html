@@ -1,0 +1,37 @@
+<div class="breadcrumb-wrapper">
+    <nav class="breadcrumb">
+
+        <div class="breadcrumb-item">
+            <a href="/">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+        </div>
+
+        <span class="breadcrumb-separator">
+            <i class="fas fa-chevron-right"></i>
+        </span>
+
+        <div class="breadcrumb-item">
+            <a href="/players">
+                <i class="fas fa-users"></i>
+                Players
+            </a>
+        </div>
+
+        <span class="breadcrumb-separator">
+            <i class="fas fa-chevron-right"></i>
+        </span>
+
+        <div class="breadcrumb-item active">
+            {% if title == 'Add Player' %}
+                <i class="fas fa-user-plus"></i>
+                Add Player
+            {% else %}
+                <i class="fas fa-user-edit"></i>
+                Edit Player
+            {% endif %}
+        </div>
+
+    </nav>
+</div>

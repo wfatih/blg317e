@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/players/form-css/breadcrumb.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/players/form-css/header.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/players/form-css/card.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/players/form-css/inputs.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/players/form-css/actions.css') }}">
+
+<div class="form-container">
+
+    {% include "players/form-components/form_css.html" %}
+
+    {% include "players/form-components/breadcrumb.html" %}
+
+    {% include "players/form-components/header.html" %}
+
+    <div class="form-card">
+        <form method="POST">
+            {% include "players/form-components/form_fields.html" %}
+            {% include "players/form-components/actions.html" %}
+        </form>
+    </div>
+
+</div>
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}

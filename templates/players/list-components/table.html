@@ -1,0 +1,32 @@
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Team</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for p in players %}
+            <tr>
+                <td><strong>{{ p.player_id }}</strong></td>
+                <td>{{ p.full_name }}</td>
+                <td>{{ p.team_name if p.team_name else "-" }}</td>
+
+                <td>
+                    <a href="/players/edit/{{ p.player_id }}" class="btn-sm btn-warning">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="/players/delete/{{ p.player_id }}" class="btn-sm btn-danger"
+                       onclick="return confirm('Delete this player?')">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

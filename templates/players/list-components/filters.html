@@ -1,0 +1,46 @@
+<div class="filter-section">
+    <h5><i class="fas fa-filter"></i> Filter Players</h5>
+
+    <form method="GET">
+        <div class="filter-row">
+
+            <!-- FULL NAME -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-user"></i> Full Name
+                </label>
+                <input 
+                    type="text" 
+                    name="name" 
+                    class="form-control"
+                    placeholder="Search by player name..."
+                    value="{{ request.args.get('name','') }}">
+            </div>
+
+            <!-- TEAM -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-shield-alt"></i> Team
+                </label>
+                <select name="team" class="form-select">
+                    <option value="">All Teams</option>
+                    {% for t in teams %}
+                        <option value="{{ t.team_name }}"
+                            {% if request.args.get('team') == t.team_name %} selected {% endif %}>
+                            {{ t.team_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn-filter">
+                <i class="fas fa-search"></i> Filter
+            </button>
+
+            <a href="{{ request.path }}" class="btn-clear">
+                <i class="fas fa-times-circle"></i> Clear
+            </a>
+
+        </div>
+    </form>
+</div>

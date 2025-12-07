@@ -1,0 +1,135 @@
+<div class="section-title">
+    <i class="fas fa-id-card"></i>
+    Player Information
+</div>
+
+<div class="row g-3">
+
+    <!-- Player ID -->
+    <div class="col-md-6">
+        <label class="form-label">
+            <i class="fas fa-hashtag"></i>
+            Player ID
+        </label>
+        <input 
+            type="number" 
+            class="form-control" 
+            name="player_id"
+            value="{{ player.player_id }}"
+            placeholder="Enter player ID"
+            {% if title != 'Add Player' %} readonly {% endif %}
+        >
+    </div>
+
+    <!-- Full Name -->
+    <div class="col-md-6">
+        <label class="form-label">
+            <i class="fas fa-user"></i>
+            Full Name
+        </label>
+        <input 
+            type="text" 
+            class="form-control" 
+            name="full_name"
+            value="{{ player.full_name }}"
+            placeholder="Enter full name"
+            required
+        >
+    </div>
+
+    <!-- Team -->
+    <div class="col-md-6">
+        <label class="form-label">
+            <i class="fas fa-shield-alt"></i>
+            Team
+        </label>
+        <select name="team_id" class="form-select">
+            <option value="">-- None --</option>
+            {% for t in teams %}
+            <option value="{{ t.team_id }}"
+                {% if player.team_id == t.team_id %} selected {% endif %}
+            >
+                {{ t.team_name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Position -->
+    <div class="col-md-6">
+        <label class="form-label">
+            <i class="fas fa-running"></i>
+            Position
+        </label>
+        <input 
+            type="text" 
+            class="form-control" 
+            name="position"
+            value="{{ player.position }}"
+            placeholder="e.g., Forward, Midfielder"
+        >
+    </div>
+
+    <!-- Height -->
+    <div class="col-md-6">
+        <label class="form-label">
+            <i class="fas fa-ruler-vertical"></i>
+            Height (cm)
+        </label>
+        <input 
+            type="number" 
+            class="form-control" 
+            step="0.1" 
+            name="height_cm"
+            value="{{ player.height_cm }}"
+            placeholder="e.g., 180"
+        >
+    </div>
+
+    <!-- Weight -->
+    <div class="col-md-6">
+        <label class="form-label">
+            <i class="fas fa-weight"></i>
+            Weight (kg)
+        </label>
+        <input 
+            type="number" 
+            class="form-control" 
+            step="0.1" 
+            name="weight_kg"
+            value="{{ player.weight_kg }}"
+            placeholder="e.g., 75"
+        >
+    </div>
+
+    <!-- Birthdate -->
+    <div class="col-md-6">
+        <label class="form-label">
+            <i class="fas fa-calendar-alt"></i>
+            Birthdate
+        </label>
+        <input 
+            type="text" 
+            class="form-control" 
+            name="birthdate"
+            value="{{ player.birthdate }}"
+            placeholder="YYYY-MM-DD"
+        >
+    </div>
+
+    <!-- Country -->
+    <div class="col-md-6">
+        <label class="form-label">
+            <i class="fas fa-globe"></i>
+            Country
+        </label>
+        <input 
+            type="text" 
+            class="form-control" 
+            name="country"
+            value="{{ player.country }}"
+            placeholder="Enter country"
+        >
+    </div>
+
+</div>

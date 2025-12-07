@@ -2,9 +2,11 @@ from datetime import datetime
 import sqlite3
 
 from flask import Flask, render_template, request, redirect, url_for
-
+from routes.players_routes import players_bp
 
 app = Flask(__name__)
+
+app.register_blueprint(players_bp)
 
 # -------- HOME --------
 @app.route("/")

@@ -1,0 +1,112 @@
+/* TABLE CONTAINER ------------------------------------------------------ */
+.table-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.08);
+    overflow: hidden;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    margin-top: 1.5rem;
+}
+
+/* TABLE BASE ----------------------------------------------------------- */
+.table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+/* TABLE HEADER --------------------------------------------------------- */
+.table thead th {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    color: white;
+    padding: 1.1rem;
+    text-transform: uppercase;
+    font-size: .85rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.05em;
+    border: none;
+}
+
+/* TABLE ROWS ----------------------------------------------------------- */
+.table tbody tr {
+    transition: all .2s ease;
+}
+
+.table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* TABLE CELLS ---------------------------------------------------------- */
+.table td {
+    padding: 1.1rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+    text-align: center;
+    color: #334155;
+    font-weight: 500;
+    word-wrap: break-word;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ACTION BUTTONS ------------------------------------------------------- */
+.btn-sm {
+    padding: .5rem .9rem;
+    border-radius: 8px;
+    font-size: .82rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    text-decoration: none;
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all .2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* EDIT BUTTON ---------------------------------------------------------- */
+.btn-warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.btn-warning:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+}
+
+.btn-warning:active {
+    transform: translateY(0);
+}
+
+/* DELETE BUTTON -------------------------------------------------------- */
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.btn-danger:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+}
+
+.btn-danger:active {
+    transform: translateY(0);
+}
+
+/* RESPONSIVE (Mobil İçin) ---------------------------------------------- */
+@media (max-width: 768px) {
+    .table td,
+    .table thead th {
+        padding: 0.9rem;
+        font-size: 0.8rem;
+    }
+
+    .btn-sm {
+        padding: .4rem .7rem;
+        font-size: 0.75rem;
+    }
+}
