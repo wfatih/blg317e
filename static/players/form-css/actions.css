@@ -1,55 +1,82 @@
-.form-actions {
+.form-container .form-actions {
     display: flex;
-    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
     margin-top: 2rem;
     padding-top: 2rem;
     border-top: 2px solid #e2e8f0;
 }
 
-.btn-primary-gradient {
+.form-container .btn-primary-gradient {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 0.85rem 2.5rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 12px;
     font-weight: 600;
     border: none;
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
+    justify-content: center;
+    gap: 0.5rem;
     transition: all .3s ease;
+    cursor: pointer;
+    min-width: 140px;
+    height: 44px;
+    box-sizing: border-box;
 }
 
-.btn-primary-gradient:hover {
+.form-container .btn-primary-gradient:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
 
-.btn-secondary {
+.form-container .btn-secondary {
     border: 2px solid #e2e8f0;
-    padding: 0.85rem 2.5rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 12px;
     font-weight: 600;
     color: #64748b;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     transition: all .3s ease;
+    text-decoration: none;
+    cursor: pointer;
+    min-width: 140px;
+    height: 44px;
+    background: white;
+    box-sizing: border-box;
+    line-height: 1;
+    font-size: 1rem;
 }
 
-.btn-secondary:hover {
+.form-container .btn-secondary:hover {
     background: #f8fafc;
     border-color: #cbd5e1;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    color: #475569;
+}
+
+/* Cancel butonunun boyutunu sabitlemek için ekstra spesifik kural */
+.form-container .form-actions .btn-secondary {
+    max-width: 140px;
+    max-height: 44px;
+    width: auto !important;
+    height: 44px !important;
 }
 
 @media (max-width: 768px) {
-    .form-actions {
+    .form-container .form-actions {
         flex-direction: column;
     }
 
-    .btn-primary-gradient,
-    .btn-secondary {
+    .form-container .btn-primary-gradient,
+    .form-container .btn-secondary {
         width: 100%;
-        justify-content: center;
+        min-width: unset;
+        max-width: 100%;
     }
 }

@@ -1,11 +1,11 @@
-.page-header {
+.form-container .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
 }
 
-.page-header h2 {
+.form-container .page-header h2 {
     font-size: 2.5rem;
     color: #0f172a;
     font-weight: 700;
@@ -15,13 +15,13 @@
     letter-spacing: -0.025em;
 }
 
-.page-header h2 i {
+.form-container .page-header h2 i {
     color: #667eea;
     font-size: 1.8rem;
 }
 
 @media (max-width: 768px) {
-    .page-header {
+    .form-container .page-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;

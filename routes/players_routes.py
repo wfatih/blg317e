@@ -15,7 +15,7 @@ def players_page():
     team = request.args.get("team", "").strip()
     name = request.args.get("name", "").strip()
     page = int(request.args.get("page", 1))  # default page = 1
-    per_page = 20
+    per_page = 15
 
     # Base query
     query = """
@@ -105,7 +105,7 @@ def add_player():
     }
 
     return render_template(
-        "players_form.html",
+        "players/players_form.html",
         title="Add Player",
         player=empty_player,
         teams=teams
@@ -150,7 +150,7 @@ def edit_player(pid):
         return redirect("/players")
 
     return render_template(
-        "players_form.html",
+        "players/players_form.html",
         title="Edit Player",
         player=player,
         teams=teams
