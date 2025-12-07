@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- DETAIL CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='games/detail-css/detail.css') }}">
+
+<div class="detail-container">
+    
+    <!-- Breadcrumb -->
+    <nav class="detail-breadcrumb">
+        <a href="/games"><i class="fas fa-arrow-left"></i> Back to Games</a>
+        <span class="separator">/</span>
+        <span class="current">Game Details</span>
+    </nav>
+
+    <!-- Game Header -->
+    <div class="game-header">
+        <div class="season-badge-large">
+            <i class="fas fa-calendar-alt"></i> {{ game.season }}
+        </div>
+        <h1 class="game-title">Game #{{ game.id }}</h1>
+        <div class="game-date">
+            <i class="fas fa-clock"></i> {{ game.date.strftime('%B %d, %Y') if game.date else game.game_date }}
+        </div>
+    </div>
+
+    <!-- Teams & Score -->
+    <div class="teams-score-section">
+        <div class="team-box home-team">
+            <div class="team-label">Home Team</div>
+            <h2 class="team-name">{{ game.home_team }}</h2>
+            <div class="team-score">{{ game.home_score if game.home_score is not none else '-' }}</div>
+        </div>
+
+        <div class="vs-divider">
+            <span>VS</span>
+        </div>
+
+        <div class="team-box away-team">
+            <div class="team-label">Away Team</div>
+            <h2 class="team-name">{{ game.away_team }}</h2>
+            <div class="team-score">{{ game.away_score if game.away_score is not none else '-' }}</div>
+        </div>
+    </div>
+
+    <!-- Game Result -->
+    {% if game.home_score is not none and game.away_score is not none %}
+    <div class="game-result">
+        {% if game.home_score > game.away_score %}
+            <i class="fas fa-trophy"></i> {{ game.home_team }} wins!
+        {% elif game.away_score > game.home_score %}
+            <i class="fas fa-trophy"></i> {{ game.away_team }} wins!
+        {% else %}
+            <i class="fas fa-handshake"></i> It's a tie!
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Info Grid -->
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="info-icon">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="info-content">
+                <div class="info-label">Venue</div>
+                <div class="info-value">{{ game.venue or 'Not specified' }}</div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-icon">
+                <i class="fas fa-basketball-ball"></i>
+            </div>
+            <div class="info-content">
+                <div class="info-label">Game ID</div>
+                <div class="info-value">{{ game.game_id }}</div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="info-content">
+                <div class="info-label">Winner</div>
+                <div class="info-value">
+                    {% if game.home_team_wins == 1 %}
+                        {{ game.home_team }}
+                    {% elif game.home_team_wins == 0 %}
+                        {{ game.away_team }}
+                    {% else %}
+                        TBD
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-icon">
+                <i class="fas fa-calendar"></i>
+            </div>
+            <div class="info-content">
+                <div class="info-label">Season</div>
+                <div class="info-value">{{ game.season }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="statistics-section">
+        <h3 class="section-title">
+            <i class="fas fa-chart-bar"></i> Game Statistics
+        </h3>
+        
+        <div class="stats-grid">
+            <div class="stats-card">
+                <h4>{{ game.home_team }} Stats</h4>
+                <div class="stats-list">
+                    <div class="stat-item">
+                        <span class="stat-name">Points</span>
+                        <span class="stat-value">{{ game.home_score if game.home_score is not none else 'N/A' }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-name">Field Goal %</span>
+                        <span class="stat-value">{{ (game.fg_pct_home * 100)|round(1) if game.fg_pct_home is not none else 'N/A' }}%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-name">Free Throw %</span>
+                        <span class="stat-value">{{ (game.ft_pct_home * 100)|round(1) if game.ft_pct_home is not none else 'N/A' }}%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-name">3-Point %</span>
+                        <span class="stat-value">{{ (game.fg3_pct_home * 100)|round(1) if game.fg3_pct_home is not none else 'N/A' }}%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-name">Assists</span>
+                        <span class="stat-value">{{ game.ast_home if game.ast_home is not none else 'N/A' }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-name">Rebounds</span>
+                        <span class="stat-value">{{ game.reb_home if game.reb_home is not none else 'N/A' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <h4>{{ game.away_team }} Stats</h4>
+                <div class="stats-list">
+                    <div class="stat-item">
+                        <span class="stat-name">Points</span>
+                        <span class="stat-value">{{ game.away_score if game.away_score is not none else 'N/A' }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-name">Field Goal %</span>
+                        <span class="stat-value">{{ (game.fg_pct_away * 100)|round(1) if game.fg_pct_away is not none else 'N/A' }}%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-name">Free Throw %</span>
+                        <span class="stat-value">{{ (game.ft_pct_away * 100)|round(1) if game.ft_pct_away is not none else 'N/A' }}%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-name">3-Point %</span>
+                        <span class="stat-value">{{ (game.fg3_pct_away * 100)|round(1) if game.fg3_pct_away is not none else 'N/A' }}%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-name">Assists</span>
+                        <span class="stat-value">{{ game.ast_away if game.ast_away is not none else 'N/A' }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-name">Rebounds</span>
+                        <span class="stat-value">{{ game.reb_away if game.reb_away is not none else 'N/A' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="detail-actions">
+        <a href="/games/edit/{{ game.id }}" class="action-btn btn-edit">
+            <i class="fas fa-edit"></i> Edit Game
+        </a>
+        <button onclick="if(confirm('Are you sure you want to delete this game?')) window.location.href='/games/delete/{{ game.id }}'" 
+                class="action-btn btn-delete">
+            <i class="fas fa-trash"></i> Delete Game
+        </button>
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+{% endblock %}

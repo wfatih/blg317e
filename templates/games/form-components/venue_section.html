@@ -1,0 +1,30 @@
+<div class="form-section">
+    <h3 class="section-title">
+        <i class="fas fa-map-marker-alt"></i> Venue Information
+    </h3>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="stadium_id">Stadium</label>
+            <select id="stadium_id" name="stadium_id" class="form-control">
+                <option value="">Select Stadium (Optional)</option>
+                {% for stadium in stadiums %}
+                <option value="{{ stadium.stadium_id }}" 
+                        {% if game and game.stadium_id == stadium.stadium_id %}selected{% endif %}>
+                    {{ stadium.stadium_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="arena_name">Arena Name</label>
+            <input type="text" 
+                   id="arena_name" 
+                   name="arena_name" 
+                   class="form-control" 
+                   placeholder="Arena Name" 
+                   value="{{ game.arena_name if game else '' }}">
+        </div>
+    </div>
+</div>

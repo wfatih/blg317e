@@ -1,0 +1,33 @@
+<div class="form-section">
+    <h3 class="section-title">
+        <i class="fas fa-users"></i> Team Selection
+    </h3>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="home_team_id">Home Team</label>
+            <select id="home_team_id" name="home_team_id" class="form-control" required>
+                <option value="">Select Home Team</option>
+                {% for team in teams %}
+                <option value="{{ team.team_id }}" 
+                        {% if game and game.home_team_id == team.team_id %}selected{% endif %}>
+                    {{ team.team_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="away_team_id">Away Team</label>
+            <select id="away_team_id" name="away_team_id" class="form-control" required>
+                <option value="">Select Away Team</option>
+                {% for team in teams %}
+                <option value="{{ team.team_id }}" 
+                        {% if game and game.away_team_id == team.team_id %}selected{% endif %}>
+                    {{ team.team_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+<div class="form-section">
+    <h3 class="section-title">
+        <i class="fas fa-trophy"></i> Score Information
+    </h3>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="home_team_score">Home Team Score</label>
+            <input type="number" 
+                   id="home_team_score" 
+                   name="home_team_score" 
+                   class="form-control" 
+                   placeholder="Home Score" 
+                   value="{{ game.home_team_score if game and game.home_team_score is not none else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="away_team_score">Away Team Score</label>
+            <input type="number" 
+                   id="away_team_score" 
+                   name="away_team_score" 
+                   class="form-control" 
+                   placeholder="Away Score" 
+                   value="{{ game.away_team_score if game and game.away_team_score is not none else '' }}">
+        </div>
+    </div>
+</div>

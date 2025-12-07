@@ -4,9 +4,8 @@
     </h5>
 
     <form method="GET">
-        <div class="row g-3">
-
-            <div class="col-md-3">
+        <div class="filter-row">
+            <div class="filter-group">
                 <label class="form-label">Season</label>
                 <input class="form-control"
                        type="text"
@@ -15,7 +14,7 @@
                        value="{{ request.args.get('season','') }}">
             </div>
 
-            <div class="col-md-3">
+            <div class="filter-group">
                 <label class="form-label">Team</label>
                 <input class="form-control"
                        type="text"
@@ -24,7 +23,7 @@
                        value="{{ request.args.get('team','') }}">
             </div>
 
-            <div class="col-md-2">
+            <div class="filter-group">
                 <label class="form-label">From Date</label>
                 <input class="form-control"
                        type="date"
@@ -32,7 +31,7 @@
                        value="{{ request.args.get('date_from','') }}">
             </div>
 
-            <div class="col-md-2">
+            <div class="filter-group">
                 <label class="form-label">To Date</label>
                 <input class="form-control"
                        type="date"
@@ -40,16 +39,15 @@
                        value="{{ request.args.get('date_to','') }}">
             </div>
 
-            <div class="col-md-2 d-flex align-items-end">
-                <button class="btn-dark w-100 me-2">
+            <div class="filter-actions">
+                <button type="submit" class="btn-filter">
                     <i class="fas fa-search"></i> Filter
                 </button>
 
-                <a href="/games" class="btn-outline-secondary" style="width:42px; height:42px; display:flex; justify-content:center; align-items:center;">
+                <a href="/games" class="btn-clear" title="Clear filters">
                     <i class="fas fa-times"></i>
                 </a>
             </div>
-
         </div>
     </form>
 </div>

@@ -3,11 +3,7 @@
 
     <!-- PREVIOUS -->
     <a class="pagination-btn {% if page <= 1 %}disabled{% endif %}"
-       href="?page={{ page - 1 }}
-       {% if request.args.get('season') %}&season={{ request.args.get('season') }}{% endif %}
-       {% if request.args.get('team') %}&team={{ request.args.get('team') }}{% endif %}
-       {% if request.args.get('date_from') %}&date_from={{ request.args.get('date_from') }}{% endif %}
-       {% if request.args.get('date_to') %}&date_to={{ request.args.get('date_to') }}{% endif %}">
+       href="?page={{ page - 1 }}{% if request.args.get('season') %}&season={{ request.args.get('season') }}{% endif %}{% if request.args.get('team') %}&team={{ request.args.get('team') }}{% endif %}{% if request.args.get('date_from') %}&date_from={{ request.args.get('date_from') }}{% endif %}{% if request.args.get('date_to') %}&date_to={{ request.args.get('date_to') }}{% endif %}">
         <i class="fas fa-chevron-left"></i> Prev
     </a>
 
@@ -18,11 +14,7 @@
 
     <!-- NEXT -->
     <a class="pagination-btn {% if page >= total_pages %}disabled{% endif %}"
-       href="?page={{ page + 1 }}
-       {% if request.args.get('season') %}&season={{ request.args.get('season') }}{% endif %}
-       {% if request.args.get('team') %}&team={{ request.args.get('team') }}{% endif %}
-       {% if request.args.get('date_from') %}&date_from={{ request.args.get('date_from') }}{% endif %}
-       {% if request.args.get('date_to') %}&date_to={{ request.args.get('date_to') }}{% endif %}">
+       href="?page={{ page + 1 }}{% if request.args.get('season') %}&season={{ request.args.get('season') }}{% endif %}{% if request.args.get('team') %}&team={{ request.args.get('team') }}{% endif %}{% if request.args.get('date_from') %}&date_from={{ request.args.get('date_from') }}{% endif %}{% if request.args.get('date_to') %}&date_to={{ request.args.get('date_to') }}{% endif %}">
         Next <i class="fas fa-chevron-right"></i>
     </a>
 

@@ -1,0 +1,123 @@
+<div class="form-section">
+    <h3 class="section-title">
+        <i class="fas fa-chart-bar"></i> Game Statistics
+    </h3>
+    
+    <div class="stats-grid">
+        <!-- Home Team Stats -->
+        <div class="stats-column">
+            <h4 class="stats-subtitle">Home Team Statistics</h4>
+            
+            <div class="form-group">
+                <label for="fg_pct_home">Field Goal %</label>
+                <input type="number" 
+                       step="0.001" 
+                       id="fg_pct_home" 
+                       name="fg_pct_home" 
+                       class="form-control" 
+                       placeholder="0.450" 
+                       value="{{ game.fg_pct_home if game and game.fg_pct_home is not none else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="ft_pct_home">Free Throw %</label>
+                <input type="number" 
+                       step="0.001" 
+                       id="ft_pct_home" 
+                       name="ft_pct_home" 
+                       class="form-control" 
+                       placeholder="0.800" 
+                       value="{{ game.ft_pct_home if game and game.ft_pct_home is not none else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="fg3_pct_home">3-Point %</label>
+                <input type="number" 
+                       step="0.001" 
+                       id="fg3_pct_home" 
+                       name="fg3_pct_home" 
+                       class="form-control" 
+                       placeholder="0.350" 
+                       value="{{ game.fg3_pct_home if game and game.fg3_pct_home is not none else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="ast_home">Assists</label>
+                <input type="number" 
+                       id="ast_home" 
+                       name="ast_home" 
+                       class="form-control" 
+                       placeholder="25" 
+                       value="{{ game.ast_home if game and game.ast_home is not none else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="reb_home">Rebounds</label>
+                <input type="number" 
+                       id="reb_home" 
+                       name="reb_home" 
+                       class="form-control" 
+                       placeholder="45" 
+                       value="{{ game.reb_home if game and game.reb_home is not none else '' }}">
+            </div>
+        </div>
+
+        <!-- Away Team Stats -->
+        <div class="stats-column">
+            <h4 class="stats-subtitle">Away Team Statistics</h4>
+            
+            <div class="form-group">
+                <label for="fg_pct_away">Field Goal %</label>
+                <input type="number" 
+                       step="0.001" 
+                       id="fg_pct_away" 
+                       name="fg_pct_away" 
+                       class="form-control" 
+                       placeholder="0.450" 
+                       value="{{ game.fg_pct_away if game and game.fg_pct_away is not none else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="ft_pct_away">Free Throw %</label>
+                <input type="number" 
+                       step="0.001" 
+                       id="ft_pct_away" 
+                       name="ft_pct_away" 
+                       class="form-control" 
+                       placeholder="0.800" 
+                       value="{{ game.ft_pct_away if game and game.ft_pct_away is not none else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="fg3_pct_away">3-Point %</label>
+                <input type="number" 
+                       step="0.001" 
+                       id="fg3_pct_away" 
+                       name="fg3_pct_away" 
+                       class="form-control" 
+                       placeholder="0.350" 
+                       value="{{ game.fg3_pct_away if game and game.fg3_pct_away is not none else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="ast_away">Assists</label>
+                <input type="number" 
+                       id="ast_away" 
+                       name="ast_away" 
+                       class="form-control" 
+                       placeholder="25" 
+                       value="{{ game.ast_away if game and game.ast_away is not none else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="reb_away">Rebounds</label>
+                <input type="number" 
+                       id="reb_away" 
+                       name="reb_away" 
+                       class="form-control" 
+                       placeholder="45" 
+                       value="{{ game.reb_away if game and game.reb_away is not none else '' }}">
+            </div>
+        </div>
+    </div>
+</div>

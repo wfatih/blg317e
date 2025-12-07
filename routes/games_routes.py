@@ -77,6 +77,68 @@ def games_list():
     )
 
 
+# ----------------- GAME DETAIL -----------------
+@games_bp.route("/games/<int:gid>")
+def game_detail(gid):
+    
+    con = db()
+    cur = con.cursor()
+
+    # Get game with team names (location kaldırıldı)
+    game = cur.execute("""
+        SELECT 
+            g.*,
+            t1.team_name AS home_team,
+            t2.team_name AS away_team,
+            s.stadium_name
+        FROM games g
+        JOIN teams t1 ON g.home_team_id = t1.team_id
+        JOIN teams t2 ON g.away_team_id = t2.team_id
+        LEFT JOIN stadiums s ON g.stadium_id = s.stadium_id
+        WHERE g.game_id = ?
+    """, (gid,)).fetchone()
+
+    if not game:
+        con.close()
+        return "Game not found", 404
+
+    # Convert to dict
+    game_dict = dict(game)
+    
+    # Add formatted date
+    if game_dict.get('game_date'):
+        from datetime import datetime
+        try:
+            date_obj = datetime.strptime(game_dict['game_date'], '%Y-%m-%d')
+            game_dict['date'] = date_obj
+        except:
+            game_dict['date'] = None
+    else:
+        game_dict['date'] = None
+
+    # Set venue (sadece stadium_name veya arena_name)
+    game_dict['venue'] = game_dict.get('stadium_name') or game_dict.get('arena_name') or 'Not specified'
+    
+    # Set scores
+    game_dict['home_score'] = game_dict.get('home_team_score')
+    game_dict['away_score'] = game_dict.get('away_team_score')
+    
+    # Set ID
+    game_dict['id'] = gid
+
+    con.close()
+
+    # Create object for template
+    class GameObj:
+        def __init__(self, data):
+            for key, value in data.items():
+                setattr(self, key, value)
+    
+    game_obj = GameObj(game_dict)
+
+    return render_template("games_detail.html", game=game_obj)
+
+
 # ----------------- ADD GAME -----------------
 @games_bp.route("/games/add", methods=["GET", "POST"])
 def add_game():
