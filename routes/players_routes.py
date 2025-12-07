@@ -171,3 +171,92 @@ def delete_player(pid):
         print("Delete error:", e)
 
     return redirect("/players")
+
+# -------- VIEW PLAYER --------
+@players_bp.route("/players/view/<int:pid>")
+def view_player(pid):
+    con = sqlite3.connect("nba.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    # 1) PLAYER INFO
+    player = cur.execute("""
+        SELECT p.*, t.team_name
+        FROM players p
+        LEFT JOIN teams t ON p.team_id = t.team_id
+        WHERE p.player_id = ?
+    """, (pid,)).fetchone()
+
+    if not player:
+        return "Player not found", 404
+
+    # 2) PLAYER'S GAME STATS (JOIN games + player_game_stats)
+    game_stats = cur.execute("""
+        SELECT 
+            g.game_id,
+            g.game_date,
+            g.home_team_id,
+            g.away_team_id,
+            g.home_team_score,
+            g.away_team_score,
+            t1.team_name AS home_team_name,
+            t2.team_name AS away_team_name,
+
+            s.points,
+            s.assists,
+            s.rebounds,
+            s.minutes_played
+
+        FROM player_game_stats s
+        JOIN games g ON s.game_id = g.game_id
+        LEFT JOIN teams t1 ON g.home_team_id = t1.team_id
+        LEFT JOIN teams t2 ON g.away_team_id = t2.team_id
+
+        WHERE s.player_id = ?
+        ORDER BY g.game_date DESC
+    """, (pid,)).fetchall()
+
+    # 3) AVERAGE STATS
+    avg_stats = cur.execute("""
+        SELECT 
+            AVG(points) AS avg_points,
+            AVG(assists) AS avg_assists,
+            AVG(rebounds) AS avg_rebounds,
+            AVG(minutes_played) AS avg_minutes
+        FROM player_game_stats
+        WHERE player_id = ?
+    """, (pid,)).fetchone()
+
+    # 4) BEST GAME (highest points)
+    best_game = cur.execute("""
+        SELECT 
+            s.points, s.assists, s.rebounds, s.minutes_played,
+            g.game_date,
+            t1.team_name AS home_team_name,
+            t2.team_name AS away_team_name
+        FROM player_game_stats s
+        JOIN games g ON s.game_id = g.game_id
+        LEFT JOIN teams t1 ON g.home_team_id = t1.team_id
+        LEFT JOIN teams t2 ON g.away_team_id = t2.team_id
+        WHERE s.player_id = ?
+        ORDER BY s.points DESC
+        LIMIT 1
+    """, (pid,)).fetchone()
+
+    # 5) STADIUMS PLAYER HAS PLAYED IN
+    stadiums = cur.execute("""
+        SELECT DISTINCT st.stadium_name, st.city, st.capacity
+        FROM player_game_stats s
+        JOIN games g ON s.game_id = g.game_id
+        JOIN stadiums st ON g.stadium_id = st.stadium_id
+        WHERE s.player_id = ?
+    """, (pid,)).fetchall()
+
+    return render_template(
+        "players/player_view.html",
+        player=player,
+        game_stats=game_stats,
+        avg_stats=avg_stats,
+        best_game=best_game,
+        stadiums=stadiums
+    )

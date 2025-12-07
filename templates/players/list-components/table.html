@@ -16,15 +16,21 @@
                 <td>{{ p.full_name }}</td>
                 <td>{{ p.team_name if p.team_name else "-" }}</td>
 
-                <td>
-                    <a href="/players/edit/{{ p.player_id }}" class="btn-sm btn-warning">
-                        <i class="fas fa-edit"></i> Edit
+                <td class="actions-cell">
+                    <a href="/players/view/{{ p.player_id }}" class="btn-sm btn-info" title="Git">
+                        <i class="fas fa-external-link-alt"></i>
                     </a>
+
+                    <a href="/players/edit/{{ p.player_id }}" class="btn-sm btn-warning">
+                        <i class="fas fa-edit"></i>
+                    </a>
+
                     <a href="/players/delete/{{ p.player_id }}" class="btn-sm btn-danger"
                        onclick="return confirm('Delete this player?')">
-                        <i class="fas fa-trash"></i> Delete
+                        <i class="fas fa-trash"></i>
                     </a>
                 </td>
+
             </tr>
             {% endfor %}
         </tbody>
