@@ -1,0 +1,148 @@
+/* Grid Container */
+.teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Biraz daha genişlettim */
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+/* Kartın Kendisi - Artık bir <a> etiketi olacak */
+.team-card-link {
+    text-decoration: none; /* Link alt çizgisini kaldır */
+    color: inherit; /* Yazı rengini koru */
+    display: block;
+}
+
+.team-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Daha havalı bir geçiş efekti */
+    border: 1px solid #f0f0f0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+/* Hover Efekti: Kart yukarı kalkar */
+.team-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 30px rgba(0,0,0,0.15);
+}
+
+/* Kart Üst Kısım (Logo ve Arkaplan) */
+.card-header-visual {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    height: 160px; /* Biraz yükselttim */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden; /* Taşmaları gizle */
+}
+
+.team-logo-img {
+    width: 110px;
+    height: 110px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    transition: all 0.4s ease;
+    z-index: 2;
+    position: relative;
+}
+
+/* Hover'da Logo Soluklaşır */
+.team-card:hover .team-logo-img {
+    opacity: 0.2;
+    transform: scale(0.9);
+}
+
+/* --- EFSANE OYUNCU KATMANI (YENİ) --- */
+.legendary-player-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Şimdilik temsili bir Michael Jordan silüeti kullanıyorum.
+       İleride veritabanından her takım için özel resim çekebiliriz. */
+    background-image: url('https://cdn.nba.com/manage/2021/08/michael-jordan-iso-crop-1568x882.jpg');
+    background-size: cover;
+    background-position: center top;
+    opacity: 0; /* Başlangıçta gizli */
+    z-index: 1;
+    transition: all 0.5s ease;
+    filter: grayscale(100%) contrast(120%); /* Siyah beyaz ve kontrastlı */
+}
+
+/* Hover'da Oyuncu Belirir */
+.team-card:hover .legendary-player-overlay {
+    opacity: 0.6; /* Çok net olmasın, arkada dursun */
+    transform: scale(1.1); /* Hafif yaklaşma efekti */
+}
+
+
+/* Kart İçerik */
+.card-body {
+    padding: 1.5rem;
+    text-align: center;
+    border-top: 1px solid #eee;
+    background: #fff;
+}
+
+.team-city {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6c757d;
+    font-weight: 700;
+}
+
+.team-name {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #2c3e50;
+    margin: 0.2rem 0 1rem 0;
+}
+
+.team-info-row {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.info-item i {
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+    color: #3498db;
+}
+.info-label {
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: #aaa;
+    margin-bottom: 2px;
+}
+
+.arena-badge {
+    background: #f8f9fa;
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 1rem;
+    border: 1px solid #eee;
+}
+
+/* Butonları kaldırdık çünkü kartın kendisi tıklanabilir oldu.
+   Sadece admin işlemleri için küçük ikonlar bırakabiliriz ama şimdilik temiz kalsın. */

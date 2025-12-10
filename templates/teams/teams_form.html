@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    /* FORM SAYFASI İÇİN ÖZEL CSS */
+    .form-container {
+        max-width: 800px;
+        margin: 40px auto;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .form-header h2 { font-weight: 900; color: #0f172a; font-size: 2rem; }
+    .form-header p { color: #64748b; }
+
+    /* KART TASARIMI */
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+
+    .form-section {
+        padding: 30px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .form-section:last-child { border-bottom: none; }
+
+    .section-title {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 800;
+        color: #94a3b8;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* INPUT GRUPLARI */
+    .input-group-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 15px;
+    }
+
+    .form-group { margin-bottom: 15px; }
+
+    .form-label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.2s;
+        background-color: #f8fafc;
+        box-sizing: border-box; /* Padding taşmasını önler */
+    }
+
+    .form-control:focus {
+        border-color: #2563eb;
+        background-color: white;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    /* BUTONLAR */
+    .form-actions {
+        background-color: #f8fafc;
+        padding: 20px 30px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .btn-cancel {
+        padding: 12px 25px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #64748b;
+        font-weight: 600;
+        background: white;
+        border: 1px solid #cbd5e1;
+        transition: all 0.2s;
+    }
+    .btn-cancel:hover { background: #f1f5f9; color: #0f172a; }
+
+    .btn-save {
+        padding: 12px 30px;
+        border-radius: 10px;
+        border: none;
+        background: #0f172a; /* NBA Mavisi */
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-save:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); }
+
+    /* DANGER ZONE (SİLME BÖLÜMÜ) */
+    .danger-zone {
+        margin-top: 40px;
+        border: 1px solid #fee2e2;
+        background: #fef2f2;
+        border-radius: 16px;
+        padding: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .danger-text h4 { margin: 0 0 5px 0; color: #991b1b; font-weight: 700; }
+    .danger-text p { margin: 0; color: #b91c1c; font-size: 0.9rem; }
+    
+    .btn-delete {
+        padding: 10px 20px;
+        background: #dc2626;
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+        border-radius: 8px;
+        border: none;
+        transition: all 0.2s;
+    }
+    .btn-delete:hover { background: #b91c1c; }
+
+</style>
+
+<div class="form-container">
+    
+    <div class="form-header">
+        <h2>{% if title == "Add Team" %}New Franchise{% else %}Edit Franchise{% endif %}</h2>
+        <p>{% if title == "Add Team" %}Enter the details to register a new NBA team.{% else %}Update roster, arena, and management information.{% endif %}</p>
+    </div>
+
+    <form method="POST" class="form-card">
+        
+        <div class="form-section">
+            <div class="section-title"><i class="fas fa-basketball-ball"></i> General Information</div>
+            
+            <div class="input-group-grid">
+                <div class="form-group">
+                    <label class="form-label">Team ID (NBA API)</label>
+                    <input type="number" name="team_id" class="form-control" 
+                           value="{{ team.team_id }}" 
+                           {% if title != "Add Team" %}readonly style="background:#e2e8f0; cursor: not-allowed;"{% endif %} required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Abbreviation</label>
+                    <input type="text" name="abbreviation" class="form-control" placeholder="e.g. LAL" 
+                           value="{{ team.abbreviation }}" maxlength="3" required>
+                </div>
+            </div>
+
+            <div class="input-group-grid">
+                <div class="form-group">
+                    <label class="form-label">City</label>
+                    <input type="text" name="city" class="form-control" placeholder="e.g. Los Angeles" 
+                           value="{{ team.city }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nickname</label>
+                    <input type="text" name="nickname" class="form-control" placeholder="e.g. Lakers" 
+                           value="{{ team.nickname }}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Founded Year</label>
+                <input type="number" name="yearfounded" class="form-control" placeholder="e.g. 1948" 
+                       value="{{ team.founded_year }}">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title"><i class="fas fa-dungeon"></i> Arena Details</div>
+            <div class="input-group-grid">
+                <div class="form-group">
+                    <label class="form-label">Arena Name</label>
+                    <input type="text" name="arena" class="form-control" placeholder="Stadium Name" 
+                           value="{{ team.arena }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Seat Capacity</label>
+                    <input type="number" name="arenacapacity" class="form-control" placeholder="e.g. 19000" 
+                           value="{{ team.arenacapacity }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title"><i class="fas fa-user-tie"></i> Management & Staff</div>
+            
+            <div class="input-group-grid">
+                <div class="form-group">
+                    <label class="form-label">Owner</label>
+                    <input type="text" name="owner" class="form-control" 
+                           value="{{ team.owner }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Manager</label>
+                    <input type="text" name="generalmanager" class="form-control" 
+                           value="{{ team.generalmanager }}">
+                </div>
+            </div>
+
+            <div class="input-group-grid">
+                <div class="form-group">
+                    <label class="form-label">Head Coach</label>
+                    <input type="text" name="headcoach" class="form-control" 
+                           value="{{ team.headcoach }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">D-League Affiliate</label>
+                    <input type="text" name="dleagueaffiliation" class="form-control" 
+                           value="{{ team.dleagueaffiliation }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="/teams" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-save">
+                {% if title == "Add Team" %}
+                    <i class="fas fa-plus me-2"></i>Create Franchise
+                {% else %}
+                    <i class="fas fa-save me-2"></i>Save Changes
+                {% endif %}
+            </button>
+        </div>
+    </form>
+
+    {% if title != "Add Team" %}
+    <div class="danger-zone">
+        <div class="danger-text">
+            <h4>Delete Franchise</h4>
+            <p>Once you delete a franchise, there is no going back. Please be certain.</p>
+        </div>
+        <a href="/teams/delete/{{ team.team_id }}" class="btn-delete" 
+           onclick="return confirm('WARNING: Are you absolutely sure you want to delete {{ team.nickname }}? This action cannot be undone.');">
+            <i class="fas fa-trash-alt me-2"></i>Delete Team
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

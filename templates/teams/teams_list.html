@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    /* 1. PROFESYONEL PAGE HEADER (Hero Alanı) */
+    .teams-page-header {
+        background: linear-gradient(to right, #0f172a, #1e293b);
+        padding: 80px 0 120px 0; /* Alttan boşluk bıraktık ki arama kutusu taşsın */
+        color: white;
+        text-align: center;
+        position: relative;
+        margin-bottom: 60px; /* Arama kutusu için yer */
+        overflow: hidden;
+    }
+
+    .header-bg-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 300px;
+        opacity: 0.03;
+        pointer-events: none;
+        color: white;
+    }
+
+    /* 2. MODERN ARAMA KUTUSU (Yüzen Kart) */
+    .search-container {
+        max-width: 1000px;
+        margin: -80px auto 50px auto; /* Header'ın üstüne bindirme efekti */
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        position: relative;
+        z-index: 10;
+        border: 1px solid #e2e8f0;
+    }
+
+    .form-label-custom {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #64748b;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-input-custom {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #f1f5f9;
+        border-radius: 10px;
+        font-weight: 600;
+        color: #334155;
+        transition: all 0.3s;
+        font-size: 0.95rem;
+    }
+    .form-input-custom:focus {
+        border-color: #2563eb;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    /* 3. KART IZGARASI */
+    .teams-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 30px;
+        padding-bottom: 50px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px 50px 20px;
+    }
+
+    /* KART TASARIMI */
+    .team-card-link { text-decoration: none; color: inherit; display: block; }
+    
+    .team-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+        position: relative;
+        height: 100%;
+    }
+
+    .team-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #cbd5e1;
+    }
+
+    .card-visual {
+        height: 180px;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .card-logo {
+        width: 110px;
+        height: 110px;
+        object-fit: contain;
+        filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));
+        transition: transform 0.3s;
+    }
+
+    .team-card:hover .card-logo { transform: scale(1.1); }
+
+    .card-info { padding: 25px; text-align: center; }
+    
+    .card-city { 
+        font-size: 0.8rem; 
+        text-transform: uppercase; 
+        letter-spacing: 2px; 
+        color: #94a3b8; 
+        font-weight: 700; 
+        margin-bottom: 5px;
+    }
+    
+    .card-name { 
+        font-size: 1.8rem; 
+        font-weight: 800; 
+        color: #0f172a; 
+        margin: 0; 
+        line-height: 1.2;
+    }
+
+    .card-meta {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: #64748b;
+    }
+    
+    .meta-item strong { display: block; color: #334155; font-size: 1rem; }
+
+    /* 4. MODERN PAGINATION (FOOTER KISMI) */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        margin-top: 20px;
+        padding-bottom: 60px;
+    }
+
+    .page-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: white;
+        padding: 12px 25px;
+        border-radius: 50px;
+        text-decoration: none;
+        color: #0f172a;
+        font-weight: 700;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s;
+    }
+
+    .page-btn:hover:not(.disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        background: #fbbf24; /* NBA Sarısı */
+        border-color: #fbbf24;
+        color: #0f172a;
+    }
+
+    .page-btn.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: #f1f5f9;
+        color: #94a3b8;
+    }
+
+    .page-info {
+        font-weight: 700;
+        color: #64748b;
+        background: white;
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+    }
+    
+    /* Layout Yardımcıları */
+    .row { display: flex; gap: 20px; flex-wrap: wrap; }
+    .col-5 { flex: 5; }
+    .col-3 { flex: 3; }
+    .col-2 { flex: 2; }
+    @media (max-width: 768px) { .row { flex-direction: column; } }
+
+</style>
+
+<div class="teams-page-header">
+    <i class="fas fa-basketball-ball header-bg-icon"></i>
+    <div style="position: relative; z-index: 2;">
+        <h1 style="font-size: 3.5rem; font-weight: 900; margin-bottom: 10px; 
+                   background: linear-gradient(to right, #ff416c, #ff4b2b); 
+                   -webkit-background-clip: text; 
+                   -webkit-text-fill-color: transparent; 
+                   filter: drop-shadow(0 0 15px rgba(255, 65, 108, 0.5));">
+            NBA Teams
+        </h1>
+        <p style="font-size: 1.2rem; opacity: 0.8; max-width: 600px; margin: 0 auto;">
+            Manage league franchises, view detailed rosters, and analyze head-to-head statistics.
+        </p>
+        <a href="/teams/add" style="display: inline-block; margin-top: 25px; background: rgba(255,255,255,0.1); color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); transition: all 0.3s;">
+            <i class="fas fa-plus me-2"></i> Add New Franchise
+        </a>
+    </div>
+</div>
+
+<div class="search-container">
+    <form method="GET">
+        <div class="row" style="align-items: flex-end;">
+            <div class="col-5">
+                <label class="form-label-custom"><i class="fas fa-search me-1"></i> Search Team</label>
+                <input type="text" name="search" class="form-input-custom" placeholder="Team Name, City or Abbr..." value="{{ request.args.get('search', '') }}">
+            </div>
+            <div class="col-3">
+                <label class="form-label-custom"><i class="fas fa-calendar me-1"></i> Est. After</label>
+                <input type="number" name="min_year" class="form-input-custom" placeholder="e.g. 1980" value="{{ request.args.get('min_year', '') }}">
+            </div>
+            <div class="col-2">
+                <label class="form-label-custom"><i class="fas fa-users me-1"></i> Min Capacity</label>
+                <input type="number" name="min_capacity" class="form-input-custom" placeholder="e.g. 18000" value="{{ request.args.get('min_capacity', '') }}">
+            </div>
+            <div class="col-2">
+                <button type="submit" style="width: 100%; padding: 12px; background: #0f172a; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; height: 100%;">
+                    Find
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="teams-grid">
+    {% for team in teams %}
+    <a href="/teams/{{ team.team_id }}" class="team-card-link">
+        <div class="team-card">
+            <div class="card-visual">
+                <img src="https://cdn.nba.com/logos/nba/{{ team.team_id }}/global/L/logo.svg" 
+                     onerror="this.src='https://cdn-icons-png.flaticon.com/512/889/889442.png'"
+                     alt="{{ team.nickname }}" 
+                     class="card-logo">
+            </div>
+            
+            <div class="card-info">
+                <div class="card-city">{{ team.city }}</div>
+                <h3 class="card-name">{{ team.nickname }}</h3>
+                
+                <div class="card-meta">
+                    <div class="meta-item">
+                        <small>FOUNDED</small>
+                        <strong>{{ team.founded_year or '????' }}</strong>
+                    </div>
+                    <div class="meta-item text-end">
+                        <small>ARENA</small>
+                        <strong>{{ "{:,}".format(team.arenacapacity) if team.arenacapacity else 'N/A' }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+{% if total_pages > 1 %}
+<div class="pagination-container">
+    <a href="?page={{ page - 1 }}{% if request.args.get('search') %}&search={{ request.args.get('search') }}{% endif %}{% if request.args.get('min_year') %}&min_year={{ request.args.get('min_year') }}{% endif %}" 
+       class="page-btn {% if page <= 1 %}disabled{% endif %}">
+        <i class="fas fa-arrow-left"></i> Previous
+    </a>
+
+    <div class="page-info">
+        Page {{ page }} of {{ total_pages }}
+    </div>
+
+    <a href="?page={{ page + 1 }}{% if request.args.get('search') %}&search={{ request.args.get('search') }}{% endif %}{% if request.args.get('min_year') %}&min_year={{ request.args.get('min_year') }}{% endif %}" 
+       class="page-btn {% if page >= total_pages %}disabled{% endif %}">
+        Next <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+{% endif %}
+
+{% endblock %}

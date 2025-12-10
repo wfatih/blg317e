@@ -1,0 +1,35 @@
+<div class="form-section">
+    <h3 class="section-title"><i class="fas fa-id-card"></i> General Info</h3>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Team ID (NBA API)</label>
+            <input type="number" name="team_id" class="form-control" 
+                   value="{{ team.team_id }}" 
+                   {{ 'readonly' if team.team_id else 'required' }}>
+        </div>
+        
+        <div class="form-group">
+            <label>Abbreviation</label>
+            <input type="text" name="abbreviation" class="form-control" 
+                   placeholder="e.g. LAL" value="{{ team.abbreviation }}" required maxlength="3">
+        </div>
+
+        <div class="form-group">
+            <label>City</label>
+            <input type="text" name="city" class="form-control" 
+                   value="{{ team.city }}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Nickname</label>
+            <input type="text" name="nickname" class="form-control" 
+                   value="{{ team.nickname }}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Year Founded</label>
+            <input type="number" name="yearfounded" class="form-control" 
+                   value="{{ team.yearfounded }}">
+        </div>
+    </div>
+</div>

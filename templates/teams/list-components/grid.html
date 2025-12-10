@@ -1,0 +1,40 @@
+<div class="teams-grid">
+    {% for team in teams %}
+    <a href="/teams/{{ team.team_id }}" class="team-card-link">
+        <div class="team-card">
+            <div class="card-header-visual">
+                <div class="legendary-player-overlay"></div>
+
+                <img src="https://cdn.nba.com/logos/nba/{{ team.team_id }}/global/L/logo.svg" 
+                     onerror="this.src='https://cdn-icons-png.flaticon.com/512/889/889442.png'"
+                     alt="{{ team.nickname }}" 
+                     class="team-logo-img">
+            </div>
+            
+            <div class="card-body">
+                <div class="team-city">{{ team.city }}</div>
+                <h3 class="team-name">{{ team.nickname }}</h3>
+                
+                <div class="team-info-row">
+                    <div class="info-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span class="info-label">Founded</span>
+                        <span>{{ team.yearfounded }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-users"></i>
+                        <span class="info-label">Capacity</span>
+                        <span>{{ "{:,}".format(team.arenacapacity) if team.arenacapacity else 'N/A' }}</span>
+                    </div>
+                </div>
+                
+                {% if team.arena %}
+                <div class="arena-badge">
+                    <i class="fas fa-map-marker-alt me-1"></i> {{ team.arena }}
+                </div>
+                {% endif %}
+            </div>
+            </div>
+    </a>
+    {% endfor %}
+</div>
