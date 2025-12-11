@@ -1,0 +1,44 @@
+<div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; overflow: hidden;">
+    <div class="card-header bg-white py-3">
+        <h6 class="mb-0 fw-bold text-primary">
+            <i class="fas fa-filter me-2"></i>Filter Teams
+        </h6>
+    </div>
+    <div class="card-body bg-light">
+        <form method="GET">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-5">
+                    <label class="form-label small text-muted fw-bold mb-1">Search Team</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                        <input type="text" name="search" class="form-control border-start-0" 
+                               placeholder="Name, City or Abbr..." 
+                               value="{{ request.args.get('search', '') }}">
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-bold mb-1">Est. After</label>
+                    <input type="number" name="min_year" class="form-control" 
+                           placeholder="e.g. 1980" 
+                           value="{{ request.args.get('min_year', '') }}">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label small text-muted fw-bold mb-1">Min. Capacity</label>
+                    <input type="number" name="min_capacity" class="form-control" 
+                           placeholder="e.g. 18000" 
+                           value="{{ request.args.get('min_capacity', '') }}">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label d-none d-md-block small text-muted fw-bold mb-1">&nbsp;</label>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Find</button>
+                        <a href="/teams" class="btn btn-outline-secondary" title="Clear"><i class="fas fa-undo"></i></a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

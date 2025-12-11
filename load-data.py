@@ -16,18 +16,38 @@ print("Loading teams...")
 with open("data/teams.csv", "r", encoding="utf-8") as f:
     reader = csv.DictReader(f)
     for row in reader:
+        
+        # Kapasite verisi bazen boş gelebiliyor, hata vermesin diye kontrol
+        capacity = row["ARENACAPACITY"]
+        if not capacity or capacity == "":
+            capacity = 0
+
         cur.execute("""
-            INSERT OR IGNORE INTO teams (team_id, team_name, conference, city, founded_year)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT OR IGNORE INTO teams (
+                team_id, team_name, nickname, abbreviation,
+                conference, city, founded_year,
+                owner, generalmanager, headcoach, dleagueaffiliation,
+                arena, arenacapacity
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             row["TEAM_ID"],
+            f"{row['CITY']} {row['NICKNAME']}", # Full Name
             row["NICKNAME"],
-            None,
+            row["ABBREVIATION"],
+            None, # Conference CSV'de yoksa None
             row["CITY"],
-            row["YEARFOUNDED"]
+            row["YEARFOUNDED"],
+            # Yeni eklediğimiz alanlar CSV'den çekiliyor:
+            row["OWNER"],
+            row["GENERALMANAGER"],
+            row["HEADCOACH"],
+            row["DLEAGUEAFFILIATION"],
+            row["ARENA"],
+            capacity
         ))
 
-        # Also insert Stadium data if available
+        # Stadiums tablosu (Arkadaşının mantığı korundu)
         if row["ARENA"]:
             cur.execute("""
                 INSERT OR IGNORE INTO stadiums (team_id, stadium_name, city, capacity)
@@ -36,10 +56,8 @@ with open("data/teams.csv", "r", encoding="utf-8") as f:
                 row["TEAM_ID"],
                 row["ARENA"],
                 row["CITY"],
-                row["ARENACAPACITY"]
+                capacity
             ))
-
-
 # -----------------------------
 # 2) PLAYERS
 # -----------------------------

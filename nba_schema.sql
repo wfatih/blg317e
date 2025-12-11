@@ -10,13 +10,24 @@ DROP TABLE IF EXISTS teams;
 -- 1) TEAMS TABLE
 ------------------------------------------------------------
 CREATE TABLE teams (
-    team_id        INTEGER PRIMARY KEY,
-    team_name      TEXT NOT NULL UNIQUE,
-    conference     TEXT,
-    city           TEXT,
-    founded_year   INTEGER
+    team_id             INTEGER PRIMARY KEY,
+    team_name           TEXT, -- Full Name (Atlanta Hawks)
+    nickname            TEXT, -- Hawks
+    abbreviation        TEXT, -- ATL
+    conference          TEXT,
+    city                TEXT,
+    founded_year        INTEGER,
+    
+    -- SENİN İÇİN EKLENEN YENİ SÜTUNLAR
+    owner               TEXT,
+    generalmanager      TEXT,
+    headcoach           TEXT,
+    dleagueaffiliation  TEXT,
+    
+    -- ARENA BİLGİSİ
+    arena               TEXT,
+    arenacapacity       INTEGER
 );
-
 ------------------------------------------------------------
 -- 2) PLAYERS TABLE
 ------------------------------------------------------------
