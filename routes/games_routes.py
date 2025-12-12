@@ -163,18 +163,18 @@ def game_detail(gid):
     con = db()
     cur = con.cursor()
 
-    # Get game with team names and stadium info
+    # Main game query with team info
     game = cur.execute("""
         SELECT 
             g.*,
-            t1.team_name AS home_team,
-            t2.team_name AS away_team,
-            s.stadium_name,
-            s.location
+            ht.team_name AS home_team,
+            at.team_name AS away_team,
+            ht.city AS home_city,
+            at.city AS away_city,
+            ht.arena AS home_arena
         FROM games g
-        JOIN teams t1 ON g.home_team_id = t1.team_id
-        JOIN teams t2 ON g.away_team_id = t2.team_id
-        LEFT JOIN stadiums s ON g.stadium_id = s.stadium_id
+        JOIN teams ht ON g.home_team_id = ht.team_id
+        JOIN teams at ON g.away_team_id = at.team_id
         WHERE g.game_id = ?
     """, (gid,)).fetchone()
 
@@ -182,10 +182,9 @@ def game_detail(gid):
         con.close()
         return "Game not found", 404
 
-    # Convert Row object to dict for easier access
     game_dict = dict(game)
     
-    # Add formatted date
+    # Format date
     if game_dict.get('game_date'):
         from datetime import datetime
         try:
@@ -196,45 +195,161 @@ def game_detail(gid):
     else:
         game_dict['date'] = None
 
-    # Prepare home team statistics
-    game_dict['home_stats'] = {
-        'Field Goal %': f"{game_dict['fg_pct_home']}%" if game_dict.get('fg_pct_home') else 'N/A',
-        'Free Throw %': f"{game_dict['ft_pct_home']}%" if game_dict.get('ft_pct_home') else 'N/A',
-        '3-Point %': f"{game_dict['fg3_pct_home']}%" if game_dict.get('fg3_pct_home') else 'N/A',
-        'Assists': game_dict.get('ast_home') or 'N/A',
-        'Rebounds': game_dict.get('reb_home') or 'N/A',
-    }
+    # SUBQUERY 1: Home Team Season Stats
+    home_stats = cur.execute("""
+        SELECT 
+            COUNT(*) as total_games,
+            SUM(CASE 
+                WHEN (home_team_id = ? AND home_team_wins = 1) 
+                  OR (away_team_id = ? AND home_team_wins = 0) 
+                THEN 1 ELSE 0 
+            END) as wins,
+            ROUND(AVG(CASE 
+                WHEN home_team_id = ? THEN home_team_score 
+                ELSE away_team_score 
+            END), 1) as avg_score
+        FROM games 
+        WHERE season = ? 
+          AND (home_team_id = ? OR away_team_id = ?)
+          AND game_date < ?
+    """, (game_dict['home_team_id'], game_dict['home_team_id'], 
+          game_dict['home_team_id'], game_dict['season'],
+          game_dict['home_team_id'], game_dict['home_team_id'],
+          game_dict['game_date'])).fetchone()
+    
+    game_dict['home_season_stats'] = dict(home_stats) if home_stats else {}
 
-    # Prepare away team statistics
-    game_dict['away_stats'] = {
-        'Field Goal %': f"{game_dict['fg_pct_away']}%" if game_dict.get('fg_pct_away') else 'N/A',
-        'Free Throw %': f"{game_dict['ft_pct_away']}%" if game_dict.get('ft_pct_away') else 'N/A',
-        '3-Point %': f"{game_dict['fg3_pct_away']}%" if game_dict.get('fg3_pct_away') else 'N/A',
-        'Assists': game_dict.get('ast_away') or 'N/A',
-        'Rebounds': game_dict.get('reb_away') or 'N/A',
-    }
+    # SUBQUERY 2: Away Team Season Stats
+    away_stats = cur.execute("""
+        SELECT 
+            COUNT(*) as total_games,
+            SUM(CASE 
+                WHEN (home_team_id = ? AND home_team_wins = 1) 
+                  OR (away_team_id = ? AND home_team_wins = 0) 
+                THEN 1 ELSE 0 
+            END) as wins,
+            ROUND(AVG(CASE 
+                WHEN home_team_id = ? THEN home_team_score 
+                ELSE away_team_score 
+            END), 1) as avg_score
+        FROM games 
+        WHERE season = ? 
+          AND (home_team_id = ? OR away_team_id = ?)
+          AND game_date < ?
+    """, (game_dict['away_team_id'], game_dict['away_team_id'],
+          game_dict['away_team_id'], game_dict['season'],
+          game_dict['away_team_id'], game_dict['away_team_id'],
+          game_dict['game_date'])).fetchone()
+    
+    game_dict['away_season_stats'] = dict(away_stats) if away_stats else {}
 
-    # Set venue info
-    if game_dict.get('stadium_name'):
-        venue = game_dict['stadium_name']
-        if game_dict.get('location'):
-            venue += f" - {game_dict['location']}"
-        game_dict['venue'] = venue
-    elif game_dict.get('arena_name'):
-        game_dict['venue'] = game_dict['arena_name']
-    else:
-        game_dict['venue'] = None
+    # SUBQUERY 3: Head to Head History
+    h2h_games = cur.execute("""
+        SELECT 
+            game_date,
+            home_team_score,
+            away_team_score,
+            home_team_wins,
+            CASE WHEN home_team_id = ? THEN 1 ELSE 0 END as is_team1_home
+        FROM games
+        WHERE ((home_team_id = ? AND away_team_id = ?) 
+            OR (home_team_id = ? AND away_team_id = ?))
+          AND game_date < ?
+        ORDER BY game_date DESC 
+        LIMIT 5
+    """, (game_dict['home_team_id'], 
+          game_dict['home_team_id'], game_dict['away_team_id'],
+          game_dict['away_team_id'], game_dict['home_team_id'],
+          game_dict['game_date'])).fetchall()
+    
+    game_dict['h2h_history'] = [dict(g) for g in h2h_games]
 
+    # SUBQUERY 4: Home Team Recent Form (Last 5 games)
+    home_form = cur.execute("""
+        SELECT 
+            game_date,
+            CASE WHEN home_team_id = ? THEN home_team_score ELSE away_team_score END as team_score,
+            CASE WHEN home_team_id = ? THEN away_team_score ELSE home_team_score END as opponent_score,
+            CASE 
+                WHEN (home_team_id = ? AND home_team_wins = 1) 
+                  OR (away_team_id = ? AND home_team_wins = 0) 
+                THEN 'W' ELSE 'L' 
+            END as result
+        FROM games
+        WHERE (home_team_id = ? OR away_team_id = ?)
+          AND game_date < ?
+        ORDER BY game_date DESC 
+        LIMIT 5
+    """, (game_dict['home_team_id'], game_dict['home_team_id'],
+          game_dict['home_team_id'], game_dict['home_team_id'],
+          game_dict['home_team_id'], game_dict['home_team_id'],
+          game_dict['game_date'])).fetchall()
+    
+    game_dict['home_form'] = [dict(g) for g in home_form]
+
+    # SUBQUERY 5: Away Team Recent Form (Last 5 games)
+    away_form = cur.execute("""
+        SELECT 
+            game_date,
+            CASE WHEN home_team_id = ? THEN home_team_score ELSE away_team_score END as team_score,
+            CASE WHEN home_team_id = ? THEN away_team_score ELSE home_team_score END as opponent_score,
+            CASE 
+                WHEN (home_team_id = ? AND home_team_wins = 1) 
+                  OR (away_team_id = ? AND home_team_wins = 0) 
+                THEN 'W' ELSE 'L' 
+            END as result
+        FROM games
+        WHERE (home_team_id = ? OR away_team_id = ?)
+          AND game_date < ?
+        ORDER BY game_date DESC 
+        LIMIT 5
+    """, (game_dict['away_team_id'], game_dict['away_team_id'],
+          game_dict['away_team_id'], game_dict['away_team_id'],
+          game_dict['away_team_id'], game_dict['away_team_id'],
+          game_dict['game_date'])).fetchall()
+    
+    game_dict['away_form'] = [dict(g) for g in away_form]
+
+    # SUBQUERY 6: Arena Statistics
+    if game_dict.get('arena_name'):
+        arena_stats = cur.execute("""
+            SELECT 
+                COUNT(*) as games_played,
+                ROUND(AVG(home_team_score + away_team_score), 1) as avg_total_score,
+                MAX(home_team_score + away_team_score) as highest_score
+            FROM games
+            WHERE arena_name = ?
+              AND game_date < ?
+        """, (game_dict['arena_name'], game_dict['game_date'])).fetchone()
+        
+        game_dict['arena_stats'] = dict(arena_stats) if arena_stats else {}
+
+    # Set venue
+    game_dict['venue'] = game_dict.get('arena_name') or game_dict.get('home_arena') or 'Not specified'
+    
     # Set scores
     game_dict['home_score'] = game_dict.get('home_team_score')
     game_dict['away_score'] = game_dict.get('away_team_score')
-    
-    # Set ID for template
     game_dict['id'] = gid
+
+    # Calculate win percentages
+    if game_dict['home_season_stats'].get('total_games', 0) > 0:
+        game_dict['home_win_pct'] = round(
+            (game_dict['home_season_stats']['wins'] / game_dict['home_season_stats']['total_games']) * 100, 1
+        )
+    else:
+        game_dict['home_win_pct'] = 0
+
+    if game_dict['away_season_stats'].get('total_games', 0) > 0:
+        game_dict['away_win_pct'] = round(
+            (game_dict['away_season_stats']['wins'] / game_dict['away_season_stats']['total_games']) * 100, 1
+        )
+    else:
+        game_dict['away_win_pct'] = 0
 
     con.close()
 
-    # Create a simple object to pass to template
+    # Create object for template
     class GameObj:
         def __init__(self, data):
             for key, value in data.items():

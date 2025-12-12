@@ -6,17 +6,219 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='games/list-css/filters.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='games/list-css/table.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='games/list-css/pagination.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="games-container">
-
     {% include "games/list-components/header.html" %}
     {% include "games/list-components/filters.html" %}
     {% include "games/list-components/table.html" %}
     {% include "games/list-components/pagination.html" %}
-
 </div>
 
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Enhanced JavaScript -->
+<script>
+// Smooth scroll to top on page load
+window.addEventListener('load', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Add animation on scroll
+var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+        }
+    });
+}, {
+    threshold: 0.1
+});
+
+// Observe all table rows
+document.querySelectorAll('.games-table tbody tr').forEach(function(row) {
+    observer.observe(row);
+});
+
+// Enhanced delete confirmation
+var deleteButtons = document.querySelectorAll('.btn-danger');
+deleteButtons.forEach(function(button) {
+    button.addEventListener('click', function(e) {
+        var confirmed = confirm('Are you sure you want to delete this game? This action cannot be undone.');
+        if (!confirmed) {
+            e.preventDefault();
+        }
+    });
+});
+
+// Add loading state to filter button
+var filterForm = document.querySelector('form');
+if (filterForm) {
+    filterForm.addEventListener('submit', function() {
+        var filterBtn = document.querySelector('.btn-filter');
+        if (filterBtn) {
+            filterBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Filtering...</span>';
+            filterBtn.style.pointerEvents = 'none';
+        }
+    });
+}
+
+// Highlight current filters
+var formControls = document.querySelectorAll('.form-control');
+formControls.forEach(function(control) {
+    if (control.value) {
+        control.style.borderColor = '#ffd700';
+        control.style.background = '#fffef0';
+    }
+    
+    control.addEventListener('change', function() {
+        if (this.value) {
+            this.style.borderColor = '#ffd700';
+            this.style.background = '#fffef0';
+        } else {
+            this.style.borderColor = 'transparent';
+            this.style.background = 'white';
+        }
+    });
+});
+
+// Add hover effect sound (optional - commented out)
+/*
+var allButtons = document.querySelectorAll('button, a.btn-primary, a.btn-sm');
+allButtons.forEach(function(btn) {
+    btn.addEventListener('mouseenter', function() {
+        // Add subtle sound effect here if desired
+    });
+});
+*/
+
+// Auto-refresh stats count with animation
+var totalCount = document.querySelector('.total-count');
+if (totalCount) {
+    var targetNumber = parseInt(totalCount.textContent);
+    var currentNumber = 0;
+    var increment = Math.ceil(targetNumber / 30);
+    
+    var timer = setInterval(function() {
+        currentNumber += increment;
+        if (currentNumber >= targetNumber) {
+            currentNumber = targetNumber;
+            clearInterval(timer);
+        }
+        totalCount.textContent = currentNumber;
+    }, 30);
+}
+
+// Add keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + K to focus search
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        var firstInput = document.querySelector('.filter-group .form-control');
+        if (firstInput) {
+            firstInput.focus();
+        }
+    }
+    
+    // Ctrl/Cmd + N for new game
+    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        e.preventDefault();
+        var newGameBtn = document.querySelector('.btn-primary');
+        if (newGameBtn) {
+            window.location.href = newGameBtn.href;
+        }
+    }
+});
+
+// Add tooltip functionality (optional)
+var tooltipElements = document.querySelectorAll('[data-tooltip]');
+tooltipElements.forEach(function(element) {
+    element.addEventListener('mouseenter', function() {
+        var tooltip = document.createElement('div');
+        tooltip.className = 'custom-tooltip';
+        tooltip.textContent = this.getAttribute('data-tooltip');
+        tooltip.style.position = 'absolute';
+        tooltip.style.background = '#2c3e50';
+        tooltip.style.color = 'white';
+        tooltip.style.padding = '8px 12px';
+        tooltip.style.borderRadius = '8px';
+        tooltip.style.fontSize = '0.85rem';
+        tooltip.style.zIndex = '10000';
+        tooltip.style.pointerEvents = 'none';
+        document.body.appendChild(tooltip);
+        
+        var rect = this.getBoundingClientRect();
+        tooltip.style.left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2) + 'px';
+        tooltip.style.top = rect.top - tooltip.offsetHeight - 8 + 'px';
+        
+        this._tooltip = tooltip;
+    });
+    
+    element.addEventListener('mouseleave', function() {
+        if (this._tooltip) {
+            this._tooltip.remove();
+            this._tooltip = null;
+        }
+    });
+});
+
+// Persist scroll position on back navigation
+window.addEventListener('beforeunload', function() {
+    sessionStorage.setItem('scrollPosition', window.scrollY);
+});
+
+var savedScrollPosition = sessionStorage.getItem('scrollPosition');
+if (savedScrollPosition) {
+    window.scrollTo(0, parseInt(savedScrollPosition));
+    sessionStorage.removeItem('scrollPosition');
+}
+</script>
+
+<style>
+/* Additional animation classes */
+.animate-in {
+    animation: slideInRow 0.5s ease-out !important;
+}
+
+@keyframes slideInRow {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Selection color */
+::selection {
+    background: #667eea;
+    color: white;
+}
+
+::-moz-selection {
+    background: #667eea;
+    color: white;
+}
+</style>
 
 {% endblock %}
