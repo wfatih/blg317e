@@ -6,6 +6,15 @@
 /* ============================================
    PLAYER VIEW - REFINED DESIGN
 ============================================ */
+.player-headshot {
+    width: auto;  /* İstediğin genişlik */
+    height: 130px;
+    object-fit: cover;
+    background-color: hsl(0, 0%, 94%); /* Arkaya hafif bir renk atmak şık durur */
+    border-radius: 50%; /* Yuvarlak yapmak istersen */
+    border: 8x solid #fff;
+}
+
 .player-view-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -522,15 +531,23 @@
         </nav>
     </div>
 
-    <!-- PLAYER HEADER -->
     <div class="player-header">
         <div class="player-header-content">
+            
+            <div class="player-image-wrapper">
+                <img 
+                    src="https://cdn.nba.com/headshots/nba/latest/1040x760/{{ player.player_id }}.png" 
+                    alt="{{ player.full_name }}"
+                    class="player-headshot"
+                    onerror="this.onerror=null; this.src='https://cdn.nba.com/headshots/nba/latest/1040x760/logoman.png';"
+                >
+                </div>
+
             <div class="player-main-info">
                 <h1>{{ player.full_name }}</h1>
                 <div class="player-meta">
                     <div class="player-meta-item">
-                        <i class="fas fa-hashtag"></i>
-                        ID: {{ player.player_id }}
+                        <i class="fas fa-fingerprint"></i> ID: #{{ player.player_id }}
                     </div>
                     {% if player.position %}
                     <div class="player-meta-item">
@@ -546,8 +563,7 @@
                     {% endif %}
                     {% if player.conference %}
                     <div class="player-meta-item">
-                        <i class="fas fa-layer-group"></i>
-                        {{ player.conference }}
+                        <i class="fas fa-globe-americas"></i> {{ player.conference }}
                     </div>
                     {% endif %}
                 </div>
@@ -569,6 +585,7 @@
                 </div>
             </div>
             {% endif %}
+            
         </div>
     </div>
 
