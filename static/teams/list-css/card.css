@@ -1,48 +1,110 @@
-/* Grid Container */
+/* --- Grid Container --- */
 .teams-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Biraz daha genişlettim */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2rem;
     padding: 1rem 0;
 }
 
-/* Kartın Kendisi - Artık bir <a> etiketi olacak */
+/* --- Link Yapısı --- */
 .team-card-link {
-    text-decoration: none; /* Link alt çizgisini kaldır */
-    color: inherit; /* Yazı rengini koru */
+    text-decoration: none;
+    color: inherit;
     display: block;
 }
 
+/* --- KARTIN KENDİSİ (ANA YAPICI) --- */
 .team-card {
     background: white;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Daha havalı bir geçiş efekti */
-    border: 1px solid #f0f0f0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
+    /* Layout Bozulmaması İçin Sabit Border */
+    border: 1px solid #f0f0f0; 
+    
     position: relative;
     display: flex;
     flex-direction: column;
     cursor: pointer;
+    
+    /* ÖNEMLİ: Z-index katmanlarını bu kutu içinde izole eder. 
+       Böylece 'z-index: -1' verdiğimiz resim kartın dışına taşmaz/kaybolmaz. */
+    isolation: isolate; 
 }
 
-/* Hover Efekti: Kart yukarı kalkar */
+/* --- ELEKTRİK EFEKTİ & HOVER DURUMU --- */
 .team-card:hover {
     transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 20px 30px rgba(0,0,0,0.15);
+    
+    /* Border kalınlığı artmıyor, sadece rengi değişiyor -> Zıplama yapmaz */
+    border-color: #00d2ff; 
+    
+    /* Elektrik gölgesi */
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.4), 
+                inset 0 0 10px rgba(0, 210, 255, 0.1);
+                
+    /* Titreşim Animasyonunu Tetikle */
+    animation: electric-pulse 0.15s infinite alternate;
 }
 
-/* Kart Üst Kısım (Logo ve Arkaplan) */
+/* Elektrik Titreşim Animasyonu (Cızz Efekti) */
+@keyframes electric-pulse {
+    0% {
+        border-color: #00d2ff;
+        box-shadow: 0 0 12px rgba(0, 210, 255, 0.5);
+    }
+    100% {
+        border-color: #52a5ff;
+        box-shadow: 0 0 18px rgba(0, 210, 255, 0.7);
+    }
+}
+
+/* --- EFSANE OYUNCU KATMANI (Arka Plan) --- */
+.legendary-player-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* Resmi HTML'den 'style' ile alacak, burayı boş bıraktık */
+    background-size: cover;
+    background-position: top center;
+    
+    opacity: 0; /* Başlangıçta görünmez */
+    z-index: -1; /* En altta duracak */
+    transition: all 0.5s ease;
+    
+    /* Siyah beyaz ve hafif kontrastlı mod */
+    filter: grayscale(100%) contrast(1.2);
+    mix-blend-mode: multiply; /* Arka planla kaynaşsın */
+}
+
+/* Hover olunca oyuncu belirsin */
+.team-card:hover .legendary-player-overlay {
+    opacity: 0.8 !important; /* Çok baskın olmasın, hayalet gibi */
+    transform: scale(1.05);
+}
+
+/* --- KART İÇERİK KATMANLARI (Önde Duracaklar) --- */
+
+/* 1. Logo Alanı */
 .card-header-visual {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    height: 160px; /* Biraz yükselttim */
+    height: 160px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    overflow: hidden; /* Taşmaları gizle */
+    overflow: hidden;
+    
+    z-index: 1; /* Oyuncunun üstünde */
+    transition: background 0.3s ease;
 }
 
+/* 2. Logo Resmi */
 .team-logo-img {
     width: 110px;
     height: 110px;
@@ -53,45 +115,38 @@
     position: relative;
 }
 
-/* Hover'da Logo Soluklaşır */
+/* Hover'da Logo Şeffaflaşır (Oyuncuyu görmek için) */
 .team-card:hover .team-logo-img {
-    opacity: 0.2;
+    opacity: 0.1; /* Logoyu neredeyse yok et */
     transform: scale(0.9);
 }
 
-/* --- EFSANE OYUNCU KATMANI (YENİ) --- */
-.legendary-player-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* Şimdilik temsili bir Michael Jordan silüeti kullanıyorum.
-       İleride veritabanından her takım için özel resim çekebiliriz. */
-    background-image: url('https://cdn.nba.com/manage/2021/08/michael-jordan-iso-crop-1568x882.jpg');
-    background-size: cover;
-    background-position: center top;
-    opacity: 0; /* Başlangıçta gizli */
-    z-index: 1;
-    transition: all 0.5s ease;
-    filter: grayscale(100%) contrast(120%); /* Siyah beyaz ve kontrastlı */
+/* Hover'da Header Arkaplanı Şeffaflaşır */
+.team-card:hover .card-header-visual {
+    background: rgba(248, 249, 250, 0.2); 
 }
 
-/* Hover'da Oyuncu Belirir */
-.team-card:hover .legendary-player-overlay {
-    opacity: 0.6; /* Çok net olmasın, arkada dursun */
-    transform: scale(1.1); /* Hafif yaklaşma efekti */
-}
-
-
-/* Kart İçerik */
+/* --- KART BODY (Yazı Alanı) --- */
 .card-body {
     padding: 1.5rem;
     text-align: center;
     border-top: 1px solid #eee;
-    background: #fff;
+    
+    /* Normalde beyaz */
+    background: #fff; 
+    
+    position: relative;
+    z-index: 1; /* Oyuncunun üstünde */
+    transition: background 0.3s ease;
 }
 
+/* Hover'da Body Arkaplanı Şeffaflaşır (Yazılar okunur kalsın diye %90 opaklık) */
+.team-card:hover .card-body {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(2px); /* Yazıların altını hafif buzla */
+}
+
+/* --- DİĞER TEXT STİLLERİ (Değişmedi) --- */
 .team-city {
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -126,6 +181,7 @@
     margin-bottom: 0.4rem;
     color: #3498db;
 }
+
 .info-label {
     font-weight: 600;
     font-size: 0.75rem;
@@ -143,6 +199,3 @@
     margin-top: 1rem;
     border: 1px solid #eee;
 }
-
-/* Butonları kaldırdık çünkü kartın kendisi tıklanabilir oldu.
-   Sadece admin işlemleri için küçük ikonlar bırakabiliriz ama şimdilik temiz kalsın. */

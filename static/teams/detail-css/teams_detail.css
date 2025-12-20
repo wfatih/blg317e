@@ -141,6 +141,36 @@
 .match-team-highlight {
     color: #2563eb !important;
 }
+/* HERO EFFECT LAYER (YAĞMUR / PARTİCLE İÇİN) */
+.rain-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1; /* hero-bg-logo'nun üstü, içeriklerin altı */
+}
+
+.rain-drop {
+    position: absolute;
+    width: 2px;
+    height: 24px;
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0.6)
+    );
+    animation: rain-fall linear infinite;
+    opacity: 0.8;
+}
+
+@keyframes rain-fall {
+    from {
+        transform: translateY(-120px);
+    }
+    to {
+        transform: translateY(600px);
+    }
+}
+
 
 .text-end { text-align: right; }
 .text-start { text-align: left; }
