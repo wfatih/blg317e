@@ -7,12 +7,12 @@
    PLAYER VIEW - REFINED DESIGN
 ============================================ */
 .player-headshot {
-    width: auto;  /* İstediğin genişlik */
-    height: 130px;
+    width: auto;
+    height: 110px;
     object-fit: cover;
-    background-color: hsl(0, 0%, 94%); /* Arkaya hafif bir renk atmak şık durur */
-    border-radius: 50%; /* Yuvarlak yapmak istersen */
-    border: 8x solid #fff;
+    background-color: hsl(0, 0%, 94%);
+    border-radius: 50%;
+    border: 8px solid #fff;
 }
 
 .player-view-container {
@@ -83,11 +83,11 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 1.5rem;
+    gap: 1.3rem;
 }
 
 .player-main-info h1 {
-    font-size: 2.5rem;
+    font-size: 2.3rem;
     font-weight: 700;
     margin: 0 0 0.75rem 0;
     letter-spacing: -0.02em;
@@ -106,7 +106,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 500;
 }
 
@@ -291,11 +291,12 @@
 }
 
 .data-table tbody tr {
-    transition: background 0.2s ease;
+    transition: all 0.25s ease;
 }
 
 .data-table tbody tr:hover {
-    background: #f8fafc;
+    background: linear-gradient(90deg, #f8fafc 0%, #f0f4ff 100%);
+    transform: scale(1.005);
 }
 
 .data-table td {
@@ -347,6 +348,7 @@
 
 .info-cards {
     display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
 }
 
@@ -366,7 +368,7 @@
 }
 
 .mini-card-header {
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: #1e293b;
     margin-bottom: 0.5rem;
@@ -377,12 +379,12 @@
 
 .mini-card-header i {
     color: #667eea;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .mini-card-subtitle {
     color: #64748b;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     margin-bottom: 0.75rem;
 }
 
@@ -409,6 +411,84 @@
     color: #94a3b8;
     text-transform: uppercase;
     margin-top: 0.25rem;
+}
+
+/* Enhanced Opponent Table Styling */
+.opponent-team-cell {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+
+.opponent-abbr {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 0.15rem;
+}
+
+.arena-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #475569;
+    font-size: 0.85rem;
+}
+
+.arena-cell i {
+    color: #94a3b8;
+}
+
+.career-avg-cell {
+    color: #64748b;
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+.games-count-cell {
+    font-weight: 600;
+    color: #334155;
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 0.35rem 0.65rem;
+    display: inline-block;
+}
+
+.performance-indicator {
+    position: relative;
+    font-weight: 700;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.performance-above {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #065f46;
+    box-shadow: 0 1px 3px rgba(5, 150, 105, 0.15);
+}
+
+.performance-below {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    color: #475569;
+}
+
+.stat-comparison {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.stat-comparison i {
+    font-size: 0.7rem;
+}
+
+.trend-up {
+    color: #059669;
+}
+
+.trend-neutral {
+    color: #64748b;
 }
 
 /* Empty State */
@@ -456,9 +536,16 @@
     transform: translateX(-3px);
 }
 
+.text-high-performance { color: #059669; }
+.text-normal { color: #1e293b; }
+
 /* Responsive */
 @media (max-width: 968px) {
     .two-column-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-cards {
         grid-template-columns: 1fr;
     }
 }
@@ -496,6 +583,10 @@
 
     .highlight-stats {
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .info-cards {
+        grid-template-columns: 1fr;
     }
 }
 </style>
@@ -541,7 +632,7 @@
                     class="player-headshot"
                     onerror="this.onerror=null; this.src='https://cdn.nba.com/headshots/nba/latest/1040x760/logoman.png';"
                 >
-                </div>
+            </div>
 
             <div class="player-main-info">
                 <h1>{{ player.full_name }}</h1>
@@ -671,7 +762,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for season in season_stats %}
+                {% for season in season_stats[:5] %}
                 <tr>
                     <td><span class="table-badge badge-season">{{ season.season }}</span></td>
                     <td style="text-align: center;">{{ season.games_played }}</td>
@@ -708,7 +799,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for g in game_stats[:15] %}
+                {% for g in game_stats[:5] %}
                 <tr>
                     <td>{{ g.game_date }}</td>
                     <td><span class="table-badge badge-season">{{ g.season }}</span></td>
@@ -740,15 +831,15 @@
     <!-- ARENAS & OPPONENTS -->
     <div class="two-column-grid">
         
-        <!-- ARENAS -->
-        <div>
+        <!-- ARENAS - NOW SPANS 2 COLUMNS -->
+        <div style="grid-column: span 2;">
             <h2 class="section-title">
                 <i class="fas fa-building"></i>
                 Arenas
             </h2>
             {% if arenas %}
             <div class="info-cards">
-                {% for arena in arenas[:8] %}
+                {% for arena in arenas[:6] %}
                 <div class="mini-card">
                     <div class="mini-card-header">
                         <i class="fas fa-map-marker-alt"></i>
@@ -774,53 +865,91 @@
             {% endif %}
         </div>
 
-        <!-- TOP OPPONENTS -->
-        <div>
+        <!-- TOP OPPONENTS - SPANS 2 COLUMNS WITH ENHANCED STYLING -->
+        <div style="grid-column: span 2;">
             <h2 class="section-title">
                 <i class="fas fa-users"></i>
-                Top Opponents
+                Opponent Analysis
             </h2>
             {% if opponents %}
-            <div class="info-cards">
-                {% for opp in opponents[:8] %}
-                <div class="mini-card">
-                    <div class="mini-card-header">
-                        <i class="fas fa-shield-alt"></i>
-                        {{ opp.team_name }}
-                    </div>
-                    <div class="mini-card-subtitle">{{ opp.abbreviation }}</div>
-                    <div class="mini-card-stats">
-                        <div class="mini-stat">
-                            <div class="mini-stat-value">{{ opp.games_against }}</div>
-                            <div class="mini-stat-label">Games</div>
-                        </div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-value">{{ opp.avg_points_vs }}</div>
-                            <div class="mini-stat-label">PPG</div>
-                        </div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-value">{{ opp.avg_assists_vs }}</div>
-                            <div class="mini-stat-label">APG</div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="empty-state">
-                <i class="fas fa-users"></i>
-                <div class="empty-state-text">No opponent data</div>
-            </div>
-            {% endif %}
-        </div>
-    </div>
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Opponent</th>
+                            <th>Arena</th>
+                            <th style="text-align: center;">Career Avg</th>
+                            <th style="text-align: center;">Games</th>
+                            <th style="text-align: center;">PPG vs Opp</th>
+                            <th style="text-align: center;">APG vs Opp</th>
+                            <th style="text-align: center;">RPG vs Opp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for opp in opponents[:5] %}
+                        <tr>
+                            <td>
+                                <div class="opponent-team-cell">{{ opp.team_name }}</div>
+                                <div class="opponent-abbr">{{ opp.abbreviation }}</div>
+                            </td>
+                            
+                            <td>
+                                {% if opp.stadium_name %}
+                                <div class="arena-cell">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>{{ opp.stadium_name }}</span>
+                                </div>
+                                {% else %}
+                                <span style="color: #cbd5e1;">—</span>
+                                {% endif %}
+                            </td>
 
-    <!-- BACK BUTTON -->
-    <a href="/players" class="btn-back">
-        <i class="fas fa-arrow-left"></i>
-        Back to Players
-    </a>
+                            <td style="text-align: center;">
+                                <span class="career-avg-cell">{{ opp.career_avg_pts }}</span>
+                            </td>
+
+                            <td style="text-align: center;">
+                                <span class="games-count-cell">{{ opp.games_against }}</span>
+                            </td>
+                            
+                            <td style="text-align: center;">
+                                <div class="stat-comparison">
+                                    <span class="performance-indicator {% if opp.avg_points_vs > opp.career_avg_pts %}performance-above{% else %}performance-below{% endif %}">
+                                        {{ opp.avg_points_vs }}
+                                    </span>
+                                    {% if opp.avg_points_vs > opp.career_avg_pts %}
+                                    <i class="fas fa-arrow-up trend-up"></i>
+                                    {% else %}
+                                    <i class="fas fa-minus trend-neutral"></i>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <td style="text-align: center; font-weight: 600; color: #475569;">
+{{ opp.avg_assists_vs }}
+</td>
+                        <td style="text-align: center; font-weight: 600; color: #475569;">
+                            {{ opp.avg_rebounds_vs }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-users"></i>
+            <div class="empty-state-text">No opponent data available</div>
+        </div>
+        {% endif %}
+    </div>
 
 </div>
 
+<!-- BACK BUTTON -->
+<a href="/players" class="btn-back">
+    <i class="fas fa-arrow-left"></i>
+    Back to Players
+</a>
+</div>
 {% endblock %}
