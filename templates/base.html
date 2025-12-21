@@ -23,7 +23,7 @@
         {% if session.get('logged_in') %}
             <li style="margin-left: 20px;">
                 <a href="{{ url_for('logout') }}" style="color: #ff4d4d; font-weight: bold;">
-                    Logout ({{ session.get('username') }})
+                    Logout
                 </a>
             </li>
         {% endif %}

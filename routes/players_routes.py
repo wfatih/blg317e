@@ -310,27 +310,43 @@ def view_player(pid):
     """, (pid,)).fetchall()
 
     # 7) OPPONENTS FACED (en çok karşılaştığı takımlar)
+    # 7) OPPONENTS FACED (GÜNCELLENMİŞ - KOMPLEKS SORGU)
+    # Kriterler: Nested Query, 4+ Table Join, Group By, Outer Join
     opponents = cur.execute("""
         SELECT 
             t.team_name,
             t.abbreviation,
+            s_venue.stadium_name,  -- 4. Tablo (Stadiums)
+            
+            -- Nested Query: Oyuncunun genel kariyer puan ortalamasını getirir
+            (SELECT ROUND(AVG(points), 1) FROM player_game_stats WHERE player_id = ?) as career_avg_pts,
+            
             COUNT(g.game_id) AS games_against,
             ROUND(AVG(s.points), 1) AS avg_points_vs,
             ROUND(AVG(s.assists), 1) AS avg_assists_vs,
             ROUND(AVG(s.rebounds), 1) AS avg_rebounds_vs
+            
         FROM player_game_stats s
         JOIN games g ON s.game_id = g.game_id
+        
+        -- Complex Join Logic: Rakip takımı bulmak için
         JOIN teams t ON (
             CASE 
                 WHEN g.home_team_id = ? THEN g.away_team_id
                 ELSE g.home_team_id
             END = t.team_id
         )
+        
+        -- Outer Join: Stadyum bilgisi (4. Tablo Bağlantısı)
+        LEFT JOIN stadiums s_venue ON t.team_id = s_venue.team_id
+
         WHERE s.player_id = ?
+        
+        -- Group By
         GROUP BY t.team_id
         ORDER BY games_against DESC
         LIMIT 10
-    """, (player['team_id'], pid)).fetchall()
+    """, (pid, player['team_id'], pid)).fetchall()
 
     con.close()
 
