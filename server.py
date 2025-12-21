@@ -1,32 +1,84 @@
 from datetime import datetime
 import sqlite3
+from flask import Flask, render_template, request, redirect, url_for, session
+from werkzeug.security import check_password_hash
 
-from flask import Flask, render_template, request, redirect, url_for
+# Eğer blueprint dosyaların varsa bunları tutabilirsin,
+# ancak aşağıdaki kodlar ana dosyada tanımlı olduğu için çakışma olmaması adına
+# blueprint rotalarının bu dosyadaki rotalarla aynı URL'yi kullanmadığından emin ol.
 from routes.players_routes import players_bp
 from routes.games_routes import games_bp
 from routes.teams_routes import teams_bp
 
 app = Flask(__name__)
 
+# --- AYARLAR ---
+# Session güvenliği için rastgele bir anahtar. Bunu canlı ortamda gizli tutmalısın.
+app.secret_key = "super_gizli_nba_anahtari"
+
 app.register_blueprint(players_bp)
 app.register_blueprint(games_bp)
 app.register_blueprint(teams_bp)
 
-# -------- HOME --------
-@app.route("/")
+# ==========================================
+# LOGIN & AUTHENTICATION (GİRİŞ İŞLEMLERİ)
+# ==========================================
+@app.route("/", methods=["GET", "POST"])
+def login_page():
+    if "logged_in" in session:
+        return redirect(url_for("home_page"))
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        con = sqlite3.connect("nba.db")
+        con.row_factory = sqlite3.Row
+        cur = con.cursor()
+
+        user = cur.execute("SELECT * FROM admins WHERE username = ?", (username,)).fetchone()
+        con.close()
+
+        # KONTROL BURADA DEĞİŞTİ:
+        # User varsa VE hash'ler eşleşiyorsa giriş yap
+        if user and check_password_hash(user["password"], password):
+            session["logged_in"] = True
+            session["username"] = user["username"]
+            return redirect(url_for("home_page"))
+        else:
+            return render_template("login.html", error="Hatalı kullanıcı adı veya şifre!")
+
+    return render_template("login.html")
+
+
+# ==========================================
+# ANA SAYFA (DASHBOARD)
+# ==========================================
+
+@app.route("/home")
 def home_page():
+    # GÜVENLİK KONTROLÜ
+    if "logged_in" not in session:
+        return redirect(url_for("login_page"))
+
     today = datetime.today()
     day_name = today.strftime("%A")
     return render_template("home.html", date=day_name)
 
-# -------- ARENAS PAGE --------
+
+# ==========================================
+# ARENAS (STADIUMS) BÖLÜMÜ
+# ==========================================
+
 @app.route("/arenas", methods=["GET", "POST"])
 def arenas_page():
+    if "logged_in" not in session: return redirect(url_for("login_page"))
+
     con = sqlite3.connect("nba.db")
     con.row_factory = sqlite3.Row
     cur = con.cursor()
 
-    # Handle Search
+    # Arama İşlemi
     search_query = request.args.get("search", "")
     if search_query:
         query = """
@@ -47,7 +99,7 @@ def arenas_page():
     
     arenas = cur.fetchall()
 
-    # Get Teams for Dropdown
+    # Dropdown için takımlar
     cur.execute("SELECT * FROM teams")
     teams = cur.fetchall()
 
@@ -56,6 +108,8 @@ def arenas_page():
 
 @app.route("/arenas/add", methods=["POST"])
 def add_arena():
+    if "logged_in" not in session: return redirect(url_for("login_page"))
+
     stadium_name = request.form.get("stadium_name")
     city = request.form.get("city")
     capacity = request.form.get("capacity")
@@ -74,6 +128,8 @@ def add_arena():
 
 @app.route("/arenas/delete/<int:id>", methods=["POST"])
 def delete_arena(id):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
+
     con = sqlite3.connect("nba.db")
     cur = con.cursor()
     cur.execute("DELETE FROM stadiums WHERE stadium_id = ?", (id,))
@@ -83,6 +139,8 @@ def delete_arena(id):
 
 @app.route("/arenas/update/<int:id>", methods=["POST"])
 def update_arena(id):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
+
     stadium_name = request.form.get("stadium_name")
     city = request.form.get("city")
     capacity = request.form.get("capacity")
@@ -104,25 +162,33 @@ def update_arena(id):
     return redirect(url_for("arenas_page"))
 
 
-# -------- ABOUT PROJECT PAGE --------
+# ==========================================
+# ABOUT PAGE
+# ==========================================
+
 @app.route("/about")
 def about_page():
+    # Hakkımızda sayfası genelde herkese açıktır, ama istersen burayı da kilitleyebilirsin.
     return render_template("about.html")
 
 
+# ==========================================
+# PLAYERS (OYUNCULAR) BÖLÜMÜ
+# ==========================================
 
-# -------- PLAYERS LIST --------
 @app.route("/players")
 def players_page():
+    if "logged_in" not in session: return redirect(url_for("login_page"))
+
     con = sqlite3.connect("nba.db")
     con.row_factory = sqlite3.Row
     cur = con.cursor()
 
-    # GET parameters
+    # GET parametreleri
     team = request.args.get("team", "").strip()
     name = request.args.get("name", "").strip()
 
-    # Base query
+    # Temel sorgu
     query = """
         SELECT p.*, t.team_name
         FROM players p
@@ -131,12 +197,12 @@ def players_page():
     """
     params = []
 
-    # Name filter
+    # İsim filtresi
     if name:
         query += " AND p.full_name LIKE ?"
         params.append("%" + name + "%")
 
-    # Team filter
+    # Takım filtresi
     if team:
         query += " AND t.team_name = ?"
         params.append(team)
@@ -145,19 +211,17 @@ def players_page():
 
     players = cur.execute(query, params).fetchall()
 
-    # For dropdown list
+    # Dropdown için takımlar
     all_teams = cur.execute("SELECT team_name FROM teams ORDER BY team_name").fetchall()
 
     return render_template("players_list.html",
                            players=players,
                            teams=all_teams)
 
-
-
-
-# -------- ADD PLAYER --------
 @app.route("/players/add", methods=["GET", "POST"])
 def add_player():
+    if "logged_in" not in session: return redirect(url_for("login_page"))
+
     con = sqlite3.connect("nba.db")
     con.row_factory = sqlite3.Row
     cur = con.cursor()
@@ -186,14 +250,8 @@ def add_player():
         return redirect("/players")
 
     empty_player = {
-        "player_id": "",
-        "team_id": "",
-        "full_name": "",
-        "position": "",
-        "height_cm": "",
-        "weight_kg": "",
-        "birthdate": "",
-        "country": ""
+        "player_id": "", "team_id": "", "full_name": "", "position": "",
+        "height_cm": "", "weight_kg": "", "birthdate": "", "country": ""
     }
 
     return render_template(
@@ -203,10 +261,10 @@ def add_player():
         teams=teams
     )
 
-
-# -------- EDIT PLAYER --------
 @app.route("/players/edit/<int:pid>", methods=["GET", "POST"])
 def edit_player(pid):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
+
     con = sqlite3.connect("nba.db")
     con.row_factory = sqlite3.Row
     cur = con.cursor()
@@ -249,10 +307,10 @@ def edit_player(pid):
         teams=teams
     )
 
-
-# -------- DELETE PLAYER --------
 @app.route("/players/delete/<int:pid>")
 def delete_player(pid):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
+
     con = sqlite3.connect("nba.db")
     con.execute("PRAGMA foreign_keys = ON;")
     cur = con.cursor()
@@ -265,9 +323,15 @@ def delete_player(pid):
 
     return redirect("/players")
 
-# -------- TEAMS LIST --------
+
+# ==========================================
+# TEAMS (TAKIMLAR) BÖLÜMÜ
+# ==========================================
+
 @app.route("/teams")
 def teams_page():
+    if "logged_in" not in session: return redirect(url_for("login_page"))
+
     con = sqlite3.connect("nba.db")
     con.row_factory = sqlite3.Row
     cur = con.cursor()
@@ -280,9 +344,14 @@ def teams_page():
     return render_template("teams_list.html", teams=teams)
 
 
-# -------- STATISTICS LIST --------
+# ==========================================
+# STATISTICS (İSTATİSTİKLER) BÖLÜMÜ
+# ==========================================
+
 @app.route("/statistics")
 def statistics_page():
+    if "logged_in" not in session: return redirect(url_for("login_page"))
+
     with sqlite3.connect("nba.db") as con:
         con.row_factory = sqlite3.Row
         cur = con.cursor()
@@ -307,9 +376,10 @@ def statistics_page():
         total_pages=total_pages
     )
 
-# -------- ADD STATISTIC --------
 @app.route("/statistics/add", methods=["GET", "POST"])
 def add_statistic():
+    if "logged_in" not in session: return redirect(url_for("login_page"))
+
     with sqlite3.connect("nba.db") as con:
         con.row_factory = sqlite3.Row
         cur = con.cursor()
@@ -337,13 +407,8 @@ def add_statistic():
             return redirect("/statistics")
 
     empty_statistic = {
-        "stat_id": "",
-        "player_id": "",
-        "game_id": "",
-        "points": "",
-        "assists": "",
-        "rebounds": "",
-        "minutes_played": "",
+        "stat_id": "", "player_id": "", "game_id": "",
+        "points": "", "assists": "", "rebounds": "", "minutes_played": "",
     }
 
     return render_template(
@@ -354,9 +419,10 @@ def add_statistic():
         games=games
     )
 
-# -------- EDIT STATISTIC --------
 @app.route("/statistics/edit/<int:sid>", methods=["GET", "POST"])
 def edit_statistic(sid):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
+
     with sqlite3.connect("nba.db") as con:
         con.row_factory = sqlite3.Row
         cur = con.cursor()
@@ -399,9 +465,10 @@ def edit_statistic(sid):
         games=games
     )
 
-# -------- DELETE STATISTIC --------
 @app.route("/statistics/delete/<int:sid>")
 def delete_statistic(sid):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
+
     with sqlite3.connect("nba.db") as con:
         con.execute("PRAGMA foreign_keys = ON;")
         cur = con.cursor()
@@ -414,6 +481,10 @@ def delete_statistic(sid):
 
         return redirect("/statistics")
 
-# -------- RUN APP --------
+
+# ==========================================
+# UYGULAMAYI BAŞLAT
+# ==========================================
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
