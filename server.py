@@ -285,6 +285,51 @@ def arena_detail(id):
             "best_performances": best_performances
         }
 
+        # 9. Legendary Seasons in this Arena (Home Team Players Only)
+        # We group by player and season to find who had the best "season average" in this specific building.
+        # Note: We use players.team_id to ensure we only show the Home Team's legends.
+        legend_query = """
+            SELECT 
+                p.player_id,
+                p.full_name, 
+                g.season,
+                COUNT(*) as gp,
+                ROUND(AVG(CAST(pgs.points as INTEGER)), 1) as ppg,
+                ROUND(AVG(CAST(pgs.rebounds as INTEGER)), 1) as rpg,
+                ROUND(AVG(CAST(pgs.assists as INTEGER)), 1) as apg
+            FROM player_game_stats pgs
+            JOIN games g ON pgs.game_id = g.game_id
+            JOIN players p ON pgs.player_id = p.player_id
+            WHERE g.home_team_id = ? 
+              AND p.team_id = ?
+            GROUP BY p.player_id, g.season
+            HAVING gp >= 30
+            ORDER BY ppg DESC
+            LIMIT 50
+        """
+        raw_legends = cur.execute(legend_query, (team_id, team_id)).fetchall()
+        
+        # Post-process: Format Season
+        unique_legends = []
+        
+        for row in raw_legends:
+            season_str = str(row["season"])
+            
+            try:
+                # Format 2022 -> 2022-2023
+                season_fmt = f"{season_str}-{int(season_str) + 1}"
+            except:
+                season_fmt = season_str
+                
+            item = dict(row)
+            item["season"] = season_fmt
+            unique_legends.append(item)
+            
+            if len(unique_legends) >= 5:
+                break
+                
+        stats["legends"] = unique_legends
+
     con.close()
     
     if not arena:

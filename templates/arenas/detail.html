@@ -133,6 +133,45 @@
                 <p>No major performances recorded yet.</p>
                 {% endif %}
             </div>
+
+            <div class="detail-section">
+                <h2>👑 Legendary Home Seasons (Best Team Players)</h2>
+                {% if stats.legends %}
+                <div class="table-responsive">
+                    <table class="games-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Player</th>
+                                <th>Season</th>
+                                <th>GP</th>
+                                <th>PPG</th>
+                                <th>RPG</th>
+                                <th>APG</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for leg in stats.legends %}
+                            <tr>
+                                <td>#{{ loop.index }}</td>
+                                <td>
+                                    <a href="/players/view/{{ leg.player_id }}" class="player-link">{{ leg.full_name
+                                        }}</a>
+                                </td>
+                                <td>{{ leg.season }}</td>
+                                <td>{{ leg.gp }}</td>
+                                <td><strong>{{ leg.ppg }}</strong></td>
+                                <td>{{ leg.rpg }}</td>
+                                <td>{{ leg.apg }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p>No historical season data available.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
