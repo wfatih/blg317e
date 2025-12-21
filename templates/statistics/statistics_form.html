@@ -1,0 +1,637 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+        background: #ffffff;
+        min-height: 100vh;
+        padding: 40px 20px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    /* Glass Container */
+    .form-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        padding: 0;
+        max-width: 800px;
+        margin: 0 auto;
+        overflow: visible; /* Changed to visible so dropdown can appear */
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        animation: slideUp 0.5s ease;
+    }
+    
+    @keyframes slideUp {
+        from { 
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Header Section */
+    .form-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .form-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+    }
+    
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    .form-header h2 {
+        font-weight: 800;
+        font-size: 2.2rem;
+        letter-spacing: -1px;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 2px 20px rgba(0,0,0,0.2);
+    }
+    
+    .form-header::after {
+        content: '📊';
+        position: absolute;
+        bottom: -20px;
+        right: 40px;
+        font-size: 6rem;
+        opacity: 0.15;
+        z-index: 0;
+    }
+
+    /* Form Body */
+    .form-body {
+        padding: 40px;
+    }
+
+    /* Error Alert */
+    .alert-danger {
+        border-radius: 16px;
+        border: none;
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #b91c1c;
+        padding: 20px;
+        margin-bottom: 30px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(185, 28, 28, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .alert-danger::before {
+        content: '⚠️';
+        font-size: 1.5rem;
+    }
+
+    /* Section Titles */
+    .form-section-title {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #667eea;
+        font-weight: 800;
+        margin-bottom: 25px;
+        padding-bottom: 12px;
+        border-bottom: 3px solid transparent;
+        background: linear-gradient(90deg, #667eea 0%, transparent 100%) bottom / 100% 3px no-repeat;
+        position: relative;
+    }
+    
+    .form-section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -3px;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    /* Input Styling */
+    .form-floating {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    
+    .form-control, .form-select {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #000000 !important;
+        height: 58px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 18px 16px;
+        transition: all 0.3s ease;
+        background: white;
+        width: 100%;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    .form-control:disabled, .form-select:disabled {
+        color: #9ca3af !important;
+        background-color: #f9fafb;
+        opacity: 1;
+        cursor: not-allowed;
+    }
+    
+    .form-floating > label {
+        padding-left: 16px;
+        color: #6b7280;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus ~ label,
+    .form-control:not(:placeholder-shown) ~ label {
+        color: #667eea;
+    }
+
+    /* Stat Inputs (Centered Numbers) */
+    .stat-input {
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.3rem;
+        background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+    }
+    
+    .stat-input:focus {
+        background: white;
+    }
+
+    /* Read Only Boxes (Edit Mode) */
+    .read-only-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6b7280;
+        margin-bottom: 8px;
+        font-weight: 700;
+    }
+    
+    .read-only-box {
+        background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 18px;
+        color: #000000 !important;
+        font-weight: 600;
+        width: 100%;
+        word-wrap: break-word;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        min-height: 58px;
+    }
+
+    /* Spinner */
+    .spinner-overlay {
+        position: absolute;
+        right: 18px;
+        top: 20px;
+        display: none;
+        width: 24px;
+        height: 24px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #667eea;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        z-index: 5;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Grid Layout for Stats */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        padding-top: 20px;
+    }
+    
+    .btn-save {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border: none;
+        padding: 16px;
+        font-weight: 700;
+        font-size: 1rem;
+        color: white;
+        border-radius: 12px;
+        flex: 1;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .btn-save:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    }
+    
+    .btn-save:active {
+        transform: translateY(0);
+    }
+
+    .btn-cancel {
+        background: white;
+        color: #ef4444;
+        border: 2px solid #ef4444;
+        padding: 16px;
+        font-weight: 700;
+        font-size: 1rem;
+        border-radius: 12px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .btn-cancel:hover {
+        background: #ef4444;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Section Spacing */
+    .section-container {
+        margin-bottom: 40px;
+    }
+    
+    .section-container:last-of-type {
+        margin-bottom: 0;
+    }
+
+    /* NEW: Suggestions Dropdown */
+    .suggestions-dropdown {
+        position: absolute; 
+        top: 100%; 
+        left: 0; 
+        right: 0;
+        background: white; 
+        border: 1px solid #e5e7eb; 
+        border-radius: 12px;
+        margin-top: 5px; 
+        max-height: 250px; 
+        overflow-y: auto;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+        z-index: 100; 
+        display: none;
+    }
+    
+    .suggestion-item {
+        padding: 12px 16px; 
+        cursor: pointer; 
+        font-weight: 500; 
+        color: #333;
+        border-bottom: 1px solid #f3f4f6; 
+        transition: background 0.2s;
+    }
+    
+    .suggestion-item:last-child {
+        border-bottom: none;
+    }
+    
+    .suggestion-item:hover { 
+        background: #f3f4f6; 
+        color: #667eea; 
+    }
+</style>
+
+<div class="form-card">
+    <div class="form-header">
+        <h2>{{ title }}</h2>
+    </div>
+
+    <div class="form-body">
+        {% if error %}
+        <div class="alert-danger">
+            <strong>Error:</strong> {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" autocomplete="off">
+            <input type="hidden" name="stat_id" value="{{ statistic.stat_id }}">
+
+            <div class="section-container">
+                <h5 class="form-section-title">Match Information</h5>
+                
+                {% if statistic.stat_id %}
+                    <div class="mb-3">
+                        <div class="read-only-label">Date</div>
+                        <div class="read-only-box">{{ statistic.game_date }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="read-only-label">Game</div>
+                        <div class="read-only-box">
+                            Game {{ statistic.game_id }}: {{ statistic.home_name }} vs {{ statistic.away_name }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="read-only-label">Player</div>
+                        <div class="read-only-box">{{ statistic.full_name }}</div>
+                    </div>
+
+                {% else %}
+                    <div class="form-floating mb-3">
+                        <input 
+                            type="date" 
+                            name="game_date"
+                            id="dateSelect" 
+                            class="form-control context-input" 
+                            value="{{ statistic.game_date }}"
+                            placeholder="Date"
+                        >
+                        <label for="dateSelect">Date</label>
+                    </div>
+
+                    <div class="form-floating mb-3 position-relative">
+                        <select name="game_id" id="gameSelect" class="form-select context-input" required disabled>
+                            <option value="">-- First Select Date --</option>
+                        </select>
+                        <label for="gameSelect">Game</label>
+                        <div id="gameLoader" class="spinner-overlay"></div>
+                    </div>
+
+                    <div class="form-floating mb-3 position-relative">
+                        <input type="text" id="playerSearch" class="form-control" placeholder="Search Player..." disabled>
+                        <input type="hidden" name="player_id" id="playerIdHidden" required>
+                        <label for="playerSearch">Player (Search)</label>
+                        
+                        <div id="playerSuggestions" class="suggestions-dropdown"></div>
+                        <div id="playerLoader" class="spinner-overlay"></div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="section-container">
+                <h5 class="form-section-title">Player Statistics</h5>
+                
+                <div class="stats-grid">
+                    <div class="form-floating">
+                        <input type="number" name="points" id="ptsInput" class="form-control stat-input" value="{{ statistic.points }}" min="0" placeholder="0" required>
+                        <label for="ptsInput">Points</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="number" name="assists" id="astInput" class="form-control stat-input" value="{{ statistic.assists }}" min="0" placeholder="0" required>
+                        <label for="astInput">Assists</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="number" name="rebounds" id="rebInput" class="form-control stat-input" value="{{ statistic.rebounds }}" min="0" placeholder="0" required>
+                        <label for="rebInput">Rebounds</label>
+                    </div>
+                </div>
+
+                <div class="form-floating">
+                    <input type="number" step="0.1" name="minutes_played" id="minInput" class="form-control stat-input" value="{{ '%.1f'|format(statistic.minutes_played) if statistic.minutes_played else '' }}" min="0" max="65" placeholder="0.0" required>
+                    <label for="minInput">Minutes Played</label>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="/statistics" class="btn-cancel">Cancel</a>
+                <button type="submit" class="btn-save" id="saveBtn">Save Statistics</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const dateInput = document.getElementById('dateSelect');
+    
+    if (dateInput) {
+        const gameSelect = document.getElementById('gameSelect');
+        const gameLoader = document.getElementById('gameLoader');
+        
+        // Player Autocomplete Elements
+        const playerSearch = document.getElementById('playerSearch');
+        const playerIdHidden = document.getElementById('playerIdHidden');
+        const playerSuggestions = document.getElementById('playerSuggestions');
+        const playerLoader = document.getElementById('playerLoader');
+        
+        // Store valid players for the selected game
+        let availablePlayers = [];
+
+        dateInput.addEventListener('change', function() {
+            const dateVal = this.value;
+            
+            gameSelect.innerHTML = '<option value="">Loading games...</option>';
+            gameSelect.disabled = true;
+            
+            // Reset Player
+            playerSearch.value = '';
+            playerSearch.disabled = true;
+            playerIdHidden.value = '';
+            availablePlayers = [];
+
+            if (!dateVal) return;
+
+            gameLoader.style.display = 'block';
+
+            fetch(`/api/games?date=${dateVal}`)
+                .then(res => res.json())
+                .then(data => {
+                    gameSelect.innerHTML = '<option value="">-- Select Game --</option>';
+                    if (data.length === 0) {
+                        const opt = document.createElement('option');
+                        opt.text = "No games found on this date";
+                        gameSelect.add(opt);
+                    } else {
+                        data.forEach(g => {
+                            const opt = document.createElement('option');
+                            opt.value = g.id;
+                            opt.text = g.label;
+                            gameSelect.add(opt);
+                        });
+                        gameSelect.disabled = false;
+                    }
+                })
+                .finally(() => { gameLoader.style.display = 'none'; });
+        });
+
+        gameSelect.addEventListener('change', function() {
+            const gameId = this.value;
+            
+            playerSearch.value = '';
+            playerIdHidden.value = '';
+            playerSearch.disabled = true;
+            availablePlayers = [];
+
+            if (!gameId) return;
+
+            playerLoader.style.display = 'block';
+            playerSearch.placeholder = "Loading players...";
+
+            fetch(`/api/game/${gameId}/players`)
+                .then(res => res.json())
+                .then(data => {
+                    availablePlayers = data; // Store data locally
+                    playerSearch.disabled = false;
+                    playerSearch.placeholder = "Type to search players...";
+                    playerSearch.focus();
+                })
+                .catch(err => {
+                    playerSearch.placeholder = "Error loading players";
+                })
+                .finally(() => { playerLoader.style.display = 'none'; });
+        });
+
+        // Search Filter Logic
+        playerSearch.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            playerSuggestions.innerHTML = '';
+            
+            if (query.length === 0) {
+                // Show all if empty for convenience
+                renderSuggestions(availablePlayers);
+                return;
+            }
+
+            const filtered = availablePlayers.filter(p => p.name.toLowerCase().includes(query));
+            renderSuggestions(filtered);
+        });
+
+        // Show suggestions on click if loaded
+        playerSearch.addEventListener('click', function() {
+            if (availablePlayers.length > 0) {
+                renderSuggestions(availablePlayers);
+            }
+        });
+
+        function renderSuggestions(list) {
+            playerSuggestions.innerHTML = '';
+            if (list.length === 0) {
+                playerSuggestions.style.display = 'none';
+                return;
+            }
+
+            list.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = p.name;
+                
+                div.addEventListener('click', function() {
+                    playerSearch.value = p.name;
+                    playerIdHidden.value = p.id;
+                    playerSuggestions.style.display = 'none';
+                    
+                    // Trigger Conflict Check immediately
+                    checkConflict(p.id, gameSelect.value);
+                });
+                
+                playerSuggestions.appendChild(div);
+            });
+            playerSuggestions.style.display = 'block';
+        }
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target !== playerSearch && e.target !== playerSuggestions) {
+                playerSuggestions.style.display = 'none';
+            }
+        });
+
+        function checkConflict(pid, gid) {
+            fetch(`/api/check_stat_exists?player_id=${pid}&game_id=${gid}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.exists) {
+                        if (confirm(`Statistics already exist for this player in this game.\n\nWould you like to edit them instead?`)) {
+                            window.location.href = `/statistics/edit/${data.stat_id}`;
+                        } else {
+                            // If they say no, clear the input
+                            playerSearch.value = '';
+                            playerIdHidden.value = '';
+                        }
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+    }
+
+    // Form validation
+    const form = document.querySelector('form');
+    const minInput = document.getElementById('minInput');
+    const ptsInput = document.getElementById('ptsInput');
+    const astInput = document.getElementById('astInput');
+    const rebInput = document.getElementById('rebInput');
+    
+    if (form && minInput) {
+        form.addEventListener('submit', function(e) {
+            const minutes = parseFloat(minInput.value) || 0;
+            const points = parseInt(ptsInput.value) || 0;
+            const assists = parseInt(astInput.value) || 0;
+            const rebounds = parseInt(rebInput.value) || 0;
+            
+            if (minutes === 0 && (points > 0 || assists > 0 || rebounds > 0)) {
+                e.preventDefault();
+                alert('If minutes played is 0, all other stats must also be 0.');
+                return false;
+            }
+        });
+    }
+    
+    // Crop minutes to 1 decimal place on blur
+    if (minInput) {
+        minInput.addEventListener('blur', function() {
+            const val = parseFloat(this.value);
+            if (!isNaN(val)) {
+                this.value = val.toFixed(1);
+            }
+        });
+    }
+</script>
+
+{% endblock %}

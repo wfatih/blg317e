@@ -1,0 +1,839 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistics Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Glassmorphism Container */
+        .glass-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 0;
+            max-width: 1400px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: visible; /* Changed to visible so dropdown can overflow if needed */
+            border: 1px solid #e5e7eb;
+        }
+
+        /* Modern Header */
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 40px 50px;
+            position: relative;
+            overflow: hidden;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, -20px); }
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-title h1 { 
+            margin: 0; 
+            font-size: 2.5rem; 
+            font-weight: 800;
+            letter-spacing: -1px;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .page-title p { 
+            margin: 8px 0 0; 
+            opacity: 0.95; 
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Floating Action Button */
+        .btn-add {
+            background: white;
+            color: #764ba2;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        
+        .btn-add:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+            color: #5a3a82;
+        }
+        
+        .btn-add::before {
+            content: '➕';
+            font-size: 1.2rem;
+        }
+
+        /* Content Area */
+        .content-wrapper {
+            padding: 30px 40px 40px;
+        }
+
+        /* Filter Section */
+        .filter-container {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .filter-group { 
+            flex: 1; 
+            min-width: 200px;
+            position: relative; /* Essential for absolute positioning of dropdown */
+        }
+        
+        .filter-group label { 
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .filter-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-weight: 600;
+            background: white;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .filter-select:focus {
+            border-color: #764ba2;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+        }
+
+        /* NEW: Autocomplete Dropdown Styles */
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            margin-top: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+        }
+        
+        .suggestion-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #333;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background 0.2s;
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .suggestion-item:hover {
+            background: #f3f4f6;
+            color: #764ba2;
+        }
+        
+        .suggestion-item strong {
+            color: #764ba2;
+        }
+
+        .btn-filter {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+        }
+        
+        .btn-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(118, 75, 162, 0.4);
+        }
+
+        /* Return Bar */
+        .return-bar {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #0d47a1;
+            border: none;
+            padding: 18px 25px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(13, 71, 161, 0.1);
+        }
+        
+        .btn-return {
+            background: white;
+            color: #0d47a1;
+            border: 2px solid #0d47a1;
+            padding: 8px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-return:hover {
+            background: #0d47a1;
+            color: white;
+            transform: translateX(-5px);
+        }
+
+        /* Stat Summary Card */
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-left: 6px solid #27ae60;
+            padding: 25px 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+        }
+        
+        .stat-divider {
+            padding-right: 30px;
+            border-right: 2px solid #e0e0e0;
+        }
+        
+        .stat-divider strong {
+            font-size: 1.2rem;
+            color: #27ae60;
+            font-weight: 800;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #333;
+            line-height: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Modern Table */
+        .custom-table-container {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .custom-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .custom-table th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+        
+        .custom-table tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .custom-table tbody tr:hover {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+            transform: scale(1.01);
+        }
+        
+        .custom-table td {
+            padding: 18px 20px;
+            vertical-align: middle;
+            font-weight: 500;
+        }
+        
+        .sort-link {
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+        
+        .sort-link:hover {
+            opacity: 0.8;
+        }
+        
+        .sort-link::after {
+            content: '↕';
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        /* Badge */
+        .badge {
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: inline-block;
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-left: 6px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-view {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(118, 75, 162, 0.4);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Pagination */
+        .pagination-wrapper {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .pagination-container {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .page-btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 16px;
+            height: 44px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            color: #555;
+            text-decoration: none;
+            font-weight: 600;
+            min-width: 44px;
+            transition: all 0.3s ease;
+        }
+        
+        .page-btn:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+        
+        .page-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+        }
+        
+        .page-btn.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        .goto-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .goto-input {
+            width: 60px;
+            height: 36px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .goto-input:focus {
+            border-color: #764ba2;
+            outline: none;
+        }
+        
+        .goto-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            height: 36px;
+            padding: 0 20px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        
+        .goto-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            color: #999;
+        }
+        
+        .empty-state::before {
+            content: '📊';
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+            
+            .filter-container {
+                flex-direction: column;
+            }
+            
+            .stat-card {
+                flex-wrap: wrap;
+            }
+            
+            .content-wrapper {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glass-container">
+        <div class="page-header">
+            <div class="header-content">
+                <div class="page-title">
+                    <h1>Player Statistics</h1>
+                    <p>Track performance, analyze games, and manage records.</p>
+                </div>
+                <a href="/statistics/add" class="btn-add">
+                    Add New Stat
+                </a>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            {% if filter_date or filter_game_id or filter_player_id or filter_name %}
+                <div class="return-bar">
+                    <span>🔍 Viewing Filtered Statistics</span>
+                    <a href="/statistics" class="btn-return">← Return to Full List</a>
+                </div>
+            {% endif %}
+
+            {% if not (filter_date or filter_game_id or filter_player_id or filter_name) %}
+                <form method="GET" action="/statistics" class="filter-container">
+                    {# NEW: Search Name Input with Autocomplete Container #}
+                    <div class="filter-group">
+                        <label>Search Name</label>
+                        <input type="text" name="name" id="nameInput" class="filter-select" 
+                               placeholder="e.g. LeBron" value="{{ filter_name }}" autocomplete="off">
+                        <div id="nameSuggestions" class="suggestions-dropdown"></div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>1. Select Date</label>
+                        <input type="date" name="date" id="filterDate" class="filter-select" value="{{ filter_date }}">
+                    </div>
+
+                    <div class="filter-group">
+                        <label>2. Select Game</label>
+                        <select name="game_id" id="filterGame" class="filter-select" disabled>
+                            <option value="">-- All Games --</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>3. Select Player</label>
+                        <select name="player_id" id="filterPlayer" class="filter-select" disabled>
+                            <option value="">-- All Players --</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn-filter">Apply Filters</button>
+                    </div>
+                </form>
+            {% endif %}
+
+            {% if summary %}
+                <div class="stat-card">
+                    <div class="stat-divider">
+                        <strong>Filtered Selection</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Games</span>
+                        <span class="stat-value">{{ summary.games_played }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">PPG</span>
+                        <span class="stat-value">{{ "%.1f"|format(summary.ppg) }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">APG</span>
+                        <span class="stat-value">{{ "%.1f"|format(summary.apg) }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">RPG</span>
+                        <span class="stat-value">{{ "%.1f"|format(summary.rpg) }}</span>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="custom-table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            {% set url_params = "&date=" ~ filter_date ~ "&game_id=" ~ filter_game_id ~ "&player_id=" ~ filter_player_id ~ "&name=" ~ filter_name %}
+                            <th><a href="?sort=date&order={{ next_order }}{{ url_params }}" class="sort-link">Date</a></th>
+                            <th><a href="?sort=player&order={{ next_order }}{{ url_params }}" class="sort-link">Player</a></th>
+                            <th><a href="?sort=points&order={{ next_order }}{{ url_params }}" class="sort-link">PTS</a></th>
+                            <th><a href="?sort=assists&order={{ next_order }}{{ url_params }}" class="sort-link">AST</a></th>
+                            <th><a href="?sort=rebounds&order={{ next_order }}{{ url_params }}" class="sort-link">REB</a></th>
+                            <th><a href="?sort=minutes&order={{ next_order }}{{ url_params }}" class="sort-link">MIN</a></th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for s in statistics %}
+                        <tr>
+                            <td><span class="badge">{{ s.game_date }}</span></td>
+                            <td><strong>{{ s.full_name }}</strong></td>
+                            <td style="font-weight: bold; font-size: 1.1rem;">{{ s.points }}</td>
+                            <td>{{ s.assists }}</td>
+                            <td>{{ s.rebounds }}</td>
+                            <td>{{ "%.1f"|format(s.minutes_played) }}</td>
+                            <td style="text-align: right;">
+                                <a href="/statistics/view/{{ s.stat_id }}" class="action-btn btn-view">View</a>
+                                <a href="/statistics/edit/{{ s.stat_id }}" class="action-btn btn-edit">Edit</a>
+                                <a href="/statistics/delete/{{ s.stat_id }}" onclick="return confirm('Delete this statistic?')" class="action-btn btn-delete">Delete</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                No statistics found matching filters.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-wrapper">
+                <div class="pagination-container">
+                    {% set url_base = "?date=" ~ filter_date ~ "&game_id=" ~ filter_game_id ~ "&player_id=" ~ filter_player_id ~ "&name=" ~ filter_name ~ "&sort=" ~ sort_by ~ "&order=" ~ order %}
+                    
+                    {% if page > 1 %}
+                        <a href="{{ url_base }}&page=1" class="page-btn">«</a>
+                        <a href="{{ url_base }}&page={{ page - 1 }}" class="page-btn">‹</a>
+                    {% else %}
+                        <span class="page-btn disabled">«</span>
+                        <span class="page-btn disabled">‹</span>
+                    {% endif %}
+
+                    {% set start_p = page - 2 if page - 2 > 0 else 1 %}
+                    {% set end_p = page + 2 if page + 2 <= total_pages else total_pages %}
+
+                    {% if start_p > 1 %}<span class="page-btn disabled">...</span>{% endif %}
+
+                    {% for p in range(start_p, end_p + 1) %}
+                        {% if p == page %}
+                            <span class="page-btn active">{{ p }}</span>
+                        {% else %}
+                            <a href="{{ url_base }}&page={{ p }}" class="page-btn">{{ p }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if end_p < total_pages %}<span class="page-btn disabled">...</span>{% endif %}
+
+                    {% if page < total_pages %}
+                        <a href="{{ url_base }}&page={{ page + 1 }}" class="page-btn">›</a>
+                        <a href="{{ url_base }}&page={{ total_pages }}" class="page-btn">»</a>
+                    {% else %}
+                        <span class="page-btn disabled">›</span>
+                        <span class="page-btn disabled">»</span>
+                    {% endif %}
+                </div>
+
+                <form action="/statistics" method="GET" class="goto-form">
+                    <input type="hidden" name="date" value="{{ filter_date }}">
+                    <input type="hidden" name="game_id" value="{{ filter_game_id }}">
+                    <input type="hidden" name="player_id" value="{{ filter_player_id }}">
+                    <input type="hidden" name="name" value="{{ filter_name }}">
+                    <input type="hidden" name="sort" value="{{ sort_by }}">
+                    <input type="hidden" name="order" value="{{ order }}">
+                    <input type="number" name="page" class="goto-input" min="1" max="{{ total_pages }}" value="{{ page }}">
+                    <button type="submit" class="goto-btn">Go</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const filterDate = document.getElementById('filterDate');
+        const filterGame = document.getElementById('filterGame');
+        const filterPlayer = document.getElementById('filterPlayer');
+        const nameInput = document.getElementById('nameInput');
+        const nameSuggestions = document.getElementById('nameSuggestions');
+
+        // ---- AUTOCOMPLETE LOGIC ----
+        if (nameInput) {
+            let debounceTimer;
+
+            nameInput.addEventListener('input', function() {
+                const query = this.value;
+                clearTimeout(debounceTimer);
+
+                if (query.length < 2) {
+                    nameSuggestions.style.display = 'none';
+                    return;
+                }
+
+                debounceTimer = setTimeout(() => {
+                    fetch(`/api/players/search?q=${query}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                nameSuggestions.innerHTML = '';
+                                data.forEach(name => {
+                                    const div = document.createElement('div');
+                                    div.className = 'suggestion-item';
+                                    
+                                    // Highlight matching part
+                                    const regex = new RegExp(`(${query})`, 'gi');
+                                    div.innerHTML = name.replace(regex, '<strong>$1</strong>');
+                                    
+                                    div.addEventListener('click', () => {
+                                        nameInput.value = name;
+                                        nameSuggestions.style.display = 'none';
+                                    });
+                                    nameSuggestions.appendChild(div);
+                                });
+                                nameSuggestions.style.display = 'block';
+                            } else {
+                                nameSuggestions.style.display = 'none';
+                            }
+                        });
+                }, 300); // Wait 300ms after typing stops
+            });
+
+            // Close dropdown if clicked outside
+            document.addEventListener('click', function(e) {
+                if (e.target !== nameInput && e.target !== nameSuggestions) {
+                    nameSuggestions.style.display = 'none';
+                }
+            });
+        }
+
+        // ---- EXISTING FILTER LOGIC ----
+        function loadGames(dateVal) {
+            if (!dateVal) {
+                filterGame.innerHTML = '<option value="">-- All Games --</option>';
+                filterGame.disabled = true;
+                return;
+            }
+            fetch(`/api/games?date=${dateVal}`)
+                .then(res => res.json())
+                .then(data => {
+                    filterGame.innerHTML = '<option value="">-- All Games --</option>';
+                    data.forEach(g => {
+                        const opt = document.createElement('option');
+                        opt.value = g.id;
+                        opt.text = g.label;
+                        filterGame.add(opt);
+                    });
+                    filterGame.disabled = false;
+                });
+        }
+
+        function loadPlayers(gameId) {
+            if (!gameId) {
+                filterPlayer.innerHTML = '<option value="">-- All Players --</option>';
+                filterPlayer.disabled = true;
+                return;
+            }
+            fetch(`/api/game/${gameId}/players`)
+                .then(res => res.json())
+                .then(data => {
+                    filterPlayer.innerHTML = '<option value="">-- All Players --</option>';
+                    data.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p.id;
+                        opt.text = p.name;
+                        filterPlayer.add(opt);
+                    });
+                    filterPlayer.disabled = false;
+                });
+        }
+
+        if (filterDate) {
+            filterDate.addEventListener('change', function() {
+                loadGames(this.value);
+                filterPlayer.innerHTML = '<option value="">-- All Players --</option>';
+                filterPlayer.disabled = true;
+            });
+        }
+
+        if (filterGame) {
+            filterGame.addEventListener('change', function() {
+                loadPlayers(this.value);
+            });
+        }
+    </script>
+</body>
+</html>
+{% endblock %}
