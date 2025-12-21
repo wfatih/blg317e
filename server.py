@@ -50,6 +50,10 @@ def login_page():
 
     return render_template("login.html")
 
+@app.route("/logout")
+def logout():
+    session.clear()  # Tüm oturum verilerini (kullanıcı adı, logged_in durumu) siler
+    return redirect(url_for("login_page"))  # Giriş sayfasına geri gönderir
 
 # ==========================================
 # ANA SAYFA (DASHBOARD)
