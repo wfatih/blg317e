@@ -1,4 +1,3 @@
-/* TABLE CONTAINER ------------------------------------------------------ */
 .table-container {
     background: white;
     border-radius: 16px;
@@ -8,7 +7,6 @@
     margin-top: 1.5rem;
 }
 
-/* TABLE BASE ----------------------------------------------------------- */
 .table {
     width: 100%;
     table-layout: fixed;
@@ -16,7 +14,6 @@
     margin: 0;
 }
 
-/* TABLE HEADER --------------------------------------------------------- */
 .table thead th {
     background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     color: white;
@@ -29,7 +26,6 @@
     border: none;
 }
 
-/* TABLE ROWS ----------------------------------------------------------- */
 .table tbody tr {
     transition: all .2s ease;
 }
@@ -38,7 +34,6 @@
     background: #f8fafc;
 }
 
-/* TABLE CELLS ---------------------------------------------------------- */
 .table td {
     padding: 1.1rem;
     border-bottom: 1px solid #f1f5f9;
@@ -53,7 +48,6 @@
     border-bottom: none;
 }
 
-/* ACTION BUTTONS ------------------------------------------------------- */
 .btn-sm {
     padding: .5rem .9rem;
     border-radius: 8px;
@@ -69,7 +63,6 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
-/* EDIT BUTTON ---------------------------------------------------------- */
 .btn-warning {
     background: linear-gradient(135deg, #f59e0b, #d97706);
 }
@@ -83,7 +76,6 @@
     transform: translateY(0);
 }
 
-/* DELETE BUTTON -------------------------------------------------------- */
 .btn-danger {
     background: linear-gradient(135deg, #ef4444, #dc2626);
 }
@@ -97,7 +89,6 @@
     transform: translateY(0);
 }
 
-/* RESPONSIVE (Mobil İçin) ---------------------------------------------- */
 @media (max-width: 768px) {
     .table td,
     .table thead th {

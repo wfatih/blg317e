@@ -155,7 +155,6 @@
     transform: translateY(0);
 }
 
-/* RESPONSIVE ---------------------------------------------------- */
 
 @media (max-width: 992px) {
     .filter-row {

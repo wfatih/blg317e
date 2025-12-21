@@ -337,7 +337,6 @@
 .stagger-item:nth-child(7) { animation-delay: 0.7s; }
 .stagger-item:nth-child(8) { animation-delay: 0.8s; }
 
-/* Neon Glow */
 @keyframes neonGlow {
     0%, 100% {
         text-shadow: 0 0 10px rgba(102, 126, 234, 0.8),
