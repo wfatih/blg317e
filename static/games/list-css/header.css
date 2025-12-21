@@ -1,352 +1,81 @@
-/* ============================================
-   PAGE HEADER - ENHANCED
-   ============================================ */
-
+/* MAIN CONTAINER */
 .games-container {
+    padding: 2rem 1rem;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 30px 20px;
-    animation: fadeIn 0.6s ease-out;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
+/* PAGE HEADER */
 .page-header {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    border-radius: 24px;
-    padding: 40px 45px;
-    margin-bottom: 35px;
-    box-shadow: 0 15px 50px rgba(245, 87, 108, 0.3);
-    color: white;
-    position: relative;
-    overflow: hidden;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 30px;
-    animation: slideDown 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Animated background effect */
-.page-header::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
-    animation: pulse 15s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { 
-        transform: scale(1) rotate(0deg); 
-        opacity: 0.5; 
-    }
-    50% { 
-        transform: scale(1.1) rotate(180deg); 
-        opacity: 0.8; 
-    }
-}
-
-.page-header::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-    background-size: 200% 200%;
-    animation: shine 3s ease-in-out infinite;
-}
-
-@keyframes shine {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-.page-header > * {
-    position: relative;
-    z-index: 1;
-}
-
-/* Header Left */
-.header-left {
-    flex: 0 0 auto;
-}
-
-.header-left h2 {
-    font-size: 2.5rem;
-    font-weight: 900;
-    margin: 0;
+.page-header h2 {
+    font-size: 2rem;
+    color: #1f2937;
     display: flex;
     align-items: center;
-    gap: 18px;
-    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    letter-spacing: -0.5px;
-}
-
-.header-left h2 i {
-    font-size: 2.5rem;
-    animation: bounce 2.5s ease-in-out infinite;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-}
-
-@keyframes bounce {
-    0%, 100% { 
-        transform: translateY(0) rotate(0deg) scale(1); 
-    }
-    25% { 
-        transform: translateY(-12px) rotate(-8deg) scale(1.05); 
-    }
-    50% {
-        transform: translateY(0) rotate(0deg) scale(1);
-    }
-    75% { 
-        transform: translateY(-12px) rotate(8deg) scale(1.05); 
-    }
-}
-
-/* Header Right */
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    animation: slideLeft 0.8s ease-out 0.3s backwards;
-}
-
-@keyframes slideLeft {
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.stats-info {
-    background: rgba(255, 255, 255, 0.25);
-    padding: 14px 28px;
-    border-radius: 50px;
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    font-size: 1.05rem;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.stats-info::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transition: left 0.5s ease;
-}
-
-.stats-info:hover::before {
-    left: 100%;
-}
-
-.stats-info:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    border-color: rgba(255, 255, 255, 0.5);
-}
-
-.stats-info i {
-    font-size: 1.3rem;
-    animation: spin 3s linear infinite;
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-.stats-info .total-count {
-    color: #fff;
-    font-size: 1.6rem;
-    font-weight: 900;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    animation: countPulse 2s ease-in-out infinite;
-}
-
-@keyframes countPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 16px 36px;
-    border-radius: 50px;
+    gap: 0.5rem;
     font-weight: 700;
-    font-size: 1.05rem;
-    text-decoration: none;
+    letter-spacing: -0.02em;
+}
+
+.page-header h2 i {
+    font-size: 1.5rem;
+    color: #4f46e5;
+}
+
+/* ADD GAME BUTTON */
+.btn-primary-gradient {
+    background: linear-gradient(135deg, #4f46e5, #818cf8);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    color: white;
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    white-space: nowrap;
-    position: relative;
-    overflow: hidden;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all .3s ease;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    cursor: pointer;
 }
 
-.btn-primary::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s ease, height 0.6s ease;
-}
-
-.btn-primary:hover::before {
-    width: 400px;
-    height: 400px;
-}
-
-.btn-primary:hover {
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+.btn-primary-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
     color: white;
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
 }
 
-.btn-primary:active {
-    transform: translateY(-2px) scale(1.02);
+.btn-primary-gradient:active {
+    transform: translateY(0);
 }
 
-.btn-primary i {
-    font-size: 1.3rem;
-    transition: transform 0.4s ease;
-    position: relative;
-    z-index: 1;
+.btn-primary-gradient i {
+    font-size: 1rem;
 }
 
-.btn-primary span {
-    position: relative;
-    z-index: 1;
-}
-
-.btn-primary:hover i {
-    transform: rotate(90deg) scale(1.2);
-}
-
-/* Responsive */
-@media (max-width: 992px) {
+/* RESPONSIVE */
+@media (max-width: 768px) {
     .page-header {
         flex-direction: column;
         align-items: flex-start;
-        padding: 32px 36px;
+        gap: 1rem;
     }
     
-    .header-left h2 {
-        font-size: 2rem;
+    .page-header h2 {
+        font-size: 1.8rem;
     }
     
-    .header-left h2 i {
-        font-size: 2rem;
-    }
-    
-    .header-right {
-        width: 100%;
-        flex-direction: column;
-        gap: 16px;
-    }
-    
-    .stats-info {
+    .btn-primary-gradient {
         width: 100%;
         justify-content: center;
-    }
-    
-    .btn-primary {
-        width: 100%;
-        justify-content: center;
-        padding: 18px 36px;
-    }
-}
-
-@media (max-width: 768px) {
-    .games-container {
-        padding: 20px 15px;
-    }
-    
-    .page-header {
-        padding: 28px 24px;
-        border-radius: 20px;
-    }
-    
-    .header-left h2 {
-        font-size: 1.6rem;
-    }
-    
-    .header-left h2 i {
-        font-size: 1.6rem;
-    }
-    
-    .stats-info {
-        font-size: 0.95rem;
-        padding: 12px 24px;
-    }
-    
-    .stats-info .total-count {
-        font-size: 1.4rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .page-header {
-        padding: 24px 20px;
-    }
-    
-    .header-left h2 {
-        font-size: 1.4rem;
-        gap: 12px;
-    }
-    
-    .btn-primary {
-        padding: 14px 28px;
-        font-size: 0.95rem;
     }
 }

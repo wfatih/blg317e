@@ -1,0 +1,34 @@
+.detail-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+}
+
+.detail-breadcrumb a {
+    color: #667eea;
+    text-decoration: none;
+    transition: all .2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 500;
+}
+
+.detail-breadcrumb a:hover {
+    color: #5568d3;
+    text-decoration: underline;
+}
+
+.detail-breadcrumb .separator {
+    color: #cbd5e1;
+    font-size: 0.75rem;
+    margin: 0 0.25rem;
+}
+
+.detail-breadcrumb .current {
+    color: #0f172a;
+    font-weight: 600;
+}

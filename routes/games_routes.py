@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session, Blueprint
 import sqlite3
 
 games_bp = Blueprint("games_bp", __name__, template_folder="../templates/games")
@@ -13,12 +13,13 @@ def db():
 # ----------------- GAMES LIST -----------------
 @games_bp.route("/games")
 def games_list():
-
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = db()
     cur = con.cursor()
 
+    game_id = request.args.get("game_id", "").strip()
     season = request.args.get("season", "").strip()
-    team = request.args.get("team", "").strip()
+    team_id = request.args.get("team", "").strip()
     date_from = request.args.get("date_from", "").strip()
     date_to = request.args.get("date_to", "").strip()
 
@@ -39,14 +40,21 @@ def games_list():
 
     params = []
 
+    if game_id:
+        query += " AND g.game_id LIKE ?"
+        params.append(f"%{game_id}%")
+
     if season:
         query += " AND g.season LIKE ?"
         params.append(f"%{season}%")
 
-    if team:
-        query += " AND (t1.team_name LIKE ? OR t2.team_name LIKE ?)"
-        params.append(f"%{team}%")
-        params.append(f"%{team}%")
+
+
+    if team_id:
+        query += " AND (g.home_team_id = ? OR g.away_team_id = ?)"
+        params.append(team_id)
+        params.append(team_id)
+
 
     if date_from:
         query += " AND g.game_date >= ?"
@@ -65,91 +73,14 @@ def games_list():
     params.extend([per_page, offset])
 
     games = cur.execute(query, params).fetchall()
+    teams = cur.execute("SELECT * FROM teams ORDER BY team_name").fetchall()
 
     con.close()
 
     return render_template(
         "games_list.html",
         games=games,
-        total_games=total_games,
-        total_pages=total_pages,
-        page=page
-    )
-
-
-from flask import Blueprint, render_template, request, redirect, url_for
-import sqlite3
-
-games_bp = Blueprint("games_bp", __name__, template_folder="../templates/games")
-
-
-def db():
-    con = sqlite3.connect("nba.db")
-    con.row_factory = sqlite3.Row
-    return con
-
-
-# ----------------- GAMES LIST -----------------
-@games_bp.route("/games")
-def games_list():
-
-    con = db()
-    cur = con.cursor()
-
-    season = request.args.get("season", "").strip()
-    team = request.args.get("team", "").strip()
-    date_from = request.args.get("date_from", "").strip()
-    date_to = request.args.get("date_to", "").strip()
-
-    page = request.args.get("page", 1, type=int)
-    per_page = 10
-    offset = (page - 1) * per_page
-
-    query = """
-        SELECT 
-            g.*, 
-            t1.team_name AS home_team,
-            t2.team_name AS away_team
-        FROM games g
-        JOIN teams t1 ON g.home_team_id = t1.team_id
-        JOIN teams t2 ON g.away_team_id = t2.team_id
-        WHERE 1=1
-    """
-
-    params = []
-
-    if season:
-        query += " AND g.season LIKE ?"
-        params.append(f"%{season}%")
-
-    if team:
-        query += " AND (t1.team_name LIKE ? OR t2.team_name LIKE ?)"
-        params.append(f"%{team}%")
-        params.append(f"%{team}%")
-
-    if date_from:
-        query += " AND g.game_date >= ?"
-        params.append(date_from)
-
-    if date_to:
-        query += " AND g.game_date <= ?"
-        params.append(date_to)
-
-    count_query = f"SELECT COUNT(*) FROM ({query})"
-    total_games = cur.execute(count_query, params).fetchone()[0]
-
-    total_pages = (total_games + per_page - 1) // per_page
-
-    query += " ORDER BY g.game_date DESC LIMIT ? OFFSET ?"
-    params.extend([per_page, offset])
-
-    games = cur.execute(query, params).fetchall()
-
-    con.close()
-
-    return render_template(
-        "games_list.html",
-        games=games,
+        teams=teams,
         total_games=total_games,
         total_pages=total_pages,
         page=page
@@ -159,7 +90,7 @@ def games_list():
 # ----------------- GAME DETAIL -----------------
 @games_bp.route("/games/<int:gid>")
 def game_detail(gid):
-    
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = db()
     cur = con.cursor()
 
@@ -363,7 +294,7 @@ def game_detail(gid):
 # ----------------- ADD GAME -----------------
 @games_bp.route("/games/add", methods=["GET", "POST"])
 def add_game():
-
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = db()
     cur = con.cursor()
 
@@ -371,6 +302,10 @@ def add_game():
     stadiums = cur.execute("SELECT * FROM stadiums ORDER BY stadium_name").fetchall()
 
     if request.method == "POST":
+
+        # Get next game_id automatically
+        max_id = cur.execute("SELECT MAX(game_id) FROM games").fetchone()[0]
+        next_game_id = (max_id + 1) if max_id else 1
 
         home_score = request.form.get("home_team_score")
         away_score = request.form.get("away_team_score")
@@ -391,7 +326,7 @@ def add_game():
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
-            request.form["game_id"],
+            next_game_id,  # Auto-generated ID
             request.form["home_team_id"],
             request.form["away_team_id"],
             request.form["stadium_id"] or None,
@@ -418,8 +353,10 @@ def add_game():
         ))
 
         con.commit()
+        con.close()
         return redirect("/games")
 
+    con.close()
     empty_game = {}
     return render_template("games_form.html", title="Add Game", game=empty_game, teams=teams, stadiums=stadiums)
 
@@ -427,7 +364,7 @@ def add_game():
 # ----------------- EDIT GAME -----------------
 @games_bp.route("/games/edit/<int:gid>", methods=["GET", "POST"])
 def edit_game(gid):
-
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = db()
     cur = con.cursor()
 
@@ -437,6 +374,14 @@ def edit_game(gid):
 
     if request.method == "POST":
 
+        home_score = request.form.get("home_team_score")
+        away_score = request.form.get("away_team_score")
+
+        if home_score and away_score:
+            winner = 1 if int(home_score) > int(away_score) else 0
+        else:
+            winner = None
+
         cur.execute("""
             UPDATE games SET
                 home_team_id=?, away_team_id=?, stadium_id=?,
@@ -444,7 +389,8 @@ def edit_game(gid):
                 home_team_score=?, away_team_score=?,
                 fg_pct_home=?, fg_pct_away=?, ft_pct_home=?, ft_pct_away=?,
                 fg3_pct_home=?, fg3_pct_away=?,
-                ast_home=?, ast_away=?, reb_home=?, reb_away=?
+                ast_home=?, ast_away=?, reb_home=?, reb_away=?,
+                home_team_wins=?
             WHERE game_id=?
         """, (
             request.form["home_team_id"],
@@ -455,8 +401,8 @@ def edit_game(gid):
             request.form["season"],
             request.form["arena_name"],
 
-            request.form["home_team_score"] or None,
-            request.form["away_team_score"] or None,
+            home_score or None,
+            away_score or None,
 
             request.form["fg_pct_home"] or None,
             request.form["fg_pct_away"] or None,
@@ -469,24 +415,27 @@ def edit_game(gid):
             request.form["reb_home"] or None,
             request.form["reb_away"] or None,
 
+            winner,
             gid
         ))
 
         con.commit()
+        con.close()
         return redirect("/games")
 
+    con.close()
     return render_template("games_form.html", title="Edit Game", game=game, teams=teams, stadiums=stadiums)
-
 
 
 # ----------------- DELETE GAME -----------------
 @games_bp.route("/games/delete/<int:gid>")
 def delete_game(gid):
-
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = db()
     cur = con.cursor()
 
     cur.execute("DELETE FROM games WHERE game_id=?", (gid,))
     con.commit()
+    con.close()
 
     return redirect("/games")

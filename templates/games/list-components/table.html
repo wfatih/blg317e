@@ -1,23 +1,27 @@
-<div class="table-responsive">
-    <table class="games-table">
+<div class="table-container">
+    <table class="table">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Season</th>
                 <th>Home Team</th>
                 <th>Away Team</th>
                 <th>Score</th>
-                <th>Venue</th>
                 <th>Date</th>
                 <th>Actions</th>
             </tr>
         </thead>
+
         <tbody>
             {% if games %}
                 {% for game in games %}
                 <tr>
-                    <td><span class="season-badge">{{ game['season'] }}</span></td>
-                    <td class="team-cell">{{ game['home_team'] }}</td>
-                    <td class="team-cell">{{ game['away_team'] }}</td>
+                    <td><strong>{{ game['game_id'] }}</strong></td>
+                    <td>
+                        <span class="season-badge">{{ game['season'] }}</span>
+                    </td>
+                    <td class="team-name">{{ game['home_team'] }}</td>
+                    <td class="team-name">{{ game['away_team'] }}</td>
                     <td>
                         <span class="score-display">
                             {{ game['home_team_score'] if game['home_team_score'] is not none else '-' }}
@@ -25,32 +29,35 @@
                             {{ game['away_team_score'] if game['away_team_score'] is not none else '-' }}
                         </span>
                     </td>
-                    <td class="venue-text">{{ game['arena_name'] or 'N/A' }}</td>
                     <td class="date-text">
-                        {{ game['game_date'] if game['game_date'] else 'N/A' }}
+                        {{ game['game_date'] if game['game_date'] else 'TBD' }}
                     </td>
-                    <td>
-                        <div class="action-buttons">
-                            <a href="/games/{{ game['game_id'] }}" class="btn-sm btn-info" title="View Details">
-                                <i class="fas fa-eye"></i> View
-                            </a>
-                            <a href="/games/edit/{{ game['game_id'] }}" class="btn-sm btn-warning" title="Edit">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
-                            <a href="/games/delete/{{ game['game_id'] }}" 
-                               class="btn-sm btn-danger" 
-                               title="Delete"
-                               onclick="return confirm('Are you sure you want to delete this game?')">
-                                <i class="fas fa-trash"></i> Delete
-                            </a>
-                        </div>
+                    <td class="actions-cell">
+                        <a href="/games/{{ game['game_id'] }}" 
+                           class="btn-sm btn-info" 
+                           title="View">
+                            <i class="fas fa-eye"></i>
+                        </a>
+
+                        <a href="/games/edit/{{ game['game_id'] }}" 
+                           class="btn-sm btn-warning"
+                           title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+
+                        <a href="/games/delete/{{ game['game_id'] }}" 
+                           class="btn-sm btn-danger"
+                           title="Delete"
+                           onclick="return confirm('Delete this game?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}
             {% else %}
                 <tr>
                     <td colspan="7" class="no-games-message">
-                        <div>
+                        <div class="empty-state">
                             <i class="fas fa-basketball-ball"></i>
                             <p>No games found</p>
                         </div>
