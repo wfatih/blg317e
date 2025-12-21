@@ -111,6 +111,18 @@
     color: #475569;
     font-size: 24px;
 }
+.player-detail-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all .2s ease;
+}
+
+.player-detail-link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
 
 /* 4. HEAD-TO-HEAD (MAÇ LİSTESİ) */
 .match-list {
