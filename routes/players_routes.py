@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, url_for, session
 import sqlite3
 
 # Blueprint oluştur
@@ -7,6 +7,7 @@ players_bp = Blueprint("players_bp", __name__)
 # -------- PLAYERS LIST --------
 @players_bp.route("/players")
 def players_page():
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = sqlite3.connect("nba.db")
     con.row_factory = sqlite3.Row
     cur = con.cursor()
@@ -67,6 +68,7 @@ def players_page():
 # -------- ADD PLAYER --------
 @players_bp.route("/players/add", methods=["GET", "POST"])
 def add_player():
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = sqlite3.connect("nba.db")
     con.row_factory = sqlite3.Row
     cur = con.cursor()
@@ -115,6 +117,7 @@ def add_player():
 # -------- EDIT PLAYER --------
 @players_bp.route("/players/edit/<int:pid>", methods=["GET", "POST"])
 def edit_player(pid):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = sqlite3.connect("nba.db")
     con.row_factory = sqlite3.Row
     cur = con.cursor()
@@ -160,6 +163,7 @@ def edit_player(pid):
 # -------- DELETE PLAYER --------
 @players_bp.route("/players/delete/<int:pid>")
 def delete_player(pid):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = sqlite3.connect("nba.db")
     con.execute("PRAGMA foreign_keys = ON;")
     cur = con.cursor()
@@ -175,6 +179,7 @@ def delete_player(pid):
 # -------- VIEW PLAYER --------
 @players_bp.route("/players/view/<int:pid>")
 def view_player(pid):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = sqlite3.connect("nba.db")
     con.row_factory = sqlite3.Row
     cur = con.cursor()

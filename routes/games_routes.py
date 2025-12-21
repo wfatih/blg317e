@@ -17,6 +17,7 @@ def games_list():
     con = db()
     cur = con.cursor()
 
+    game_id = request.args.get("game_id", "").strip()
     season = request.args.get("season", "").strip()
     team = request.args.get("team", "").strip()
     date_from = request.args.get("date_from", "").strip()
@@ -39,84 +40,9 @@ def games_list():
 
     params = []
 
-    if season:
-        query += " AND g.season LIKE ?"
-        params.append(f"%{season}%")
-
-    if team:
-        query += " AND (t1.team_name LIKE ? OR t2.team_name LIKE ?)"
-        params.append(f"%{team}%")
-        params.append(f"%{team}%")
-
-    if date_from:
-        query += " AND g.game_date >= ?"
-        params.append(date_from)
-
-    if date_to:
-        query += " AND g.game_date <= ?"
-        params.append(date_to)
-
-    count_query = f"SELECT COUNT(*) FROM ({query})"
-    total_games = cur.execute(count_query, params).fetchone()[0]
-
-    total_pages = (total_games + per_page - 1) // per_page
-
-    query += " ORDER BY g.game_date DESC LIMIT ? OFFSET ?"
-    params.extend([per_page, offset])
-
-    games = cur.execute(query, params).fetchall()
-
-    con.close()
-
-    return render_template(
-        "games_list.html",
-        games=games,
-        total_games=total_games,
-        total_pages=total_pages,
-        page=page
-    )
-
-
-from flask import Blueprint, render_template, request, redirect, url_for
-import sqlite3
-
-games_bp = Blueprint("games_bp", __name__, template_folder="../templates/games")
-
-
-def db():
-    con = sqlite3.connect("nba.db")
-    con.row_factory = sqlite3.Row
-    return con
-
-
-# ----------------- GAMES LIST -----------------
-@games_bp.route("/games")
-def games_list():
-
-    con = db()
-    cur = con.cursor()
-
-    season = request.args.get("season", "").strip()
-    team = request.args.get("team", "").strip()
-    date_from = request.args.get("date_from", "").strip()
-    date_to = request.args.get("date_to", "").strip()
-
-    page = request.args.get("page", 1, type=int)
-    per_page = 10
-    offset = (page - 1) * per_page
-
-    query = """
-        SELECT 
-            g.*, 
-            t1.team_name AS home_team,
-            t2.team_name AS away_team
-        FROM games g
-        JOIN teams t1 ON g.home_team_id = t1.team_id
-        JOIN teams t2 ON g.away_team_id = t2.team_id
-        WHERE 1=1
-    """
-
-    params = []
+    if game_id:
+        query += " AND g.game_id LIKE ?"
+        params.append(f"%{game_id}%")
 
     if season:
         query += " AND g.season LIKE ?"
@@ -476,7 +402,6 @@ def edit_game(gid):
         return redirect("/games")
 
     return render_template("games_form.html", title="Edit Game", game=game, teams=teams, stadiums=stadiums)
-
 
 
 # ----------------- DELETE GAME -----------------

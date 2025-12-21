@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, session
 import sqlite3
 
 teams_bp = Blueprint("teams_bp", __name__)
@@ -11,6 +11,7 @@ def db():
 # ----------------- TEAMS LIST (Filtreleme Aynı Kalıyor) -----------------
 @teams_bp.route("/teams")
 def teams_list():
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = db()
     cur = con.cursor()
 
@@ -59,6 +60,7 @@ def teams_list():
 # ----------------- TEAM DETAIL (KRİTİK DÜZELTME BURADA) -----------------
 @teams_bp.route("/teams/<int:tid>")
 def team_detail(tid):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = db()
     cur = con.cursor()
     
@@ -133,6 +135,7 @@ def team_detail(tid):
 # ----------------- ADD/EDIT/DELETE (AYNI KALIYOR) -----------------
 @teams_bp.route("/teams/add", methods=["GET", "POST"])
 def add_team():
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     # ... (Eski kodunun aynısı)
     if request.method == "POST":
         con = db()
@@ -159,6 +162,7 @@ def add_team():
 
 @teams_bp.route("/teams/edit/<int:tid>", methods=["GET", "POST"])
 def edit_team(tid):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     # ... (Eski kodunun aynısı)
     con = db()
     cur = con.cursor()
