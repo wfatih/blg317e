@@ -26,7 +26,8 @@ CREATE TABLE teams (
     
     -- ARENA BİLGİSİ
     arena               TEXT,
-    arenacapacity       INTEGER
+    arenacapacity       INTEGER,
+    legend_img          TEXT
 );
 ------------------------------------------------------------
 -- 2) PLAYERS TABLE
