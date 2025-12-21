@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- DETAIL CSS -->
 <link rel="stylesheet" href="{{ url_for('static', filename='games/detail-css/breadcrumb.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='games/detail-css/header.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='games/detail-css/teams.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='games/detail-css/info.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='games/detail-css/stats.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='games/detail-css/actions.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='games/detail-css/advanced.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="detail-container">
     
     <!-- Breadcrumb -->
-    <nav class="detail-breadcrumb">
+    <nav class="detail-breadcrumb fade-in">
         <a href="/">
             <i class="fas fa-home"></i>
             Home
@@ -32,7 +32,7 @@
     </nav>
 
     <!-- Page Header -->
-    <div class="page-header-detail">
+    <div class="page-header-detail slide-down">
         <h2>
             <i class="fas fa-basketball-ball"></i> 
             Game Details
@@ -40,7 +40,7 @@
     </div>
 
     <!-- Game Info Card -->
-    <div class="game-info-card">
+    <div class="game-info-card slide-up">
         <div class="game-info-row">
             <div class="info-item">
                 <i class="fas fa-hashtag"></i>
@@ -66,7 +66,7 @@
     </div>
 
     <!-- Teams & Score -->
-    <div class="teams-score-section">
+    <div class="teams-score-section flip-in-left">
         <div class="team-card home-team">
             <div class="team-badge">
                 <span class="badge-label">HOME</span>
@@ -81,7 +81,7 @@
         </div>
 
         <div class="vs-divider">
-            <span class="vs-text">VS</span>
+            <span class="vs-text pulse">VS</span>
         </div>
 
         <div class="team-card away-team">
@@ -100,7 +100,7 @@
 
     <!-- Winner Banner -->
     {% if game.home_score is not none and game.away_score is not none %}
-    <div class="winner-banner">
+    <div class="winner-banner zoom-in">
         <i class="fas fa-trophy"></i>
         {% if game.home_score > game.away_score %}
             {{ game.home_team }} wins!
@@ -113,14 +113,14 @@
     {% endif %}
 
     <!-- Statistics Section -->
-    <div class="statistics-section">
+    <div class="statistics-section fade-in-up">
         <h3 class="section-title">
             <i class="fas fa-chart-bar"></i> Game Statistics
         </h3>
         
         <div class="stats-grid">
             <!-- Home Team Stats -->
-            <div class="stats-card">
+            <div class="stats-card hover-lift">
                 <div class="stats-card-header">
                     <div class="team-logo-small">
                         <img src="https://cdn.nba.com/logos/nba/{{ game.home_team_id }}/global/L/logo.svg" 
@@ -169,7 +169,7 @@
             </div>
 
             <!-- Away Team Stats -->
-            <div class="stats-card">
+            <div class="stats-card hover-lift">
                 <div class="stats-card-header">
                     <div class="team-logo-small">
                         <img src="https://cdn.nba.com/logos/nba/{{ game.away_team_id }}/global/L/logo.svg" 
@@ -219,13 +219,276 @@
         </div>
     </div>
 
+    <!-- Season Comparison Section -->
+    {% if game.season_comparison %}
+    <div class="advanced-section fade-in-up">
+        <h3 class="section-title">
+            <i class="fas fa-trophy"></i> Season Head-to-Head Comparison
+        </h3>
+        
+        <div class="comparison-grid">
+            {% for team in game.season_comparison %}
+            <div class="comparison-card {% if loop.index == 1 %}leading-team{% endif %} stagger-item">
+                <div class="comparison-header">
+                    <div class="team-logo-medium">
+                        <img src="https://cdn.nba.com/logos/nba/{{ team.team_id }}/global/L/logo.svg" 
+                             alt="{{ team.team_name }}">
+                    </div>
+                    <h4>{{ team.team_name }}</h4>
+                    <span class="team-city">{{ team.city }}</span>
+                </div>
+                
+                <div class="comparison-stats">
+                    <div class="comp-stat-row">
+                        <span class="comp-label">Record</span>
+                        <span class="comp-value highlight">{{ team.total_wins }}-{{ team.games_played - team.total_wins }}</span>
+                    </div>
+                    <div class="comp-stat-row">
+                        <span class="comp-label">Win %</span>
+                        <span class="comp-value">{{ ((team.total_wins * 100.0 / team.games_played) | round(1)) if team.games_played > 0 else 0 }}%</span>
+                    </div>
+                    <div class="comp-stat-row">
+                        <span class="comp-label">PPG</span>
+                        <span class="comp-value">{{ team.avg_points_scored }}</span>
+                    </div>
+                    <div class="comp-stat-row">
+                        <span class="comp-label">Opp PPG</span>
+                        <span class="comp-value">{{ team.avg_points_allowed }}</span>
+                    </div>
+                    <div class="comp-stat-row">
+                        <span class="comp-label">Home/Away</span>
+                        <span class="comp-value">{{ team.home_games }}/{{ team.away_games }}</span>
+                    </div>
+                    <div class="comp-stat-row">
+                        <span class="comp-label">Venues</span>
+                        <span class="comp-value">{{ team.stadiums_played }}</span>
+                    </div>
+                </div>
+                
+                {% if loop.index == 1 %}
+                <div class="leading-badge">
+                    <i class="fas fa-crown"></i> Better Record
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Advanced Analytics Section -->
+    {% if game.advanced_analytics %}
+    <div class="advanced-section slide-in-right">
+        <h3 class="section-title">
+            <i class="fas fa-chart-line"></i> Home vs Away Performance Analysis
+        </h3>
+        
+        <div class="analytics-grid">
+            {% for team in game.advanced_analytics %}
+            <div class="analytics-card hover-lift">
+                <div class="analytics-header">
+                    <div class="team-logo-medium">
+                        <img src="https://cdn.nba.com/logos/nba/{{ team.team_id }}/global/L/logo.svg" 
+                             alt="{{ team.team_name }}">
+                    </div>
+                    <h4>{{ team.team_name }}</h4>
+                </div>
+                
+                <div class="analytics-content">
+                    <div class="analytics-section">
+                        <div class="analytics-badge home-badge">
+                            <i class="fas fa-home"></i> Home Games
+                        </div>
+                        <div class="analytics-stats">
+                            <div class="analytics-stat">
+                                <span class="label">Games</span>
+                                <span class="value">{{ team.home_games or 0 }}</span>
+                            </div>
+                            <div class="analytics-stat">
+                                <span class="label">Wins</span>
+                                <span class="value">{{ team.home_wins or 0 }}</span>
+                            </div>
+                            <div class="analytics-stat">
+                                <span class="label">Avg Score</span>
+                                <span class="value">{{ team.home_avg_score or 'N/A' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="divider-line"></div>
+                    
+                    <div class="analytics-section">
+                        <div class="analytics-badge away-badge">
+                            <i class="fas fa-plane"></i> Away Games
+                        </div>
+                        <div class="analytics-stats">
+                            <div class="analytics-stat">
+                                <span class="label">Games</span>
+                                <span class="value">{{ team.away_games or 0 }}</span>
+                            </div>
+                            <div class="analytics-stat">
+                                <span class="label">Wins</span>
+                                <span class="value">{{ team.away_wins or 0 }}</span>
+                            </div>
+                            <div class="analytics-stat">
+                                <span class="label">Avg Score</span>
+                                <span class="value">{{ team.away_avg_score or 'N/A' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="differential-badge {% if team.home_away_differential and team.home_away_differential > 0 %}positive{% else %}negative{% endif %}">
+                        <i class="fas fa-exchange-alt"></i>
+                        Home Advantage: {{ team.home_away_differential or 'N/A' }} pts
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- League Rankings Section -->
+    {% if game.league_rankings %}
+    <div class="advanced-section zoom-in">
+        <h3 class="section-title">
+            <i class="fas fa-ranking-star"></i> League Standings Context
+        </h3>
+        
+        <div class="rankings-container">
+            {% for team in game.league_rankings %}
+            <div class="ranking-card pulse">
+                <div class="rank-badge rank-{{ team.league_rank }}">
+                    #{{ team.league_rank }}
+                </div>
+                
+                <div class="ranking-content">
+                    <div class="ranking-header">
+                        <div class="team-logo-small">
+                            <img src="https://cdn.nba.com/logos/nba/{{ team.team_id }}/global/L/logo.svg" 
+                                 alt="{{ team.team_name }}">
+                        </div>
+                        <div class="ranking-info">
+                            <h4>{{ team.team_name }}</h4>
+                            <div class="record-display">{{ team.total_wins }}-{{ team.total_games - team.total_wins }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="ranking-stats-row">
+                        <div class="ranking-stat">
+                            <span class="stat-icon"><i class="fas fa-percentage"></i></span>
+                            <div>
+                                <div class="stat-label">Win %</div>
+                                <div class="stat-value">{{ team.win_percentage }}%</div>
+                            </div>
+                        </div>
+                        <div class="ranking-stat">
+                            <span class="stat-icon"><i class="fas fa-plus-minus"></i></span>
+                            <div>
+                                <div class="stat-label">Avg Margin</div>
+                                <div class="stat-value {% if team.avg_margin and team.avg_margin > 0 %}positive{% else %}negative{% endif %}">
+                                    {{ '+' if team.avg_margin and team.avg_margin > 0 else '' }}{{ team.avg_margin or 'N/A' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="win-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" data-width="{{ team.win_percentage or 0 }}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Stadium Performance Section -->
+    {% if game.stadium_performance %}
+    <div class="advanced-section flip-in-left">
+        <h3 class="section-title">
+            <i class="fas fa-building"></i> Stadium Performance Analysis
+        </h3>
+        
+        <div class="stadium-grid">
+            {% for stadium in game.stadium_performance %}
+            <div class="stadium-card stagger-item">
+                <div class="stadium-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                
+                <div class="stadium-info">
+                    <h4>{{ stadium.stadium_name }}</h4>
+                    <p class="stadium-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ stadium.stadium_city }}
+                    </p>
+                </div>
+                
+                <div class="stadium-stats-grid">
+                    <div class="stadium-stat">
+                        <div class="stat-icon-circle">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Games</div>
+                            <div class="stat-value">{{ stadium.games_hosted }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stadium-stat">
+                        <div class="stat-icon-circle">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Capacity</div>
+                            <div class="stat-value">{{ "{:,}".format(stadium.capacity) if stadium.capacity else 'N/A' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stadium-stat">
+                        <div class="stat-icon-circle">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Avg Score</div>
+                            <div class="stat-value">{{ stadium.avg_total_score }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stadium-stat">
+                        <div class="stat-icon-circle">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Home Win %</div>
+                            <div class="stat-value">{{ stadium.home_win_percentage }}%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="home-advantage-meter">
+                    <div class="meter-label">Home Court Advantage</div>
+                    <div class="meter-bar">
+                        <div class="meter-fill" data-width="{{ stadium.home_win_percentage }}"></div>
+                    </div>
+                    <div class="meter-value">{{ stadium.avg_home_advantage }} pts</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Actions -->
-    <div class="detail-actions">
-        <a href="/games/edit/{{ game.id }}" class="btn-action btn-edit">
+    <div class="detail-actions fade-in-up">
+        <a href="/games/edit/{{ game.id }}" class="btn-action btn-edit hover-lift">
             <i class="fas fa-edit"></i>
             <span>Edit Game</span>
         </a>
-        <button onclick="deleteGame()" class="btn-action btn-delete">
+        <button onclick="deleteGame()" class="btn-action btn-delete hover-lift">
             <i class="fas fa-trash"></i>
             <span>Delete Game</span>
         </button>
@@ -239,6 +502,18 @@ function deleteGame() {
         window.location.href = '/games/delete/{{ game.id }}';
     }
 }
+
+// Animate progress bars on load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.progress-fill, .meter-fill').forEach(function(el) {
+        const width = el.getAttribute('data-width');
+        if (width) {
+            setTimeout(function() {
+                el.style.width = width + '%';
+            }, 100);
+        }
+    });
+});
 </script>
 
 {% endblock %}

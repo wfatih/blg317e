@@ -15,6 +15,7 @@
                 </option>
                 {% endfor %}
             </select>
+            <span class="error-message" id="home_team_error"></span>
         </div>
 
         <div class="form-group">
@@ -28,6 +29,110 @@
                 </option>
                 {% endfor %}
             </select>
+            <span class="error-message" id="away_team_error"></span>
         </div>
     </div>
 </div>
+
+<style>
+.error-message {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    display: block;
+    font-weight: 500;
+}
+
+.form-control.error {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+}
+
+.form-control.error:focus {
+    outline: none;
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const homeTeamSelect = document.getElementById('home_team_id');
+    const awayTeamSelect = document.getElementById('away_team_id');
+    const homeError = document.getElementById('home_team_error');
+    const awayError = document.getElementById('away_team_error');
+    const form = homeTeamSelect.closest('form');
+
+    function validateTeams() {
+        const homeTeamId = homeTeamSelect.value;
+        const awayTeamId = awayTeamSelect.value;
+        
+        let isValid = true;
+
+        homeError.textContent = '';
+        awayError.textContent = '';
+        homeTeamSelect.classList.remove('error');
+        awayTeamSelect.classList.remove('error');
+
+        if (homeTeamId && awayTeamId && homeTeamId === awayTeamId) {
+            const errorMsg = 'A team cannot play against itself!';
+            homeError.textContent = errorMsg;
+            awayError.textContent = errorMsg;
+            homeTeamSelect.classList.add('error');
+            awayTeamSelect.classList.add('error');
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function updateAvailableOptions() {
+        const homeTeamId = homeTeamSelect.value;
+        const awayTeamId = awayTeamSelect.value;
+
+        // Update away team options
+        Array.from(awayTeamSelect.options).forEach(option => {
+            if (option.value === homeTeamId && option.value !== '') {
+                option.disabled = true;
+                option.style.color = '#cbd5e1';
+                option.textContent = option.textContent.replace(' (Already selected as Home)', '') + ' (Already selected as Home)';
+            } else {
+                option.disabled = false;
+                option.style.color = '';
+                option.textContent = option.textContent.replace(' (Already selected as Home)', '').replace(' (Already selected as Away)', '');
+            }
+        });
+
+        Array.from(homeTeamSelect.options).forEach(option => {
+            if (option.value === awayTeamId && option.value !== '') {
+                option.disabled = true;
+                option.style.color = '#cbd5e1';
+                option.textContent = option.textContent.replace(' (Already selected as Away)', '') + ' (Already selected as Away)';
+            } else {
+                option.disabled = false;
+                option.style.color = '';
+                option.textContent = option.textContent.replace(' (Already selected as Home)', '').replace(' (Already selected as Away)', '');
+            }
+        });
+
+        validateTeams();
+    }
+
+    homeTeamSelect.addEventListener('change', updateAvailableOptions);
+    awayTeamSelect.addEventListener('change', updateAvailableOptions);
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!validateTeams()) {
+                e.preventDefault();
+                
+                homeTeamSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                alert('Please select different teams for Home and Away!');
+            }
+        });
+    }
+
+    updateAvailableOptions();
+});
+</script>
