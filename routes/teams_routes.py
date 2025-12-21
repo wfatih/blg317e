@@ -135,56 +135,91 @@ def team_detail(tid):
 # ----------------- ADD/EDIT/DELETE (AYNI KALIYOR) -----------------
 @teams_bp.route("/teams/add", methods=["GET", "POST"])
 def add_team():
+<<<<<<< Updated upstream
     if "logged_in" not in session: return redirect(url_for("login_page"))
     # ... (Eski kodunun aynısı)
+=======
+>>>>>>> Stashed changes
     if request.method == "POST":
         con = db()
         cur = con.cursor()
         try:
             cur.execute("""
                 INSERT INTO teams (
-                    team_id, abbreviation, nickname, yearfounded, city, 
+                    team_id, abbreviation, nickname, founded_year, city,
                     arena, arenacapacity, owner, generalmanager, headcoach, dleagueaffiliation
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
-                request.form["team_id"], request.form["abbreviation"], request.form["nickname"],
-                request.form["yearfounded"], request.form["city"], request.form["arena"],
-                request.form["arenacapacity"] or 0, request.form["owner"], request.form["generalmanager"],
-                request.form["headcoach"], request.form["dleagueaffiliation"]
+                request.form["team_id"],
+                
+                request.form["abbreviation"],
+                request.form["nickname"],
+                request.form.get("founded_year"),
+                request.form["city"],
+                request.form["arena"],
+                request.form.get("arenacapacity") or 0,
+                request.form.get("owner"),
+                request.form.get("generalmanager"),
+                request.form.get("headcoach"),
+                request.form.get("dleagueaffiliation")
             ))
             con.commit()
             return redirect("/teams")
-        except sqlite3.IntegrityError:
-            return "Error: Team ID already exists!"
+        except sqlite3.IntegrityError as e:
+            return f"DB Error: {e}"
         finally:
             con.close()
+
     return render_template("teams/teams_form.html", title="Add Team", team={})
+
 
 @teams_bp.route("/teams/edit/<int:tid>", methods=["GET", "POST"])
 def edit_team(tid):
+<<<<<<< Updated upstream
     if "logged_in" not in session: return redirect(url_for("login_page"))
     # ... (Eski kodunun aynısı)
+=======
+>>>>>>> Stashed changes
     con = db()
     cur = con.cursor()
+
     if request.method == "POST":
         cur.execute("""
             UPDATE teams SET
-                abbreviation=?, nickname=?, yearfounded=?, city=?, 
-                arena=?, arenacapacity=?, owner=?, generalmanager=?, 
-                headcoach=?, dleagueaffiliation=?
+                
+                abbreviation=?,
+                nickname=?,
+                founded_year=?,
+                city=?,
+                arena=?,
+                arenacapacity=?,
+                owner=?,
+                generalmanager=?,
+                headcoach=?,
+                dleagueaffiliation=?
             WHERE team_id=?
         """, (
-            request.form["abbreviation"], request.form["nickname"], request.form["yearfounded"],
-            request.form["city"], request.form["arena"], request.form["arenacapacity"],
-            request.form["owner"], request.form["generalmanager"], request.form["headcoach"],
-            request.form["dleagueaffiliation"], tid
+            
+            request.form["abbreviation"],
+            request.form["nickname"],
+            request.form.get("founded_year"),
+            request.form["city"],
+            request.form["arena"],
+            request.form.get("arenacapacity"),
+            request.form.get("owner"),
+            request.form.get("generalmanager"),
+            request.form.get("headcoach"),
+            request.form.get("dleagueaffiliation"),
+            tid
         ))
         con.commit()
         con.close()
         return redirect(f"/teams/{tid}")
+
     team = cur.execute("SELECT * FROM teams WHERE team_id=?", (tid,)).fetchone()
     con.close()
     return render_template("teams/teams_form.html", title="Edit Team", team=team)
+
 
 @teams_bp.route("/teams/delete/<int:tid>")
 def delete_team(tid):
