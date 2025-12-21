@@ -135,11 +135,7 @@ def team_detail(tid):
 # ----------------- ADD/EDIT/DELETE (AYNI KALIYOR) -----------------
 @teams_bp.route("/teams/add", methods=["GET", "POST"])
 def add_team():
-<<<<<<< Updated upstream
-    if "logged_in" not in session: return redirect(url_for("login_page"))
-    # ... (Eski kodunun aynısı)
-=======
->>>>>>> Stashed changes
+
     if request.method == "POST":
         con = db()
         cur = con.cursor()
@@ -175,11 +171,7 @@ def add_team():
 
 @teams_bp.route("/teams/edit/<int:tid>", methods=["GET", "POST"])
 def edit_team(tid):
-<<<<<<< Updated upstream
-    if "logged_in" not in session: return redirect(url_for("login_page"))
-    # ... (Eski kodunun aynısı)
-=======
->>>>>>> Stashed changes
+
     con = db()
     cur = con.cursor()
 
