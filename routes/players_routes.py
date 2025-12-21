@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, url_for, session
 import sqlite3
 
 # Blueprint oluştur
@@ -7,6 +7,7 @@ players_bp = Blueprint("players_bp", __name__)
 # -------- PLAYERS LIST --------
 @players_bp.route("/players")
 def players_page():
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = sqlite3.connect("nba.db")
     con.row_factory = sqlite3.Row
     cur = con.cursor()
@@ -67,6 +68,7 @@ def players_page():
 # -------- ADD PLAYER --------
 @players_bp.route("/players/add", methods=["GET", "POST"])
 def add_player():
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = sqlite3.connect("nba.db")
     con.row_factory = sqlite3.Row
     cur = con.cursor()
@@ -115,6 +117,7 @@ def add_player():
 # -------- EDIT PLAYER --------
 @players_bp.route("/players/edit/<int:pid>", methods=["GET", "POST"])
 def edit_player(pid):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = sqlite3.connect("nba.db")
     con.row_factory = sqlite3.Row
     cur = con.cursor()
@@ -160,6 +163,7 @@ def edit_player(pid):
 # -------- DELETE PLAYER --------
 @players_bp.route("/players/delete/<int:pid>")
 def delete_player(pid):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = sqlite3.connect("nba.db")
     con.execute("PRAGMA foreign_keys = ON;")
     cur = con.cursor()
@@ -175,88 +179,168 @@ def delete_player(pid):
 # -------- VIEW PLAYER --------
 @players_bp.route("/players/view/<int:pid>")
 def view_player(pid):
+    if "logged_in" not in session: return redirect(url_for("login_page"))
     con = sqlite3.connect("nba.db")
     con.row_factory = sqlite3.Row
     cur = con.cursor()
 
     # 1) PLAYER INFO
     player = cur.execute("""
-        SELECT p.*, t.team_name
+        SELECT 
+            p.player_id,
+            p.full_name,
+            p.position,
+            p.team_id,
+            t.team_name,
+            t.abbreviation,
+            t.city,
+            t.conference
         FROM players p
         LEFT JOIN teams t ON p.team_id = t.team_id
         WHERE p.player_id = ?
     """, (pid,)).fetchone()
 
     if not player:
+        con.close()
         return "Player not found", 404
 
-    # 2) PLAYER'S GAME STATS (JOIN games + player_game_stats)
+    # 2) PLAYER'S GAME STATS
     game_stats = cur.execute("""
         SELECT 
             g.game_id,
             g.game_date,
+            g.season,
             g.home_team_id,
             g.away_team_id,
             g.home_team_score,
             g.away_team_score,
             t1.team_name AS home_team_name,
+            t1.abbreviation AS home_team_abbr,
             t2.team_name AS away_team_name,
-
+            t2.abbreviation AS away_team_abbr,
             s.points,
             s.assists,
             s.rebounds,
-            s.minutes_played
-
+                             
+            ROUND(s.minutes_played, 1) as minutes_played,
+            CASE 
+                WHEN g.home_team_id = ? AND g.home_team_score > g.away_team_score THEN 1
+                WHEN g.away_team_id = ? AND g.away_team_score > g.home_team_score THEN 1
+                ELSE 0
+            END AS player_team_won
         FROM player_game_stats s
         JOIN games g ON s.game_id = g.game_id
         LEFT JOIN teams t1 ON g.home_team_id = t1.team_id
         LEFT JOIN teams t2 ON g.away_team_id = t2.team_id
-
         WHERE s.player_id = ?
         ORDER BY g.game_date DESC
+    """, (player['team_id'], player['team_id'], pid)).fetchall()
+
+    # 3) SEASON STATS (her sezon için ortalamalar)
+    season_stats = cur.execute("""
+        SELECT 
+            g.season,
+            COUNT(s.stat_id) AS games_played,
+            ROUND(AVG(s.points), 1) AS avg_points,
+            ROUND(AVG(s.assists), 1) AS avg_assists,
+            ROUND(AVG(s.rebounds), 1) AS avg_rebounds,
+            ROUND(AVG(s.minutes_played), 1) AS avg_minutes,
+            CAST(SUM(s.points) AS INTEGER) AS total_points,
+            CAST(SUM(s.assists) AS INTEGER) AS total_assists,
+            CAST(SUM(s.rebounds) AS INTEGER) AS total_rebounds
+        FROM player_game_stats s
+        JOIN games g ON s.game_id = g.game_id
+        WHERE s.player_id = ?
+        GROUP BY g.season
+        ORDER BY g.season DESC
     """, (pid,)).fetchall()
 
-    # 3) AVERAGE STATS
-    avg_stats = cur.execute("""
+    # 4) CAREER AVERAGES
+    career_avg = cur.execute("""
         SELECT 
-            AVG(points) AS avg_points,
-            AVG(assists) AS avg_assists,
-            AVG(rebounds) AS avg_rebounds,
-            AVG(minutes_played) AS avg_minutes
-        FROM player_game_stats
-        WHERE player_id = ?
+            COUNT(s.stat_id) AS total_games,
+            ROUND(AVG(CAST(s.points AS REAL)), 1) AS avg_points,
+            ROUND(AVG(CAST(s.assists AS REAL)), 1) AS avg_assists,
+            ROUND(AVG(CAST(s.rebounds AS REAL)), 1) AS avg_rebounds,
+            ROUND(AVG(CAST(s.minutes_played AS REAL)), 1) AS avg_minutes,
+            SUM(CAST(s.points AS INTEGER)) AS total_points,
+            MAX(CAST(s.points AS INTEGER)) AS career_high_points
+        FROM player_game_stats s
+        WHERE s.player_id = ?
     """, (pid,)).fetchone()
 
-    # 4) BEST GAME (highest points)
+# 5) BEST GAME (Sıfırları filtreleyen versiyon)
     best_game = cur.execute("""
         SELECT 
-            s.points, s.assists, s.rebounds, s.minutes_played,
+            CAST(COALESCE(s.points, 0) AS INTEGER) AS points,
+            CAST(COALESCE(s.assists, 0) AS INTEGER) AS assists,
+            CAST(COALESCE(s.rebounds, 0) AS INTEGER) AS rebounds,
+            CAST(COALESCE(s.minutes_played, 0) AS INTEGER) AS minutes_played,
             g.game_date,
+            g.season,
+            g.home_team_score,
+            g.away_team_score,
             t1.team_name AS home_team_name,
-            t2.team_name AS away_team_name
+            t1.abbreviation AS home_team_abbr,
+            t2.team_name AS away_team_name,
+            t2.abbreviation AS away_team_abbr
         FROM player_game_stats s
         JOIN games g ON s.game_id = g.game_id
         LEFT JOIN teams t1 ON g.home_team_id = t1.team_id
         LEFT JOIN teams t2 ON g.away_team_id = t2.team_id
-        WHERE s.player_id = ?
-        ORDER BY s.points DESC
+        WHERE s.player_id = ? 
+          AND s.points > 0  -- <--- KRİTİK EKLEME: Puanı 0 olan maçları (hatalı kayıtları) görmezden gel
+        ORDER BY CAST(s.points AS INTEGER) DESC, CAST(s.rebounds AS INTEGER) DESC
         LIMIT 1
     """, (pid,)).fetchone()
 
-    # 5) STADIUMS PLAYER HAS PLAYED IN
-    stadiums = cur.execute("""
-        SELECT DISTINCT st.stadium_name, st.city, st.capacity
+    # 6) ARENAS PLAYER HAS PLAYED IN
+    arenas = cur.execute("""
+        SELECT DISTINCT 
+            t.arena AS stadium_name,
+            t.city,
+            t.arenacapacity AS capacity,
+            COUNT(DISTINCT g.game_id) AS games_played
         FROM player_game_stats s
         JOIN games g ON s.game_id = g.game_id
-        JOIN stadiums st ON g.stadium_id = st.stadium_id
-        WHERE s.player_id = ?
+        JOIN teams t ON g.home_team_id = t.team_id
+        WHERE s.player_id = ? AND t.arena IS NOT NULL
+        GROUP BY t.arena, t.city, t.arenacapacity
+        ORDER BY games_played DESC
     """, (pid,)).fetchall()
+
+    # 7) OPPONENTS FACED (en çok karşılaştığı takımlar)
+    opponents = cur.execute("""
+        SELECT 
+            t.team_name,
+            t.abbreviation,
+            COUNT(g.game_id) AS games_against,
+            ROUND(AVG(s.points), 1) AS avg_points_vs,
+            ROUND(AVG(s.assists), 1) AS avg_assists_vs,
+            ROUND(AVG(s.rebounds), 1) AS avg_rebounds_vs
+        FROM player_game_stats s
+        JOIN games g ON s.game_id = g.game_id
+        JOIN teams t ON (
+            CASE 
+                WHEN g.home_team_id = ? THEN g.away_team_id
+                ELSE g.home_team_id
+            END = t.team_id
+        )
+        WHERE s.player_id = ?
+        GROUP BY t.team_id
+        ORDER BY games_against DESC
+        LIMIT 10
+    """, (player['team_id'], pid)).fetchall()
+
+    con.close()
 
     return render_template(
         "players/player_view.html",
         player=player,
         game_stats=game_stats,
-        avg_stats=avg_stats,
+        season_stats=season_stats,
+        career_avg=career_avg,
         best_game=best_game,
-        stadiums=stadiums
+        arenas=arenas,
+        opponents=opponents
     )

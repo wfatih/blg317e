@@ -4,277 +4,369 @@
 
 <style>
 /* ============================================
-   PLAYER VIEW - PREMIUM DESIGN
+   PLAYER VIEW - REFINED DESIGN
 ============================================ */
+.player-headshot {
+    width: auto;  /* İstediğin genişlik */
+    height: 130px;
+    object-fit: cover;
+    background-color: hsl(0, 0%, 94%); /* Arkaya hafif bir renk atmak şık durur */
+    border-radius: 50%; /* Yuvarlak yapmak istersen */
+    border: 8x solid #fff;
+}
+
 .player-view-container {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: 1rem 1.5rem 2rem;
 }
 
-/* Player Header */
-.player-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    position: relative;
+/* Breadcrumb */
+.breadcrumb-wrapper {
+    margin-bottom: 2rem;
 }
 
-.player-header::after {
-    content: '';
-    display: block;
-    width: 80px;
-    height: 4px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-    margin: 1.5rem auto 0;
-    border-radius: 2px;
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    flex-wrap: wrap;
 }
 
-.player-name {
-    font-size: 2.8rem;
-    font-weight: 700;
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.breadcrumb-item a {
+    color: #667eea;
+    text-decoration: none;
+    transition: all .2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.breadcrumb-item a:hover {
+    color: #5568d3;
+}
+
+.breadcrumb-separator {
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    margin: 0 0.25rem;
+}
+
+.breadcrumb-item.active {
     color: #0f172a;
-    margin: 0;
-    letter-spacing: -0.025em;
+    font-weight: 600;
 }
 
-.player-id-badge {
-    display: inline-block;
+/* Player Header - Simplified */
+.player-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 0.4rem 1rem;
+    padding: 3rem 2.5rem;
     border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-top: 0.75rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.25);
 }
 
-/* Info Card */
-.player-info-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fc 100%);
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-    border: 1px solid rgba(148, 163, 184, 0.1);
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.player-info-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-}
-
-.info-item {
+.player-header-content {
     display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-}
-
-.info-label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #94a3b8;
-    font-weight: 600;
-    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 0.4rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
 }
 
-.info-value {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #1e293b;
-}
-
-/* Section Headers */
-.section-header {
-    font-size: 1.5rem;
+.player-main-info h1 {
+    font-size: 2.5rem;
     font-weight: 700;
-    color: #0f172a;
-    margin: 3rem 0 1.5rem;
+    margin: 0 0 0.75rem 0;
+    letter-spacing: -0.02em;
+    color: white;
+}
+
+.player-meta {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    opacity: 0.95;
+}
+
+.player-meta-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid #e2e8f0;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
 }
 
-.section-header i {
-    color: #667eea;
-    font-size: 1.3rem;
+.player-meta-item i {
+    opacity: 0.8;
 }
 
-/* Stats Grid */
-.stats-grid {
+.player-quick-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
-    margin-bottom: 2.5rem;
-}
-
-.stat-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.15);
     padding: 1.5rem;
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    border: 2px solid #e2e8f0;
+    backdrop-filter: blur(10px);
+}
+
+.quick-stat {
     text-align: center;
-    transition: all 0.3s ease;
 }
 
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
-    border-color: #667eea;
-}
-
-.stat-label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #94a3b8;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.stat-value {
+.quick-stat-value {
     font-size: 2rem;
     font-weight: 700;
-    color: #667eea;
+    margin-bottom: 0.25rem;
 }
 
-/* Best Game Box */
-.best-game-box {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
-    margin-bottom: 2.5rem;
-}
-
-.best-game-header {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-}
-
-.best-game-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1.5rem;
-}
-
-.best-game-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-}
-
-.best-game-label {
-    font-size: 0.8rem;
+.quick-stat-label {
+    font-size: 0.85rem;
     opacity: 0.9;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
-.best-game-value {
-    font-size: 1.1rem;
-    font-weight: 600;
+/* Section Layout */
+.section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 2.5rem 0 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
 }
 
-.no-data-message {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-style: italic;
+.section-title i {
+    color: #667eea;
+    font-size: 1.2rem;
 }
 
-/* Game Table */
-.game-table-container {
+.section-title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, #e2e8f0 0%, transparent 100%);
+    margin-left: 1rem;
+}
+
+/* Stats Cards - Cleaner */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.stat-box {
     background: white;
+    padding: 1.75rem;
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    overflow: hidden;
-    margin-bottom: 2.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    text-align: center;
+    transition: all 0.3s ease;
 }
 
-.game-table {
-    width: 100%;
-    border-collapse: collapse;
+.stat-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.15);
+    border-color: #667eea;
 }
 
-.game-table thead {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+.stat-box-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #667eea;
+    line-height: 1;
+    margin-bottom: 0.5rem;
 }
 
-.game-table th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
+.stat-box-label {
     font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
-.game-table tbody tr {
-    border-bottom: 1px solid #e2e8f0;
+/* Best Performance Card */
+.highlight-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.25);
+}
+
+.highlight-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.highlight-matchup {
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.highlight-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+}
+
+.highlight-stat {
+    text-align: center;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.highlight-stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.highlight-stat-label {
+    font-size: 0.75rem;
+    opacity: 0.9;
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Tables - Modern & Clean */
+.data-table-wrapper {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    border: 1px solid #e2e8f0;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.data-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #475569;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.data-table tbody tr {
     transition: background 0.2s ease;
 }
 
-.game-table tbody tr:hover {
+.data-table tbody tr:hover {
     background: #f8fafc;
 }
 
-.game-table td {
+.data-table td {
     padding: 1rem;
     color: #334155;
     font-size: 0.9rem;
+    border-bottom: 1px solid #f1f5f9;
 }
 
-.game-table tbody tr:last-child {
+.data-table tbody tr:last-child td {
     border-bottom: none;
 }
 
-/* Stadium List */
-.stadium-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
+.table-highlight {
+    font-weight: 700;
+    color: #667eea;
 }
 
-.stadium-card {
+.table-badge {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-win {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-loss {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.badge-season {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+/* Info Grid - Two Column Layout */
+.two-column-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.info-cards {
+    display: grid;
+    gap: 1rem;
+}
+
+.mini-card {
     background: white;
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    border: 2px solid #e2e8f0;
+    padding: 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
     transition: all 0.3s ease;
 }
 
-.stadium-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+.mini-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.12);
     border-color: #667eea;
 }
 
-.stadium-name {
-    font-size: 1.1rem;
+.mini-card-header {
+    font-size: 1rem;
     font-weight: 700;
     color: #1e293b;
     margin-bottom: 0.5rem;
@@ -283,13 +375,61 @@
     gap: 0.5rem;
 }
 
-.stadium-name i {
+.mini-card-header i {
+    color: #667eea;
+    font-size: 0.9rem;
+}
+
+.mini-card-subtitle {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+}
+
+.mini-card-stats {
+    display: flex;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.mini-stat {
+    flex: 1;
+    text-align: center;
+}
+
+.mini-stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
     color: #667eea;
 }
 
-.stadium-details {
+.mini-stat-label {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #f8fafc;
+    border-radius: 16px;
     color: #64748b;
-    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    opacity: 0.3;
+    margin-bottom: 1rem;
+}
+
+.empty-state-text {
+    font-size: 1rem;
+    font-style: italic;
 }
 
 /* Back Button */
@@ -297,7 +437,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.85rem 1.8rem;
+    padding: 0.9rem 1.8rem;
     background: white;
     color: #64748b;
     text-decoration: none;
@@ -305,45 +445,57 @@
     border-radius: 12px;
     font-weight: 600;
     transition: all 0.3s ease;
-    margin-top: 2rem;
+    margin-top: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .btn-back:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-    transform: translateX(-4px);
-    color: #475569;
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+    transform: translateX(-3px);
 }
 
 /* Responsive */
+@media (max-width: 968px) {
+    .two-column-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 768px) {
-    .player-name {
+    .player-header {
+        padding: 2rem 1.5rem;
+    }
+
+    .player-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .player-main-info h1 {
         font-size: 2rem;
     }
 
-    .player-info-card {
-        grid-template-columns: 1fr;
-        padding: 1.5rem;
+    .player-quick-stats {
+        grid-template-columns: repeat(3, 1fr);
+        width: 100%;
     }
 
-    .stats-grid {
+    .stats-row {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .best-game-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .game-table-container {
+    .data-table-wrapper {
         overflow-x: auto;
     }
 
-    .game-table {
+    .data-table {
         min-width: 600px;
     }
 
-    .stadium-grid {
-        grid-template-columns: 1fr;
+    .highlight-stats {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 </style>
@@ -352,181 +504,316 @@
 
 <div class="player-view-container">
 
-    <!-- PLAYER HEADER -->
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-wrapper">
+        <nav class="breadcrumb">
+            <div class="breadcrumb-item">
+                <a href="/">
+                    <i class="fas fa-home"></i>
+                    Home
+                </a>
+            </div>
+            <span class="breadcrumb-separator">
+                <i class="fas fa-chevron-right"></i>
+            </span>
+            <div class="breadcrumb-item">
+                <a href="/players">
+                    <i class="fas fa-users"></i>
+                    Players
+                </a>
+            </div>
+            <span class="breadcrumb-separator">
+                <i class="fas fa-chevron-right"></i>
+            </span>
+            <div class="breadcrumb-item active">
+                {{ player.full_name }}
+            </div>
+        </nav>
+    </div>
+
     <div class="player-header">
-        <h1 class="player-name">{{ player.full_name }}</h1>
-        <div class="player-id-badge">
-            <i class="fas fa-hashtag"></i> {{ player.player_id }}
+        <div class="player-header-content">
+            
+            <div class="player-image-wrapper">
+                <img 
+                    src="https://cdn.nba.com/headshots/nba/latest/1040x760/{{ player.player_id }}.png" 
+                    alt="{{ player.full_name }}"
+                    class="player-headshot"
+                    onerror="this.onerror=null; this.src='https://cdn.nba.com/headshots/nba/latest/1040x760/logoman.png';"
+                >
+                </div>
+
+            <div class="player-main-info">
+                <h1>{{ player.full_name }}</h1>
+                <div class="player-meta">
+                    <div class="player-meta-item">
+                        <i class="fas fa-fingerprint"></i> ID: #{{ player.player_id }}
+                    </div>
+                    {% if player.position %}
+                    <div class="player-meta-item">
+                        <i class="fas fa-running"></i>
+                        {{ player.position }}
+                    </div>
+                    {% endif %}
+                    {% if player.team_name %}
+                    <div class="player-meta-item">
+                        <i class="fas fa-shield-alt"></i>
+                        {{ player.team_name }} ({{ player.abbreviation }})
+                    </div>
+                    {% endif %}
+                    {% if player.conference %}
+                    <div class="player-meta-item">
+                        <i class="fas fa-globe-americas"></i> {{ player.conference }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if career_avg %}
+            <div class="player-quick-stats">
+                <div class="quick-stat">
+                    <div class="quick-stat-value">{{ career_avg.total_games }}</div>
+                    <div class="quick-stat-label">Games</div>
+                </div>
+                <div class="quick-stat">
+                    <div class="quick-stat-value">{{ career_avg.avg_points }}</div>
+                    <div class="quick-stat-label">PPG</div>
+                </div>
+                <div class="quick-stat">
+                    <div class="quick-stat-value">{{ career_avg.career_high_points if career_avg.career_high_points else 0 }}</div>
+                    <div class="quick-stat-label">Career High</div>
+                </div>
+            </div>
+            {% endif %}
+            
         </div>
     </div>
 
-    <!-- PLAYER INFO CARD -->
-    <div class="player-info-card">
-        <div class="info-item">
-            <div class="info-label">
-                <i class="fas fa-shield-alt"></i> Team
-            </div>
-            <div class="info-value">{{ player.team_name or "—" }}</div>
-        </div>
-        <div class="info-item">
-            <div class="info-label">
-                <i class="fas fa-running"></i> Position
-            </div>
-            <div class="info-value">{{ player.position or "—" }}</div>
-        </div>
-        <div class="info-item">
-            <div class="info-label">
-                <i class="fas fa-ruler-vertical"></i> Height
-            </div>
-            <div class="info-value">{{ player.height_cm }} cm</div>
-        </div>
-        <div class="info-item">
-            <div class="info-label">
-                <i class="fas fa-weight"></i> Weight
-            </div>
-            <div class="info-value">{{ player.weight_kg }} kg</div>
-        </div>
-        <div class="info-item">
-            <div class="info-label">
-                <i class="fas fa-calendar-alt"></i> Birthdate
-            </div>
-            <div class="info-value">{{ player.birthdate or "—" }}</div>
-        </div>
-        <div class="info-item">
-            <div class="info-label">
-                <i class="fas fa-globe"></i> Country
-            </div>
-            <div class="info-value">{{ player.country or "—" }}</div>
-        </div>
-    </div>
-
-    <!-- SEASON AVERAGES -->
-    <h2 class="section-header">
+    <!-- CAREER AVERAGES -->
+    {% if career_avg %}
+    <h2 class="section-title">
         <i class="fas fa-chart-line"></i>
-        Season Averages
+        Career Averages
     </h2>
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-label">PPG</div>
-            <div class="stat-value">{{ avg_stats.avg_points | round(1) if avg_stats.avg_points else 0 }}</div>
+    <div class="stats-row">
+        <div class="stat-box">
+            <div class="stat-box-value">{{ career_avg.avg_points }}</div>
+            <div class="stat-box-label">Points</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label">APG</div>
-            <div class="stat-value">{{ avg_stats.avg_assists | round(1) if avg_stats.avg_assists else 0 }}</div>
+        <div class="stat-box">
+            <div class="stat-box-value">{{ career_avg.avg_assists }}</div>
+            <div class="stat-box-label">Assists</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label">RPG</div>
-            <div class="stat-value">{{ avg_stats.avg_rebounds | round(1) if avg_stats.avg_rebounds else 0 }}</div>
+        <div class="stat-box">
+            <div class="stat-box-value">{{ career_avg.avg_rebounds }}</div>
+            <div class="stat-box-label">Rebounds</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label">MPG</div>
-            <div class="stat-value">{{ avg_stats.avg_minutes | round(1) if avg_stats.avg_minutes else 0 }}</div>
+        <div class="stat-box">
+            <div class="stat-box-value">{{ career_avg.avg_minutes }}</div>
+            <div class="stat-box-label">Minutes</div>
         </div>
     </div>
-
-    <!-- BEST GAME -->
-    <h2 class="section-header">
-        <i class="fas fa-trophy"></i>
-        Best Game (By Points)
-    </h2>
-    {% if best_game %}
-    <div class="best-game-box">
-        <div class="best-game-header">
-            <i class="fas fa-star"></i>
-            Career High Performance
-        </div>
-        <div class="best-game-grid">
-            <div class="best-game-item">
-                <div class="best-game-label">Date</div>
-                <div class="best-game-value">{{ best_game.game_date }}</div>
-            </div>
-            <div class="best-game-item">
-                <div class="best-game-label">Match</div>
-                <div class="best-game-value">{{ best_game.home_team_name }} vs {{ best_game.away_team_name }}</div>
-            </div>
-            <div class="best-game-item">
-                <div class="best-game-label">Points</div>
-                <div class="best-game-value">{{ best_game.points }}</div>
-            </div>
-            <div class="best-game-item">
-                <div class="best-game-label">Assists</div>
-                <div class="best-game-value">{{ best_game.assists }}</div>
-            </div>
-            <div class="best-game-item">
-                <div class="best-game-label">Rebounds</div>
-                <div class="best-game-value">{{ best_game.rebounds }}</div>
-            </div>
-            <div class="best-game-item">
-                <div class="best-game-label">Minutes</div>
-                <div class="best-game-value">{{ best_game.minutes_played }}</div>
-            </div>
-        </div>
-    </div>
-    {% else %}
-    <p class="no-data-message">No game stats available.</p>
     {% endif %}
 
-    <!-- GAME LOG TABLE -->
-    <h2 class="section-header">
-        <i class="fas fa-list"></i>
-        Game Log
+    <!-- BEST GAME -->
+    {% if best_game %}
+    <h2 class="section-title">
+        <i class="fas fa-star"></i>
+        Best Performance
     </h2>
-    {% if game_stats %}
-    <div class="game-table-container">
-        <table class="game-table">
+    <div class="highlight-card">
+        <div class="highlight-card-title">
+            <i class="fas fa-fire"></i>
+            Career High Game
+        </div>
+        <div class="highlight-matchup">
+            <div><i class="fas fa-calendar-alt"></i> {{ best_game.game_date }} · <span class="table-badge badge-season">{{ best_game.season }}</span></div>
+            <div style="margin-top: 0.5rem;"><i class="fas fa-basketball-ball"></i> {{ best_game.home_team_name }} {{ best_game.home_team_score }} - {{ best_game.away_team_score }} {{ best_game.away_team_name }}</div>
+        </div>
+        <div class="highlight-stats">
+            <div class="highlight-stat">
+                <div class="highlight-stat-value">{{ best_game.points }}</div>
+                <div class="highlight-stat-label">Points</div>
+            </div>
+            <div class="highlight-stat">
+                <div class="highlight-stat-value">{{ best_game.assists }}</div>
+                <div class="highlight-stat-label">Assists</div>
+            </div>
+            <div class="highlight-stat">
+                <div class="highlight-stat-value">{{ best_game.rebounds }}</div>
+                <div class="highlight-stat-label">Rebounds</div>
+            </div>
+            <div class="highlight-stat">
+                <div class="highlight-stat-value">{{ best_game.minutes_played }}</div>
+                <div class="highlight-stat-label">Minutes</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- SEASON STATS -->
+    {% if season_stats %}
+    <h2 class="section-title">
+        <i class="fas fa-calendar"></i>
+        Season Statistics
+    </h2>
+    <div class="data-table-wrapper">
+        <table class="data-table">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Match</th>
-                    <th>Score</th>
-                    <th>PTS</th>
-                    <th>AST</th>
-                    <th>REB</th>
-                    <th>MIN</th>
+                    <th>Season</th>
+                    <th style="text-align: center;">GP</th>
+                    <th style="text-align: center;">PPG</th>
+                    <th style="text-align: center;">APG</th>
+                    <th style="text-align: center;">RPG</th>
+                    <th style="text-align: center;">MPG</th>
+                    <th style="text-align: center;">Total PTS</th>
                 </tr>
             </thead>
             <tbody>
-                {% for g in game_stats %}
+                {% for season in season_stats %}
+                <tr>
+                    <td><span class="table-badge badge-season">{{ season.season }}</span></td>
+                    <td style="text-align: center;">{{ season.games_played }}</td>
+                    <td style="text-align: center;">{{ season.avg_points }}</td>
+                    <td style="text-align: center;">{{ season.avg_assists }}</td>
+                    <td style="text-align: center;">{{ season.avg_rebounds }}</td>
+                    <td style="text-align: center;">{{ season.avg_minutes }}</td>
+                    <td style="text-align: center;" class="table-highlight">{{ season.total_points }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- RECENT GAMES -->
+    {% if game_stats %}
+    <h2 class="section-title">
+        <i class="fas fa-list"></i>
+        Recent Games
+    </h2>
+    <div class="data-table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Season</th>
+                    <th>Matchup</th>
+                    <th style="text-align: center;">Score</th>
+                    <th style="text-align: center;">PTS</th>
+                    <th style="text-align: center;">AST</th>
+                    <th style="text-align: center;">REB</th>
+                    <th style="text-align: center;">MIN</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for g in game_stats[:15] %}
                 <tr>
                     <td>{{ g.game_date }}</td>
-                    <td>{{ g.home_team_name }} vs {{ g.away_team_name }}</td>
-                    <td>{{ g.home_team_score }} - {{ g.away_team_score }}</td>
-                    <td>{{ g.points }}</td>
-                    <td>{{ g.assists }}</td>
-                    <td>{{ g.rebounds }}</td>
-                    <td>{{ g.minutes_played }}</td>
+                    <td><span class="table-badge badge-season">{{ g.season }}</span></td>
+                    <td>
+                        {{ g.home_team_abbr }} vs {{ g.away_team_abbr }}
+                        {% if g.player_team_won == 1 %}
+                        <span class="table-badge badge-win">W</span>
+                        {% else %}
+                        <span class="table-badge badge-loss">L</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;" class="table-highlight">{{ g.home_team_score }}-{{ g.away_team_score }}</td>
+                    <td style="text-align: center;">{{ g.points }}</td>
+                    <td style="text-align: center;">{{ g.assists }}</td>
+                    <td style="text-align: center;">{{ g.rebounds }}</td>
+                    <td style="text-align: center;">{{ g.minutes_played }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
     {% else %}
-    <p class="no-data-message">No games found for this player.</p>
+    <div class="empty-state">
+        <i class="fas fa-basketball-ball"></i>
+        <div class="empty-state-text">No game statistics available</div>
+    </div>
     {% endif %}
 
-    <!-- STADIUMS PLAYED -->
-    <h2 class="section-header">
-        <i class="fas fa-map-marker-alt"></i>
-        Stadiums Played In
-    </h2>
-    {% if stadiums %}
-    <div class="stadium-grid">
-        {% for s in stadiums %}
-        <div class="stadium-card">
-            <div class="stadium-name">
+    <!-- ARENAS & OPPONENTS -->
+    <div class="two-column-grid">
+        
+        <!-- ARENAS -->
+        <div>
+            <h2 class="section-title">
                 <i class="fas fa-building"></i>
-                {{ s.stadium_name }}
+                Arenas
+            </h2>
+            {% if arenas %}
+            <div class="info-cards">
+                {% for arena in arenas[:8] %}
+                <div class="mini-card">
+                    <div class="mini-card-header">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ arena.stadium_name }}
+                    </div>
+                    <div class="mini-card-subtitle">
+                        {{ arena.city }} · Cap: {{ "{:,}".format(arena.capacity) if arena.capacity else "—" }}
+                    </div>
+                    <div class="mini-card-stats">
+                        <div class="mini-stat">
+                            <div class="mini-stat-value">{{ arena.games_played }}</div>
+                            <div class="mini-stat-label">Games</div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
-            <div class="stadium-details">
-                <i class="fas fa-location-dot"></i> {{ s.city }} · 
-                <i class="fas fa-users"></i> Capacity: {{ s.capacity }}
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-building"></i>
+                <div class="empty-state-text">No arena data</div>
             </div>
+            {% endif %}
         </div>
-        {% endfor %}
+
+        <!-- TOP OPPONENTS -->
+        <div>
+            <h2 class="section-title">
+                <i class="fas fa-users"></i>
+                Top Opponents
+            </h2>
+            {% if opponents %}
+            <div class="info-cards">
+                {% for opp in opponents[:8] %}
+                <div class="mini-card">
+                    <div class="mini-card-header">
+                        <i class="fas fa-shield-alt"></i>
+                        {{ opp.team_name }}
+                    </div>
+                    <div class="mini-card-subtitle">{{ opp.abbreviation }}</div>
+                    <div class="mini-card-stats">
+                        <div class="mini-stat">
+                            <div class="mini-stat-value">{{ opp.games_against }}</div>
+                            <div class="mini-stat-label">Games</div>
+                        </div>
+                        <div class="mini-stat">
+                            <div class="mini-stat-value">{{ opp.avg_points_vs }}</div>
+                            <div class="mini-stat-label">PPG</div>
+                        </div>
+                        <div class="mini-stat">
+                            <div class="mini-stat-value">{{ opp.avg_assists_vs }}</div>
+                            <div class="mini-stat-label">APG</div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-users"></i>
+                <div class="empty-state-text">No opponent data</div>
+            </div>
+            {% endif %}
+        </div>
     </div>
-    {% else %}
-    <p class="no-data-message">No stadium data found.</p>
-    {% endif %}
 
     <!-- BACK BUTTON -->
     <a href="/players" class="btn-back">

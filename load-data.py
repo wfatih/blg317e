@@ -9,27 +9,39 @@ cur = con.cursor()
 con.execute("PRAGMA foreign_keys = ON;")
 
 # -----------------------------
-# 1) TEAMS
+# 1) TEAMS (SADECE BURASI GÜNCELLENDİ)
 # -----------------------------
 print("Loading teams...")
+
+# Dictionary SİLİNDİ. Artık veri doğrudan CSV'den geliyor.
+# Herhangi bir aksilik olursa (CSV'de boşsa) kullanılacak yedek resim:
+DEFAULT_IMG = "https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=1000&auto=format&fit=crop"
 
 with open("data/teams.csv", "r", encoding="utf-8") as f:
     reader = csv.DictReader(f)
     for row in reader:
         
-        # Kapasite verisi bazen boş gelebiliyor, hata vermesin diye kontrol
+        # Kapasite verisi kontrolü
         capacity = row["ARENACAPACITY"]
         if not capacity or capacity == "":
             capacity = 0
+            
+        # --- RESİM SEÇME MANTIĞI ---
+        # Direkt CSV sütunundan okuyoruz.
+        # Eğer sütun boşsa veya yoksa DEFAULT_IMG kullanır.
+        legend_img = row.get("LEGENDARY_IMG")
+        if not legend_img:
+            legend_img = DEFAULT_IMG
 
         cur.execute("""
             INSERT OR IGNORE INTO teams (
                 team_id, team_name, nickname, abbreviation,
                 conference, city, founded_year,
                 owner, generalmanager, headcoach, dleagueaffiliation,
-                arena, arenacapacity
+                arena, arenacapacity,
+                legend_img
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             row["TEAM_ID"],
             f"{row['CITY']} {row['NICKNAME']}", # Full Name
@@ -38,16 +50,16 @@ with open("data/teams.csv", "r", encoding="utf-8") as f:
             None, # Conference CSV'de yoksa None
             row["CITY"],
             row["YEARFOUNDED"],
-            # Yeni eklediğimiz alanlar CSV'den çekiliyor:
             row["OWNER"],
             row["GENERALMANAGER"],
             row["HEADCOACH"],
             row["DLEAGUEAFFILIATION"],
             row["ARENA"],
-            capacity
+            capacity,
+            legend_img # <-- Direkt CSV'den gelen veri
         ))
 
-        # Stadiums tablosu (Arkadaşının mantığı korundu)
+        # Stadiums tablosu
         if row["ARENA"]:
             cur.execute("""
                 INSERT OR IGNORE INTO stadiums (team_id, stadium_name, city, capacity)
@@ -58,6 +70,7 @@ with open("data/teams.csv", "r", encoding="utf-8") as f:
                 row["CITY"],
                 capacity
             ))
+
 # -----------------------------
 # 2) PLAYERS
 # -----------------------------
