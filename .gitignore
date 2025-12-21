@@ -1,6 +1,7 @@
 # =========================
 # Python
 # =========================
+routes/__pycache__/
 __pycache__/
 *.py[cod]
 *.pyo
@@ -68,3 +69,5 @@ dist/
 # =========================
 *.tmp
 *.temp
+routes/__pycache__/players_routes.cpython-310.pyc
+routes/__pycache__/teams_routes.cpython-310.pyc

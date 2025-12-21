@@ -1,47 +1,41 @@
 {% extends "base.html" %}
-
 {% block content %}
-
 <header class="hero">
   <h1>BLG317 - Database Systems</h1>
-  <p class="date">📅 {{ date }}</p>
 </header>
 
-<main>
-  <section class="hero">
-    <h2>NBA Game Database Project</h2>
-    <p>
-      In this semester project, we will work on a dataset containing
-      statistical information of NBA games. Students are expected to perform
-      relational database modeling, SQL querying, and basic data analysis.
-    </p>
-    <a href="#" class="button">Explore the Dataset</a>
-  </section>
+<section class="hero">
+  <h2>NBA Game Database Project</h2>
+  <p>
+    A comprehensive database system for NBA game statistics. This project includes
+    relational database modeling, SQL querying, and data analysis of NBA games,
+    players, teams, and performance metrics.
+  </p>
+  <a href="https://www.kaggle.com/datasets/nathanlauga/nba-games" class="button">Explore the Dataset</a>
+</section>
 
-  <section class="dataset">
-    <h3>About the Dataset</h3>
-    <ul>
-      <li><strong>Total number of games:</strong> 25,000+</li>
-      <li>
-        <strong>Main fields:</strong> Team, player, date, score, assists,
-        rebounds
-      </li>
-      <li><strong>Source:</strong> Kaggle NBA Games Dataset / Stats API</li>
-    </ul>
-  </section>
+<section class="dataset">
+  <h3>About the Dataset</h3>
+  <ul>
+    <li><strong>Total number of games:</strong> 25,000+</li>
+    <li><strong>Main fields:</strong> Team, player, date, score, assists, rebounds</li>
+    <li><strong>Source:</strong> Kaggle NBA Games Dataset</li>
+    <li><strong>Coverage:</strong> Multiple seasons with detailed statistics</li>
+  </ul>
+</section>
 
-  <section class="objectives">
-    <h3>Course Objectives</h3>
-    <p>
-      Students will analyze the dataset and design properly structured relational
-      tables. Example tasks include:
-    </p>
-    <ul>
-      <li>Top 10 highest-scoring games</li>
-      <li>Average score comparison between teams</li>
-      <li>Player performance trends across seasons</li>
-    </ul>
-  </section>
-</main>
-
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; max-width: 900px; margin-left: auto; margin-right: auto;">
+  <div style="background: white; padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0px 3px 10px rgba(0,0,0,0.1); border: 2px solid #4a90e2;">
+    <h3 style="font-size: 2.5rem; color: #4a90e2; margin-bottom: 10px;">5</h3>
+    <p style="color: #666; margin: 0;">Main Tables</p>
+  </div>
+  <div style="background: white; padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0px 3px 10px rgba(0,0,0,0.1); border: 2px solid #4a90e2;">
+    <h3 style="font-size: 2.5rem; color: #4a90e2; margin-bottom: 10px;">25K+</h3>
+    <p style="color: #666; margin: 0;">Games Recorded</p>
+  </div>
+  <div style="background: white; padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0px 3px 10px rgba(0,0,0,0.1); border: 2px solid #4a90e2;">
+    <h3 style="font-size: 2.5rem; color: #4a90e2; margin-bottom: 10px;">30</h3>
+    <p style="color: #666; margin: 0;">NBA Teams</p>
+  </div>
+</div>
 {% endblock %}

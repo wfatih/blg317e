@@ -35,13 +35,18 @@
                 <label class="form-label">
                     <i class="fas fa-shield-alt"></i> Team
                 </label>
-                <input 
-                    type="text" 
-                    name="team" 
-                    class="form-control"
-                    placeholder="Team"
-                    value="{{ request.args.get('team','') }}">
+
+                <select name="team" class="form-control">
+                    <option value="">All Teams</option>
+                    {% for team in teams %}
+                        <option value="{{ team.team_id }}"
+                            {% if request.args.get('team') == team.team_id|string %}selected{% endif %}>
+                            {{ team.team_name }}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
+
 
             <!-- DATE FROM -->
             <div class="form-group">

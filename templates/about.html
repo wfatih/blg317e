@@ -1,4 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>About Project</h1>
+<div class="hero">
+  <h1>About the Project</h1>
+</div>
+
+<div class="dataset">
+  <h2>Project Description</h2>
+  <p>
+    This NBA Database Project is designed to manage and analyze comprehensive basketball
+    game statistics. The system stores information about teams, players, games, performance
+    metrics, and arena details in a structured relational database.
+  </p>
+
+  <h2>Database Structure</h2>
+  <p>
+    The database consists of five main tables: Teams (managing NBA team information),
+    Players (storing player profiles and statistics), Games (recording match details),
+    Player Statistics (tracking individual game performance), and Arenas (maintaining
+    venue information). Each table is normalized and connected through foreign key relationships.
+  </p>
+
+  <h2>Team Responsibilities</h2>
+  <ul style="list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+    <li style="background: #f9f9f9; padding: 20px; border-radius: 8px; text-align: center; border: 2px solid #4a90e2;">
+      <h3 style="color: #4a90e2; margin-bottom: 8px;">Bahadır Selim Bakla</h3>
+      <p style="color: #666; margin: 0;">Teams Table</p>
+    </li>
+    <li style="background: #f9f9f9; padding: 20px; border-radius: 8px; text-align: center; border: 2px solid #4a90e2;">
+      <h3 style="color: #4a90e2; margin-bottom: 8px;">Alperen Budak</h3>
+      <p style="color: #666; margin: 0;">Players Table</p>
+    </li>
+    <li style="background: #f9f9f9; padding: 20px; border-radius: 8px; text-align: center; border: 2px solid #4a90e2;">
+      <h3 style="color: #4a90e2; margin-bottom: 8px;">Fatih Çakır</h3>
+      <p style="color: #666; margin: 0;">Games Table</p>
+    </li>
+    <li style="background: #f9f9f9; padding: 20px; border-radius: 8px; text-align: center; border: 2px solid #4a90e2;">
+      <h3 style="color: #4a90e2; margin-bottom: 8px;">Member 4</h3>
+      <p style="color: #666; margin: 0;">Statistics Table</p>
+    </li>
+    <li style="background: #f9f9f9; padding: 20px; border-radius: 8px; text-align: center; border: 2px solid #4a90e2;">
+      <h3 style="color: #4a90e2; margin-bottom: 8px;">Member 5</h3>
+      <p style="color: #666; margin: 0;">Arenas Table</p>
+    </li>
+  </ul>
+</div>
 {% endblock %}
