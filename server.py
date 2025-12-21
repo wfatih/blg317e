@@ -532,60 +532,10 @@ def teams_page():
     return render_template("teams_list.html", teams=teams)
 
 
-# -------- API ENDPOINTS --------
-@app.route("/api/games")
-def get_games_by_date_api():
-    date_str = request.args.get("date")
-    if not date_str:
-        return jsonify([])
-    
-    with sqlite3.connect("nba.db") as con:
-        con.row_factory = sqlite3.Row
-        cur = con.cursor()
-        
-        query = """
-            SELECT 
-                g.game_id, 
-                g.home_team_id, 
-                g.away_team_id,
-                ht.team_name as home_name,
-                at.team_name as away_name
-            FROM games g
-            LEFT JOIN teams ht ON g.home_team_id = ht.team_id
-            LEFT JOIN teams at ON g.away_team_id = at.team_id
-            WHERE g.game_date = ? 
-            ORDER BY g.game_id
-        """
-        games = cur.execute(query, (date_str,)).fetchall()
-        
-        return jsonify([
-            {
-                "id": g["game_id"], 
-                "label": f"Game {g['game_id']}: {g['home_name']} vs {g['away_name']}"
-            } 
-            for g in games
-        ])
+# ==========================================
+# STATISTICS
+# ==========================================
 
-@app.route("/api/game/<int:game_id>/players")
-def get_game_players_api(game_id):
-    with sqlite3.connect("nba.db") as con:
-        cur = con.cursor()
-        
-        game = cur.execute("SELECT home_team_id, away_team_id FROM games WHERE game_id=?", (game_id,)).fetchone()
-        if not game:
-            return jsonify([])
-            
-        query = """
-            SELECT player_id, full_name, team_id 
-            FROM players 
-            WHERE team_id IN (?, ?) 
-            ORDER BY full_name
-        """
-        players = cur.execute(query, (game[0], game[1])).fetchall()
-        
-        return jsonify([{"id": p[0], "name": p[1]} for p in players])
-
-# -------- STATISTICS LIST --------
 @app.route("/statistics")
 def statistics_page():
     if "logged_in" not in session: return redirect(url_for("login_page"))
@@ -694,7 +644,7 @@ def statistics_page():
         next_order='asc' if order == 'desc' else 'desc', summary=summary
     )
 
-# -------- STATISTIC DETAIL VIEW --------
+# -------- VIEW STATISTIC --------
 @app.route("/statistics/view/<int:sid>")
 def view_statistic(sid):
     with sqlite3.connect("nba.db") as con:
@@ -757,7 +707,6 @@ def view_statistic(sid):
 @app.route("/statistics/add", methods=["GET", "POST"])
 def add_statistic():
     if "logged_in" not in session: return redirect(url_for("login_page"))
-    
     error = None
     statistic = {
         "stat_id": "", "player_id": "", "game_id": "", "game_date": "",
@@ -808,6 +757,7 @@ def add_statistic():
 
     return render_template("statistics/statistics_form.html", title="Add Statistic", statistic=statistic, error=error)
 
+# -------- EDIT STATISTIC --------
 @app.route("/statistics/edit/<int:sid>", methods=["GET", "POST"])
 def edit_statistic(sid):
     if "logged_in" not in session: return redirect(url_for("login_page"))
@@ -872,6 +822,7 @@ def edit_statistic(sid):
         error=error
     )
 
+# -------- DELETE STATISTIC --------
 @app.route("/statistics/delete/<int:sid>")
 def delete_statistic(sid):
     if "logged_in" not in session: return redirect(url_for("login_page"))
@@ -886,6 +837,60 @@ def delete_statistic(sid):
             pass
         return redirect("/statistics")
     
+
+# -------- API ENDPOINTS --------
+@app.route("/api/games")
+def get_games_by_date_api():
+    date_str = request.args.get("date")
+    if not date_str:
+        return jsonify([])
+    
+    with sqlite3.connect("nba.db") as con:
+        con.row_factory = sqlite3.Row
+        cur = con.cursor()
+        
+        query = """
+            SELECT 
+                g.game_id, 
+                g.home_team_id, 
+                g.away_team_id,
+                ht.team_name as home_name,
+                at.team_name as away_name
+            FROM games g
+            LEFT JOIN teams ht ON g.home_team_id = ht.team_id
+            LEFT JOIN teams at ON g.away_team_id = at.team_id
+            WHERE g.game_date = ? 
+            ORDER BY g.game_id
+        """
+        games = cur.execute(query, (date_str,)).fetchall()
+        
+        return jsonify([
+            {
+                "id": g["game_id"], 
+                "label": f"Game {g['game_id']}: {g['home_name']} vs {g['away_name']}"
+            } 
+            for g in games
+        ])
+
+@app.route("/api/game/<int:game_id>/players")
+def get_game_players_api(game_id):
+    with sqlite3.connect("nba.db") as con:
+        cur = con.cursor()
+        
+        game = cur.execute("SELECT home_team_id, away_team_id FROM games WHERE game_id=?", (game_id,)).fetchone()
+        if not game:
+            return jsonify([])
+            
+        query = """
+            SELECT player_id, full_name, team_id 
+            FROM players 
+            WHERE team_id IN (?, ?) 
+            ORDER BY full_name
+        """
+        players = cur.execute(query, (game[0], game[1])).fetchall()
+        
+        return jsonify([{"id": p[0], "name": p[1]} for p in players])
+
 @app.route("/api/players/search")
 def search_players_api():
     query = request.args.get("q", "").strip()
