@@ -8,7 +8,7 @@ def db():
     con.row_factory = sqlite3.Row
     return con
 
-# ----------------- TEAMS LIST (Filtreleme Aynı Kalıyor) -----------------
+# ----------------- TEAMS LIST  -----------------
 @teams_bp.route("/teams")
 def teams_list():
     if "logged_in" not in session: return redirect(url_for("login_page"))
@@ -57,7 +57,7 @@ def teams_list():
         total_games=total_teams
     )
 
-# ----------------- TEAM DETAIL (KRİTİK DÜZELTME BURADA) -----------------
+# ----------------- TEAM DETAIL -----------------
 @teams_bp.route("/teams/<int:tid>")
 def team_detail(tid):
     if "logged_in" not in session: return redirect(url_for("login_page"))
@@ -77,7 +77,7 @@ def team_detail(tid):
     selected_season = request.args.get("season", "")
     opponent_id = request.args.get("opponent_id", "")
 
-    # 3. KADRO SORGUSU (DÜZELTİLDİ: Sadece o takımın oyuncuları gelecek)
+    # 3. KADRO SORGUSU 
     if selected_season:
         # Mantık: O sezon o takımın maçına çıkmış VE takım ID'si eşleşen oyuncular
         players_query = """
@@ -198,7 +198,7 @@ def team_detail(tid):
         arena_id=arena_id,
     )
 
-# ----------------- ADD/EDIT/DELETE (AYNI KALIYOR) -----------------
+# ----------------- ADD/EDIT/DELETE  -----------------
 @teams_bp.route("/teams/add", methods=["GET", "POST"])
 def add_team():
 
