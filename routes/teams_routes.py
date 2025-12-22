@@ -210,7 +210,7 @@ def add_team():
                 INSERT INTO teams (
                     team_id, abbreviation, nickname, founded_year, city,
                     arena, arenacapacity, owner, generalmanager, headcoach, dleagueaffiliation
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 request.form["team_id"],
                 
