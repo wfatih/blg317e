@@ -35,18 +35,72 @@
     </div>
 
     <div id="overview" class="tab-pane {% if not selected_season and not opponent_id %}active{% endif %}">
-        <div style="display: flex; gap: 30px;">
-            <div style="flex: 1; background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0;">
-                <h3 style="margin-top: 0; color: #1e293b;">Front Office</h3>
-                <p><strong>Owner:</strong> {{ team.owner or team.OWNER or 'N/A' }}</p>
-                <p><strong>GM:</strong> {{ team.generalmanager or team.GENERALMANAGER or 'N/A' }}</p>
-                <p><strong>Coach:</strong> {{ team.headcoach or team.HEADCOACH or 'N/A' }}</p>
+
+
+        {% if top_seasons %}
+        <div class="top-seasons">
+                 <div class="top-seasons-title">
+                     🏆 Most Successful Seasons
+                </div>
+
+            <div class="top-seasons-grid">
+                {% for s in top_seasons %}
+                <div class="top-season-card">
+                    <div class="top-season-year">{{ s.season }}</div>
+                    <div class="top-season-wins">{{ s.wins }} Wins</div>
+                    <div class="top-season-badge">Top Season</div>
+                </div>
+                {% endfor %}
             </div>
-            <div style="flex: 1; background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0;">
-                <h3 style="margin-top: 0; color: #ef4444;">Arena Info</h3>
+        </div>
+        {% endif %}
+
+        {% if home_away or avg_point_diff %}
+        <div class="analytics-section">
+
+            <div class="analytics-card">
+                <div class="analytics-title">🏠 Home vs Away Performance</div>
+                <div class="analytics-values">
+                    <span>Home Wins: <strong>{{ home_away.home_wins }}</strong></span>
+                    <span>Away Wins: <strong>{{ home_away.away_wins }}</strong></span>
+                </div>
+            </div>
+
+            <div class="analytics-card highlight">
+                <div class="analytics-title">📊 Avg Point Differential</div>
+                <div class="analytics-main">
+                    {{ avg_point_diff.avg_point_diff }} pts
+                </div>
+                <small class="analytics-sub">
+                    Average score difference per game
+                </small>
+            </div>
+
+        </div>
+        {% endif %}
+        <div class="info-grid">
+
+            <div class="info-card">
+                <h3 class="info-title">Front Office</h3>
+                 <p><strong>Owner:</strong> {{ team.owner or team.OWNER or 'N/A' }}</p>
+                 <p><strong>GM:</strong> {{ team.generalmanager or team.GENERALMANAGER or 'N/A' }}</p>
+                 <p><strong>Coach:</strong> {{ team.headcoach or team.HEADCOACH or 'N/A' }}</p>
+            </div>
+
+            {% if arena_id %}
+            <a href="/arenas/{{ arena_id }}" style="text-decoration: none; color: inherit;">
+            {% endif %}
+
+            <div class="info-card arena-card-clickable">
+                <h3 class="info-title arena">Arena Info</h3>
                 <p><strong>Name:</strong> {{ team.arena or team.ARENA or 'N/A' }}</p>
                 <p><strong>Capacity:</strong> {{ "{:,}".format(team.arenacapacity or team.ARENACAPACITY or 0) }}</p>
+                <small class="arena-hint">Click to view arena details</small>
             </div>
+
+            {% if arena_id %}
+            </a>
+            {% endif %}
         </div>
     </div>
 
@@ -65,18 +119,28 @@
             {% if players %}
                 {% for p in players %}
                 <div class="player-card">
-                    <div class="player-avatar">{{ p.full_name[:1] }}</div>
-                    <div style="font-weight: 700; color: #1e293b; margin-bottom: 5px;">{{ p.full_name }}</div>
-       
+
+                    <div class="player-image-wrapper">
+                        <img
+                            src="https://cdn.nba.com/headshots/nba/latest/1040x760/{{ p.player_id }}.png"
+                            alt="{{ p.full_name }}"
+                            class="player-headshot"
+                            onerror="this.onerror=null;this.src='https://cdn.nba.com/headshots/nba/latest/1040x760/logoman.png';"
+                        >
+                    </div>
+
+                    <div class="player-name">{{ p.full_name }}</div>
+
                     <a href="/players/view/{{ p.player_id }}" class="player-detail-link">
                         View Details
                     </a>
                 </div>
                 {% endfor %}
             {% else %}
-                <p style="grid-column: 1/-1; text-align: center; color: #94a3b8;">No players found for this season.</p>
+                <p>No players found.</p>
             {% endif %}
         </div>
+
     </div>
 
     <div id="headtohead" class="tab-pane {% if opponent_id %}active{% endif %}">
@@ -150,11 +214,6 @@ function openTab(tabName) {
     }
     // 3. Seçileni aç
     document.getElementById(tabName).classList.add('active');
-    
-    // 4. İlgili butonu aktif yap (event.target kullanmadan basit loop ile bulalım)
-    // Basit olması için: onclick içine event göndermedik, butonlara ID verip yapabilirdik ama
-    // şimdilik CSS :hover ile idare eder, fonksiyonel olarak çalışır.
-    // Görsel 'active' durumu için event'i parametre olarak almak daha iyi olurdu ama karışmasın.
 }
 </script>
 

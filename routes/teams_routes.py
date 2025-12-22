@@ -118,6 +118,68 @@ def team_detail(tid):
             else:
                 head_to_head_stats["losses"] += 1
 
+    top_seasons = cur.execute("""
+        SELECT *
+        FROM (
+            SELECT 
+                g.season,
+                SUM(
+                    CASE 
+                        WHEN (g.home_team_id = ? AND g.home_team_wins = 1)
+                          OR (g.away_team_id = ? AND g.home_team_wins = 0)
+                        THEN 1 ELSE 0
+                    END
+                ) AS wins
+            FROM games g
+            WHERE g.home_team_id = ? OR g.away_team_id = ?
+            GROUP BY g.season
+        ) season_stats
+        ORDER BY wins DESC
+        LIMIT 3
+    """, (tid, tid, tid, tid)).fetchall()
+
+    # 6. HOME vs AWAY PERFORMANCE
+    home_away = cur.execute("""
+        SELECT
+             SUM(
+                CASE 
+                    WHEN g.home_team_id = ? AND g.home_team_wins = 1 THEN 1
+                     ELSE 0
+                 END
+             ) AS home_wins,
+                SUM(
+                    CASE 
+                        WHEN g.away_team_id = ? AND g.home_team_wins = 0 THEN 1
+                         ELSE 0
+                END
+            ) AS away_wins
+        FROM games g
+        WHERE g.home_team_id = ? OR g.away_team_id = ?
+    """, (tid, tid, tid, tid)).fetchone()
+
+    # 7. AVERAGE POINT DIFFERENTIAL
+    avg_point_diff = cur.execute("""
+         SELECT
+            ROUND(AVG(
+                 CASE
+                    WHEN home_team_id = ? 
+                        THEN home_team_score - away_team_score
+                    ELSE away_team_score - home_team_score
+                END
+            ), 2) AS avg_point_diff
+        FROM games
+        WHERE home_team_id = ? OR away_team_id = ?
+    """, (tid, tid, tid)).fetchone()
+
+    # ARENA ID (stadiums tablosundan)
+    arena_row = cur.execute("""
+        SELECT stadium_id
+        FROM stadiums
+        WHERE team_id = ?
+    """, (tid,)).fetchone()
+
+    arena_id = arena_row["stadium_id"] if arena_row else None
+
     con.close()
 
     return render_template(
@@ -129,7 +191,11 @@ def team_detail(tid):
         selected_season=selected_season,
         opponent_id=int(opponent_id) if opponent_id.isdigit() else None,
         comparison_games=comparison_games,
-        stats=head_to_head_stats
+        stats=head_to_head_stats,
+        top_seasons=top_seasons,
+        home_away=home_away,
+        avg_point_diff=avg_point_diff,
+        arena_id=arena_id,
     )
 
 # ----------------- ADD/EDIT/DELETE (AYNI KALIYOR) -----------------

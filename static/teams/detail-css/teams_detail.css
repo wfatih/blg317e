@@ -122,7 +122,7 @@
     border-radius: 16px;
     padding: 20px;
     text-align: center;
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .player-card:hover {
@@ -131,19 +131,25 @@
     border-color: #94a3b8;
 }
 
-.player-avatar {
-    width: 60px;
-    height: 60px;
-    background: #f1f5f9;
+/* FOTOĞRAF KUTUSU (KRİTİK KISIM) */
+.player-image-wrapper {
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
+    overflow: hidden;
     margin: 0 auto 15px;
+    background: #f1f5f9;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    color: #475569;
-    font-size: 24px;
 }
+
+.player-headshot {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .player-detail-link {
     color: #2563eb;
     text-decoration: none;
@@ -215,6 +221,204 @@
         transform: translateY(600px);
     }
 }
+/* =========================
+   MOST SUCCESSFUL SEASONS
+========================= */
+
+.top-seasons {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.top-seasons-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.top-seasons-grid {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.top-season-card {
+    background: linear-gradient(135deg, #ffffff, #f1f5ff);
+    border-radius: 18px;
+    padding: 25px 30px;
+    min-width: 180px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.top-season-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 35px rgba(0,0,0,0.12);
+}
+
+.top-season-year {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #2563eb;
+    margin-bottom: 8px;
+}
+
+.top-season-wins {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 10px;
+}
+
+.top-season-badge {
+    display: inline-block;
+    background: #2563eb;
+    color: white;
+    font-size: 0.75rem;
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+/* =========================
+   ANALYTICS SECTION
+========================= */
+
+.analytics-section {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.analytics-card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: transform .25s ease;
+}
+
+.analytics-card:hover {
+    transform: translateY(-4px);
+}
+
+.analytics-title {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #0f172a;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.analytics-values {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+.analytics-values span {
+    background: #f8fafc;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    width: 48%;
+    text-align: center;
+}
+
+/* Highlight card (Avg Point Differential) */
+.analytics-card.highlight {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: white;
+}
+
+.analytics-card.highlight .analytics-title {
+    color: white;
+}
+
+.analytics-main {
+    font-size: 3rem;
+    font-weight: 900;
+    margin: 15px 0 5px;
+}
+
+.analytics-sub {
+    opacity: 0.85;
+    font-size: 0.9rem;
+}
+
+/* =========================
+   FRONT OFFICE & ARENA INFO
+========================= */
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    margin-top: 35px;
+}
+
+.info-card {
+    background: white;
+    padding: 28px;
+    border-radius: 18px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 35px rgba(0,0,0,0.1);
+}
+
+.info-title {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.info-title.arena {
+    color: #ef4444;
+}
+
+.info-card p {
+    margin: 8px 0;
+    color: #334155;
+    font-size: 0.95rem;
+}
+
+.arena-card-clickable {
+    cursor: pointer;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.arena-card-clickable:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 35px rgba(0,0,0,0.12);
+}
+
+.arena-hint {
+    display: block;
+    margin-top: 12px;
+    font-size: 0.8rem;
+    color: #64748b;
+    opacity: 0.8;
+}
+
 
 
 .text-end { text-align: right; }
